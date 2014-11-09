@@ -21,6 +21,12 @@ file { '/etc/usb_modeswitch.d/e1752cu.conf':
 # install gnokii so that we can send sms'es
 install { 'gnokii': }
 
+# configure gnokii
+file { ' /etc/gnokiirc':
+   ensure => 'present',
+   content => "[global]\nmodel = AT\nport = /dev/gsmmodem\nconnection = serial\n",
+}
+
 # or
 # http://ubuntuforums.org/showthread.php?t=1996734&p=12000198#post12000198
 
