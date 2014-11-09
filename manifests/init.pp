@@ -19,7 +19,7 @@ file { '/etc/usb_modeswitch.d/e1752cu.conf':
 }
 
 # install gnokii so that we can send sms'es
-install { 'gnokii': }
+package { 'gnokii': }
 
 # configure gnokii
 file { ' /etc/gnokiirc':
