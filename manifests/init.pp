@@ -18,6 +18,9 @@ file { '/etc/usb_modeswitch.d/e1752cu.conf':
   content => "DefaultVendor= 0×12d1\nDefaultProduct= 0×1446\nTargetVendor= 0×12d1\nTargetProdct= 0×1001\nMessageEndpoint= 0×01\nMessageContent= \"55534243000000000000000000000011060000000000000000000000000000\""
 }
 
+# install gnokii so that we can send sms'es
+install { 'gnokii': }
+
 # or
 # http://ubuntuforums.org/showthread.php?t=1996734&p=12000198#post12000198
 
