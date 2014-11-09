@@ -4,7 +4,13 @@
 # usb_modeswitch -c /etc/usb_modeswitch.conf
 # http://debbox.dk/sending-sms-from-huawei-e1752/
 #
-#
+# minial pi installed
+# http://www.cnx-software.com/2012/07/31/84-mb-minimal-raspbian-armhf-image-for-raspberry-pi/
+# 
+# lots of links about 3G pi router
+# http://techmind.org/rpi/ 
+
+
 
 #
 # huawei e1752cu
@@ -13,7 +19,7 @@
 # which basically sets some udev rules
 package { 'usb-modeswitch': }
 
-file { '/etc/usb_modeswitch.d/e1752cu.conf':
+file { '/etc/usb_modeswitch.conf':
   ensure => 'present',
   content => "DefaultVendor= 0×12d1\nDefaultProduct= 0×1446\nTargetVendor= 0×12d1\nTargetProdct= 0×1001\nMessageEndpoint= 0×01\nMessageContent= \"55534243000000000000000000000011060000000000000000000000000000\"",
   require => Package [ 'usb-modeswitch' ],
