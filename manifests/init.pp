@@ -19,9 +19,9 @@
 # which basically sets some udev rules
 package { 'usb-modeswitch': }
 
-file { '/etc/usb_modeswitch.conf':
+file { '/etc/usb-modeswitch.conf':
   ensure => 'present',
-  content => "DefaultVendor= 0×12d1\nDefaultProduct= 0×1446\nTargetVendor= 0×12d1\nTargetProdct= 0×1001\nMessageEndpoint= 0×01\nMessageContent= \"55534243000000000000000000000011060000000000000000000000000000\"",
+  content => "DefaultVendor= 0×12d1\nDefaultProduct= 0×1446\nTargetVendor= 0×12d1\nTargetProduct= 0×1001\nMessageEndpoint= 0×01\nMessageContent= \"55534243000000000000000000000011060000000000000000000000000000\"",
   require => Package [ 'usb-modeswitch' ],
 }
 
