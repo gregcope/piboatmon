@@ -48,3 +48,32 @@ file { '/etc/gnokiirc':
 # http://debbox.dk/sending-sms-from-huawei-e1752/
 #
 
+
+
+
+
+
+# http://www.stroobant.be/huawei-e1752-mobiel-internet-op-linux-ubuntudebian
+
+# Chose one of;
+# DetachStorageOnly=1
+# HuaweiMode=1
+
+# DefaultVendor=  0x12d1
+# DefaultProduct= 0x1001
+ 
+
+# TargetClass=    0xff
+
+# choose one of these:
+# DetachStorageOnly=1
+# HuaweiMode=1
+
+
+#TargetProductList="1001,1406,140b,140c,1412,141b,14ac"
+# add 1436?
+# https://help.ubuntu.com/community/3GInternet
+
+# http://www.draisberghof.de/usb_modeswitch/bb/viewtopic.php?t=561&sid=b1fc4ab2946571296dc2042a4630ef21
+
+# /usr/sbin/usb_modeswitch -I -W -c /etc/usb_modeswitch.d/12d1:1446
