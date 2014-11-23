@@ -4,6 +4,7 @@ class rpi {
   include rpi::gps
   include rpi::ntp
   include rpi::3g
+  include rpi::mopi
 }
 
 # to run but do nothing
