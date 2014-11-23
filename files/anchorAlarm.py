@@ -4,6 +4,11 @@
 
 import math
 
+# lat:  51.013653333
+# lon:  -0.449591667
+
+distance
+
 def distance(origin, destination):
     """Determine distance between 2 sets of [lat,lon] in km"""
  
