@@ -15,6 +15,8 @@ gpsFixTimeout = 1
 phone = '07769907533'
 boatname = 'Spindrift'
 debug = False
+# gammu statemachine
+sm = None
 
 def gpsfix():
 
@@ -64,25 +66,12 @@ def gpsfix():
     # all good
     return (1, report.lat, report.lon, report.speed, report.track)
 
-def sendSMS(phoneNum, txt):
+def sendSMS(phoneNum, txt, sm):
 
     # for a give phoneNum and txt message
     # send the message to the phone
     # trap any nonesense
     print 'Sending txt:' + txt + ', to: ' + phone
-    sm = gammu.StateMachine()
-
-    try:
-        print 'Going to read config'
-        sm.ReadConfig(Filename = '/home/pi/.gammurc')
-    except Exception as inst:
-        print 'Pants failed read config file ...'
-        print type (inst)
-        print inst
-        return (0)
- 
-    # this takes about 1 sec ... 
-    sm.Init()
 
     # go for it
     message = {
@@ -96,17 +85,39 @@ def sendSMS(phoneNum, txt):
         # to make this barf, wrap the phone num in single quotes
         sm.SendSMS(message)
         print 'Message sent'
-        return True
+        sent = True
+        print 'Sent is: ' + str(sent)
     except Exception as inst:
         print 'Pants failed to send message...'
         print type (inst)
         print inst
-        return False
+        sent = False
+        print 'Sent is: ' + str(sent)
+    print 'returning sent = ', str(sent)
+    return sent
 
-def getSMS():
+def getSMS(sm):
 
     # get SMS message for this number
     # and if successful delete them...
+
+    sm.GetSMSStatus() 
+    print 'there are: ', sm.GetSMSStatus(), 'sms to deal with'
+
+    remainSMS = status['SIMUsed'] + status['PhoneUsed'] + status['TemplatesUsed']
+    sms = [] 
+    start = True
+
+    while remainSMS > 0:
+        if start:
+            curSMS = sm.GetNextSMS(Start = True, Folder=0)
+            start = False
+        else:
+            cursms = sm.GetNextSMS(Location = curSMS[0]['Location'], Folder = 0)
+        remainSMS = remainSMS - len(curSMS)
+        sms.append(curSMS)
+
+    print sms
 
     return False
 
@@ -132,10 +143,32 @@ def main():
 
     # so lets send a txt
     message = boatname + ': LAT: ' + str(lat) + ', LON: ' + str(lon) + ', SPEED :' + str(speed) + ', HEADING: ' + str(heading)
-    if sendSMS(phone, message) is False:
+
+    sm = gammu.StateMachine()
+
+    try:
+        print 'Going to read /home/pi/.gammurc config ...'
+        sm.ReadConfig(Filename = '/home/pi/.gammurc')
+    except Exception as inst:
+        print 'Pants failed ...'
+        print type (inst)
+        print inst
+    print 'Read gammu /home/pi/.gammurc config'
+ 
+    # this takes about 1 sec ... 
+    try:
+        print 'Going to cal gammu Init() ...'
+        sm.Init()
+    except Exception as inst:
+        print 'Pants failed  ...'
+        print type (inst)
+        print inst
+    print 'gammu init done'
+
+    if sendSMS(phone, message, sm) is False:
         print 'Oh my ... failed to send SMS'
 
-    if getSMS() is False:
+    if getSMS(sm) is False:
         print 'Oh my ... failed to get sms'
 
 if __name__ == '__main__':
