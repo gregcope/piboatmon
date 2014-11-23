@@ -119,13 +119,13 @@ def getSMS(sm):
         # print 'In while, _start is: ' + str(_start)
         try :
             if _start:
-                # print 'in if bit'
+                print 'in if bit'
                 sms = sm.GetNextSMS(Start = True, Folder=0)
-                # print sms
+                print sms
                 _start = False
             else:
-                # print sms
-                # print 'in else bit'
+                print sms
+                print 'in else bit'
                 #be careful sometimes Location is directly in the hash so you'll have to remove the [0]
                 sms = sm.GetNextSMS(Location = sms[0]['Location'], Folder=0)
         except gammu.ERR_EMPTY:
@@ -138,7 +138,7 @@ def getSMS(sm):
         # set flag to true
         gotSMS = True
 
-    print 'gotSMS: ' + gotSMS
+    print 'gotSMS: ' + str(gotSMS)
     # return flag
     return gotSMS
 
@@ -147,8 +147,12 @@ def processSMS(sms, sm):
     # process SMS'es
     # print "Location:%s\t State:%s\t Folder:%s\t Text:%s" % (sms[0]['Location'],sms[0]['State'],sms[0]['Folder'],sms[0]['Text'])
 
-    txt = sms[0]['Text']
-    lowertxt = txt.lower
+    #txt = sms[0]['Text']
+    #lowertxt = txt.lower()
+    lowertxt = sms[0]['Text'].lower()
+    print
+    print 'lowertxt is: ', lowertxt
+    print 
     # might be a config message
     if 'config' in lowertxt:
         print 'SMS txt had config in it: ' + sms[0]['Text']
@@ -164,34 +168,36 @@ def processSMS(sms, sm):
         print 'No idea what that SMS was... ignoring: ' + sms[0]['Text']
 
     print 'About to delete sms'
-    #sm.DeleteSMS(Location = sms[0]['Location'], Folder = 1)
+    sm.DeleteSMS(Location = sms[0]['Location'], Folder = 1)
 
 def debugSMS(sms, sm):
 
     # either put debug on/off
-    txt = sms[0]['Text'].lower
+    _lowertxt = sms[0]['Text'].lower()
     reply = ''
-    if 'on' in txt:
+    if 'true' in _lowertxt:
         debug = True
         reply = boatname + ': Setting debug to True'
-    elif 'off' in txt:
+    elif 'off' in _lowertxt:
         debug = False
-        reply = boatname + ': Setting debug to True'
+        reply = boatname + ': Setting debug to False'
     else:
-        print 'Not idea what that was'
-        reply = boatname + ': Could not parse debug message : ' + txt
+        print 'Not idea what that was ... not changing anything'
+        reply = boatname + ': Could not parse debug message : ' + _lowertxt
 
     # send message back
+    number = str(sms[0]['Number'])
     print 'Reply: ' + reply + ', to: ' + sms[0]['Number']
-    sendSMS(sms[0]['Number'], reply, sm)
+    sendSMS(number, reply, sm)
 
-def configSMS(sms):
+def configSMS(sms, sm):
 
+    lowertxt = sms[0]['Text'].lower()
     #print "Location:%s\t State:%s\t Folder:%s\t Text:%s" % (sms[0]['Location'],sms[0]['State'],sms[0]['Folder'],sms[0]['Text'])
     #print sms
     print 'Doing config'
     print 'From: ' + sms[0]['Number']
-    print 'Config message: ' + sms[0]['Text']
+    print 'Config message: ' + lowertxt
 
     # lookfing for string like
     # config wake NUM
