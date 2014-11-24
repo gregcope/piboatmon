@@ -12,13 +12,15 @@ import re
 # some defaults
 lat = 51.013648333
 lon = -0.449681667
-gpsFixTimeout = 10
+# has to be more than numberGpsFixesToAverage
+gpsFixTimeout = 20
 phone = '07769907533'
 boatname = 'pi'
 debug = False
 # gammu statemachine
 sm = None
-wake = 1800
+wakeInNSecs = 1800
+numberGpsFixesToAverage = 10
 
 def gpsfix():
 
@@ -39,17 +41,40 @@ def gpsfix():
 
     # loop whilst we wait for a fix
     _loop = 0
+    _lat = 0
+    _lon = 0
+    _speed = 0
+    _heading = 0
+    _sumLat = 0
+    _sumLon = 0
+    _sumSpeed = 0
+    _sumHeading = 0
+
     while True:
         try:
             report = session.next()
             if report['class'] == 'TPV':
 
-                print 'GPS fix Loop is: ', _loop
                 _loop += 1
+                #print 'GPS fix Loop is: ', _loop
 
                 if ( hasattr(report, 'speed') and hasattr(report, 'lon') and hasattr(report, 'lat') and hasattr(report, 'track')):
                     # we got a fix... break
-                    break
+                    _sumLat = _sumLat + report.lat
+                    _sumLon = _sumLon + report.lon
+                    _sumSpeed = _sumSpeed + report.speed
+                    _sumHeading = _sumHeading + report.track
+                    #print 'Got a fix', _sumLat, report.lat, _sumLon, report.lon, _sumSpeed,  report.speed, _sumHeading, report.track, _loop
+                    #break
+
+                    # if we have enough data, calc average and break
+                    if _loop == numberGpsFixesToAverage:
+                        _lat = _sumLat / numberGpsFixesToAverage
+                        _lon = _sumLon / numberGpsFixesToAverage
+                        _speed = _sumSpeed / numberGpsFixesToAverage
+                        _heading = _sumHeading / numberGpsFixesToAverage
+                        break
+
                 if _loop > gpsFixTimeout:
                     # Ops, we failed to get a fix in time
                     break
@@ -63,10 +88,10 @@ def gpsfix():
 
     # Ops, we bailed
     if _loop > gpsFixTimeout:
-       return (0, 0, 0, 0, 0)
+       return (0, _lat, _lon, _speed, _heading)
 
     # all good
-    return (1, report.lat, report.lon, report.speed, report.track)
+    return (1, _lat, _lon, _speed, _heading)
 
 def sendSMS(phoneNum, txt, sm):
 
@@ -98,45 +123,47 @@ def sendSMS(phoneNum, txt, sm):
 def getSMS(sm):
 
     # set this to nothing
-    sms = None
+    sms = []
+    _status = None
+    _remain = 0
+    _start = True
+    _remain = 0
+    cursms = None
 
     # get SMS message for this number
-    gotSMS = False
+    gotSMS = 0
 
     try:
         print 'GetSMSStatus() ...'
-        sm.GetSMSStatus()
+        _status = sm.GetSMSStatus()
         print 'Done'
     except:
         print 'Pants failed to get SMSStatus ...'
         print type (inst)
         print inst
 
-    print 'there are: ', sm.GetSMSStatus(), 'sms to deal with'
+    _remain = _status['SIMUsed'] + _status['PhoneUsed'] + _status['TemplatesUsed']
+    print 'there are: ', _remain, 'sms to deal with'
 
-    _start = True
-    while 1:
-        # print 'In while, _start is: ' + str(_start)
-        try :
-            if _start:
-                print 'in if bit'
-                sms = sm.GetNextSMS(Start = True, Folder=0)
-                print sms
-                _start = False
-            else:
-                print sms
-                print 'in else bit'
-                #be careful sometimes Location is directly in the hash so you'll have to remove the [0]
-                sms = sm.GetNextSMS(Location = sms[0]['Location'], Folder=0)
-        except gammu.ERR_EMPTY:
-            break
+    if _remain == 0:
+        return False
 
-        # process them one at a time
-        print 'Processing sms: ' + str(sms)
-        processSMS(sms, sm)
-
-        # set flag to true
-        gotSMS = True
+    while _remain > 0:
+        if _start:
+            cursms = sm.GetNextSMS(Start = True, Folder = 0)
+            _start = False
+            #print 'Processing sms: ' + str(cursms)
+            processSMS(cursms, sm)
+            gotSMS += 1
+        else:
+            cursms = sm.GetNextSMS(Location = cursms[0]['Location'], Folder = 0)
+            #print 'Processing sms: ' + str(cursms)
+            processSMS(cursms, sm)
+            gotSMS = 1
+        for x in range(len(cursms)):
+            sm.DeleteSMS(cursms[x]['Folder'], cursms[x]['Location'])
+        _remain = _remain - len(cursms)
+        sms.append(cursms)
 
     print 'gotSMS: ' + str(gotSMS)
     # return flag
@@ -167,11 +194,9 @@ def processSMS(sms, sm):
     else:
         print 'No idea what that SMS was... ignoring: ' + sms[0]['Text']
 
-    print 'About to delete sms'
-    sm.DeleteSMS(Location = sms[0]['Location'], Folder = 1)
-
 def debugSMS(sms, sm):
 
+    global debug
     # either put debug on/off
     _lowertxt = sms[0]['Text'].lower()
     reply = ''
@@ -193,6 +218,10 @@ def debugSMS(sms, sm):
 def configSMS(sms, sm):
 
     lowertxt = sms[0]['Text'].lower()
+    mins = None
+    reply = None
+    minutes = None
+    
     #print "Location:%s\t State:%s\t Folder:%s\t Text:%s" % (sms[0]['Location'],sms[0]['State'],sms[0]['Folder'],sms[0]['Text'])
     #print sms
     print 'Doing config'
@@ -201,12 +230,23 @@ def configSMS(sms, sm):
 
     # lookfing for string like
     # config wake NUM
-    #if 'wake' in sms[0]['Text']:
+    if 'wake' in sms[0]['Text']:
+        mins = re.search("config wake (\d+)", lowertxt)
+        global wakeInNSecs
+        reply = boatname + ': wakeInNSecs was: ' + str(wakeInNSecs)
+        minutes = mins.group(1)
+        wakeInNSecs = int(minutes) * 60
+        reply = reply + ', wakeInNSecs now: ' +  str(wakeInNSecs)
+        number = str(sms[0]['Number'])
+        sendSMS(number, reply, sm)
+    else:
+        print 'Count not parse: ', lowertxt
 
 def main():
 
+    debug = False
     # started ...
-    print "running"
+    print "running, wakeInNSecs is: ", wakeInNSecs, ", debug is: ", debug
 
     # get a fix
     fixStatus, lat, lon, speed, heading = gpsfix()
@@ -276,6 +316,7 @@ def main():
         print 'Got some SMS'
 
     # so now DEBUG might be on and we might want to delay reboot
+    print "Stopping, wakeInNSecs is: ", wakeInNSecs, ", debug is: ", debug
 
 if __name__ == '__main__':
     main()
