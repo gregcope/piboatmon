@@ -122,6 +122,9 @@ def sendSMS(phoneNum, txt, sm):
 
 def getSMS(sm):
 
+
+    # lifted from
+    # http://osdir.com/ml/linux.drivers.gammu/2005-07/msg00018.html
     # set this to nothing
     sms = []
     _status = None
@@ -171,35 +174,52 @@ def getSMS(sm):
 
 def processSMS(sms, sm):
 
-    # process SMS'es
-    # print "Location:%s\t State:%s\t Folder:%s\t Text:%s" % (sms[0]['Location'],sms[0]['State'],sms[0]['Folder'],sms[0]['Text'])
-
-    #txt = sms[0]['Text']
-    #lowertxt = txt.lower()
-    lowertxt = sms[0]['Text'].lower()
-    print
-    print 'lowertxt is: ', lowertxt
-    print 
-    # might be a config message
-    if 'config' in lowertxt:
-        print 'SMS txt had config in it: ' + sms[0]['Text']
-        configSMS(sms, sm)
+    # lower text the message so we can parse it
+    # anoying the iPhone capitalising first char
+    _lowertxt = sms[0]['Text'].lower()
+ 
+    # some vars
+    _sentDebug = None
+    _understoodSms = False
 
     # might have debug in it
-    elif 'debug' in lowertxt:
+    # do this first to trap lots of lovely debug
+    if 'debug' in _lowertxt:
         print 'SMS txt had debug in it: ' + sms[0]['Text']
-        debugSMS(sms, sm)
+        _sentDebug = debugSMS(sms, sm)
+        _understoodSms = True
+
+    print 'We should get this far...'
+    # might be a config message
+    if 'config' in _lowertxt:
+        print 'SMS txt had config in it: ' + sms[0]['Text']
+        configSMS(sms, sm)
+        _understoodSms = True
+
+    # set the anchor alarm
+    if 'anchor alarm set' in _lowertxt:
+        print 'SMS txt had set anchor alarm in it: ' + sms[0]['Text']
+        setAnchorAlarm(sms, sm)
+        _understoodSms = True
 
     # no idea what the SMS is...
-    else:
+    if _understoodSms is False:
         print 'No idea what that SMS was... ignoring: ' + sms[0]['Text']
+
+    # finished!
 
 def debugSMS(sms, sm):
 
-    global debug
     # either put debug on/off
     _lowertxt = sms[0]['Text'].lower()
-    reply = ''
+
+    # setup reply
+    reply = None
+    sent = None
+
+    # set global var
+    global debug
+
     if 'true' in _lowertxt:
         debug = True
         reply = boatname + ': Setting debug to True'
@@ -210,9 +230,41 @@ def debugSMS(sms, sm):
         print 'Not idea what that was ... not changing anything'
         reply = boatname + ': Could not parse debug message : ' + _lowertxt
 
-    # send message back
+    # send message back to number that did the sending
     number = str(sms[0]['Number'])
+    # setup the reply text
     print 'Reply: ' + reply + ', to: ' + sms[0]['Number']
+    # send it
+    sent = sendSMS(number, reply, sm)
+    return sent
+
+def saveconfig():
+
+    print 'saveconfig' 
+
+def setAnchorAlarm(sms, sm):
+
+    # lower case the message
+    lowertxt = sms[0]['Text'].lower()
+    number = str(sms[0]['Number'])
+    reply = None
+    
+    # where are we
+    _fixStatus, _lat, _lon, _speed, _heading = gpsfix()
+
+    # setglobal vars
+    global lat
+    lat = _lat 
+    global lon
+    lon = _lon
+
+    # save config
+    saveconfig()
+
+    # sort a message to send back
+    reply = boatname + ': Anchor alarm being set for LAT: ' + str(_lat) + ', LON: ' + str(_lon)
+
+    # send the reply
     sendSMS(number, reply, sm)
 
 def configSMS(sms, sm):
@@ -235,12 +287,16 @@ def configSMS(sms, sm):
         global wakeInNSecs
         reply = boatname + ': wakeInNSecs was: ' + str(wakeInNSecs)
         minutes = mins.group(1)
-        wakeInNSecs = int(minutes) * 60
-        reply = reply + ', wakeInNSecs now: ' +  str(wakeInNSecs)
-        number = str(sms[0]['Number'])
-        sendSMS(number, reply, sm)
+        if minutes > 1:
+            wakeInNSecs = int(minutes) * 60
+            reply = reply + ', wakeInNSecs now: ' +  str(wakeInNSecs)
+            number = str(sms[0]['Number'])
+            sendSMS(number, reply, sm)
+        else:
+            # zeros sent?
+            print 'Not positive digits in: ', lowertxt
     else:
-        print 'Count not parse: ', lowertxt
+        print 'Could not parse: ', lowertxt
 
 def main():
 
