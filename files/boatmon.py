@@ -8,19 +8,25 @@ import gps
 import time
 import gammu
 import re
+import ConfigParser
+import math
 
 # some defaults
-lat = 51.013648333
-lon = -0.449681667
+configFile = "/home/pi/rpi/files/boatmon.config"
+
+lat = ''
+lon = ''
 # has to be more than numberGpsFixesToAverage
 gpsFixTimeout = 20
-phone = '07769907533'
-boatname = 'pi'
+phone = ''
+boatname = ''
 debug = False
 # gammu statemachine
 sm = None
-wakeInNSecs = 1800
+wakeInNSecs = ''
 numberGpsFixesToAverage = 10
+alarmRange = ''
+
 
 def gpsfix():
 
@@ -122,7 +128,6 @@ def sendSMS(phoneNum, txt, sm):
 
 def getSMS(sm):
 
-
     # lifted from
     # http://osdir.com/ml/linux.drivers.gammu/2005-07/msg00018.html
     # set this to nothing
@@ -140,7 +145,7 @@ def getSMS(sm):
         print 'GetSMSStatus() ...'
         _status = sm.GetSMSStatus()
         print 'Done'
-    except:
+    except Exception as inst:
         print 'Pants failed to get SMSStatus ...'
         print type (inst)
         print inst
@@ -190,16 +195,34 @@ def processSMS(sms, sm):
         _understoodSms = True
 
     print 'We should get this far...'
+
+    # might be a phone set command
+    if 'update phone' in _lowertxt:
+        print 'SMS txt had update phone in it: ' + sms[0]['Text']
+        _sentDebug = updatePhoneSms(sms, sm)
+        _understoodSms = True
+
+    # might be an anchor alarm off
+    if 'anchor alarm off' in _lowertxt:
+        print 'SMS txt had set anchor alarm off in it: ' + sms[0]['Text']
+        _sentAnchorAlarmOffSms = anchorAlarmOffSms(sms, sm)
+        _understoodSms = True
+
     # might be a config message
     if 'config' in _lowertxt:
         print 'SMS txt had config in it: ' + sms[0]['Text']
-        configSMS(sms, sm)
+        configSms(sms, sm)
         _understoodSms = True
 
     # set the anchor alarm
-    if 'anchor alarm set' in _lowertxt:
+    if 'set anchor alarm' in _lowertxt:
         print 'SMS txt had set anchor alarm in it: ' + sms[0]['Text']
-        setAnchorAlarm(sms, sm)
+        setAnchorAlarmSms(sms, sm)
+        _understoodSms = True
+
+    if 'send state' in _lowertxt:
+        print 'SMS txt had send state: ' + sms[0]['Text']
+        sendStateSms(sms, sm)
         _understoodSms = True
 
     # no idea what the SMS is...
@@ -208,7 +231,44 @@ def processSMS(sms, sm):
 
     # finished!
 
-def debugSMS(sms, sm):
+def sendStateSms(sms, sm):
+
+    # lower case the message
+    lowertxt = sms[0]['Text'].lower()
+    # get the number
+    number = str(sms[0]['Number'])
+    reply = None
+
+    ##### go gate state.... ####
+
+    # sort message to send back
+    reply = boatname + ': State is fab...'
+
+    # sent the SMS
+    sendSMS(number, reply, sm)
+
+def anchorAlarmOffSmsS(sms, sm):
+
+    # lower case the message
+    lowertxt = sms[0]['Text'].lower()
+    # get the number
+    number = str(sms[0]['Number'])
+    reply = None
+
+    # disabled the Alarm by Nulling the values
+    lat = None
+    lon = None
+ 
+    # save the config for next checks
+    saveConfig()
+            
+    # sort a message to send back
+    reply = boatname + ': Anchor alarm being diabled!'
+            
+    # sent the SMS
+    sendSMS(number, reply, sm)
+
+def debugSms(sms, sm):
 
     # either put debug on/off
     _lowertxt = sms[0]['Text'].lower()
@@ -238,17 +298,93 @@ def debugSMS(sms, sm):
     sent = sendSMS(number, reply, sm)
     return sent
 
-def saveconfig():
+def saveConfig():
 
-    print 'saveconfig' 
+    print 'saveconfig'
 
-def setAnchorAlarm(sms, sm):
+    #
+    # Need to save the following...
+    # configs to save
+    # 'debug', 'gpsFixTimeout', 'phone', 'boatname', 'wakeInNSecs', 'numberGpsFixesToAverage', 'lat', 'lon', 'alarmRange'
+
+    global configP
+
+    configP.set('main', 'debug', str(debug))
+    configP.set('main', 'gpsFixTimeout', str(gpsFixTimeout))
+    configP.set('main', 'wakeInNSecs', str(wakeInNSecs))
+
+    if phone:
+        configP.set('main', 'phone', str(phone))
+    if boatname:
+        configP.set('main', 'boatname', str(boatname))
+    if lat:
+        configP.set('main', 'lat', str(lat))
+    if lon:
+        configP.set('main', 'lon', str(lon))
+    if alarmRange:
+        configP.set('main', 'alarmRange', str(alarmRange))
+
+    configP.write(sys.stdout)
+
+    with open(configFile, 'w') as configFilehandle:
+         configP.write(configFilehandle)
+
+def loadConfig():
+
+    # fish out the global var
+    global configP
+    global debug
+    global lat
+    global lon
+    global boatname
+    global phone
+    global alarmRange
+    global wakeInNSecs
+    global gpsFixTimeout
+
+    # setup the config system
+    configP = ConfigParser.SafeConfigParser()
+    configFileRead = configP.read(configFile)
+
+    debug = configP.getboolean('main', 'debug')
+
+    # may not be set
+    try: 
+        debug = configP.getboolean('main', 'debug')
+        phone = configP.get('main', 'phone')
+        boatname = configP.get('main', 'boatname')
+        lat = configP.get('main', 'lat')
+        lon = configP.get('main', 'lon')
+        alarmRange = configP.getint('main', 'alarmRange')        
+
+    except Exception:
+        phone = ''
+        boatname = ''
+        lat = ''
+        lon = ''
+        alarmRange = ''
+
+    wakeInNSecs = configP.getint('main', 'wakeInNSecs')
+    gpsFixTimeout = configP.getint('main', 'gpsFixTimeout')
+
+    print 'debug is: ' + str(debug)
+    print 'lat is: ' + str(lat)
+    print 'lon is: ' + str(lon)
+    print 'boatname is: ' +str(boatname)
+    print 'phone is: ' +str(phone)
+    print 'alarmRange is: ' + str(alarmRange)
+    print 'wakeInNSecs is: ' + str(wakeInNSecs)
+    print 'gpsFixTimeout is: ' + str(gpsFixTimeout)
+
+def setAnchorAlarmSms(sms, sm):
 
     # lower case the message
     lowertxt = sms[0]['Text'].lower()
+    # get the number
     number = str(sms[0]['Number'])
     reply = None
-    
+    _newRange = None
+
     # where are we
     _fixStatus, _lat, _lon, _speed, _heading = gpsfix()
 
@@ -257,19 +393,83 @@ def setAnchorAlarm(sms, sm):
     lat = _lat 
     global lon
     lon = _lon
+    global alarmRange
 
-    # save config
-    saveconfig()
+    # lookfing for string like
+    # set anchor alarm 100m or
+    # set anchor alarm
 
+    # parse the SMS for alarm range
+    newRange = re.search("set anchor alarm (\d+)m", _lowertxt)
+
+    if newRange > 1:
+
+        # so should have something sensible to set the alarmRange to
+        alarmRange = newRange
+
+    else:
+        # zeros sent?  Do not reset alarmRange
+        print 'Not positive digits in: ', _lowertxt
+
+    # Ok, got this far, should have something sensible to do
+
+    # save the config for next checks
+    saveConfig()
+            
     # sort a message to send back
-    reply = boatname + ': Anchor alarm being set for LAT: ' + str(_lat) + ', LON: ' + str(_lon)
-
-    # send the reply
+    reply = boatname + ': Anchor alarm being set for LAT: ' + str(_lat) + ', LON: ' + str(_lon) + ', Alarm range: ', + alarmRange
+            
+    # sent the SMS
     sendSMS(number, reply, sm)
 
-def configSMS(sms, sm):
+def updatePhoneSms(sms, sm):
 
-    lowertxt = sms[0]['Text'].lower()
+    # lower case the message
+    _lowertxt = sms[0]['Text'].lower()
+    # get the number
+    number = str(sms[0]['Number'])
+    reply = None
+    _newPhone = None
+    
+    global phone
+    
+    # lookfing for string like
+    # update phone NNNNN
+    
+    # parse the SMS for a phone number like
+    # 07788888888
+    # +0452345234
+    _newPhone = re.search("update phone (\+?\d+)", _lowertxt)
+    
+    if _newPhone is not '':
+    
+        # so should have something sensible to set the alarmRange to
+        oldphone = phone
+        phone = _newPhone
+
+        # got this far, should have something sensible to set
+
+        # save the config for next checks
+        saveConfig()
+
+        # sort a message to reply back letting original phone know of reset
+        reply = boatname + ': New phone being set: ' + str(phone) + '.  to reset the phone back to this phone, reply to this SMS with:\n\nupdate phone ' + str(oldphone)
+
+        # sent the reply SMS
+        sendSMS(number, reply, sm)
+
+        # send message to the new phone
+        reply = boatname + ': New phone being set: ' + str(phone) + '.  to reset the phone back to old phone, reply to this SMS with:\n\nupdate phone ' + str(oldphone)
+        # sent the reply SMS
+        sendSMS(phone, reply, sm)
+ 
+    else:
+        # zeros sent?  Do not reset phone
+        print 'Not a phone positive digits in: ', _lowertxt
+
+def configSms(sms, sm):
+
+    _lowertxt = sms[0]['Text'].lower()
     mins = None
     reply = None
     minutes = None
@@ -280,12 +480,12 @@ def configSMS(sms, sm):
     print 'From: ' + sms[0]['Number']
     print 'Config message: ' + lowertxt
 
-    # lookfing for string like
-    # config wake NUM
-    if 'wake' in sms[0]['Text']:
-        mins = re.search("config wake (\d+)", lowertxt)
+    # lookfing for strings like
+
+    # check for config wake NUM
+    if 'wake' in _lower:
+        mins = re.search("config wake (\d+)", _lowertxt)
         global wakeInNSecs
-        reply = boatname + ': wakeInNSecs was: ' + str(wakeInNSecs)
         minutes = mins.group(1)
         if minutes > 1:
             wakeInNSecs = int(minutes) * 60
@@ -294,15 +494,25 @@ def configSMS(sms, sm):
             sendSMS(number, reply, sm)
         else:
             # zeros sent?
-            print 'Not positive digits in: ', lowertxt
+            print 'Not positive digits in: ', _lowertxt
+
+    # check for config boatname
+    if 'boatname' in _lower:
+        boatname = re.search("config boatname (+)$", _lowertxt)
+        if boatname:
+            reply = boatname + ': Resetting boatname to: ' + str(boatname)
+            number = str(sms[0]['Number'])
+            sendSMS(number, reply, sm)
+        else:
+            print 'Confused on setting boatname: ', _lowertxt
+
+    # got confused ...
     else:
-        print 'Could not parse: ', lowertxt
+        print 'Could not parse: ', _lowertxt
 
-def main():
+def smsFix(sm):
 
-    debug = False
-    # started ...
-    print "running, wakeInNSecs is: ", wakeInNSecs, ", debug is: ", debug
+    # get a fix and send an SMS
 
     # get a fix
     fixStatus, lat, lon, speed, heading = gpsfix()
@@ -323,56 +533,146 @@ def main():
 
     # so we know where we are, or it timed out
 
-    # lets get the modem up
-    sm = gammu.StateMachine()
+    if sendSMS(phone, message, sm) is False:
+        print 'Oh my ... failed to send SMS'
 
+def setUpGammu(sm):
+
+    # setups the SMS gammu system
+    # returns true if all good
+    # return false if there are issues
+
+    # create a state machine
+    sm = gammu.StateMachine()
+    
+    # try and read the config
     try:
         print 'Going to read /home/pi/.gammurc config ...'
-        sm.ReadConfig(Filename = '/home/pi/.gammurc')
+        sm.ReadConfig(Filename = '/home/pi/.gammurc') 
     except Exception as inst:
         print 'Pants failed ...'
         print type (inst)
         print inst
+
+        # ok went bad - return false
+        return False 
     print 'Read gammu /home/pi/.gammurc config'
- 
-    # this takes about 1 sec per go, and we are going to 
+
+    # Now call gammu init
+    # this takes about 1 sec per go, and we are going to
     # try gammuInittries times
     _gammuInittries = 5
     _tries = 1    
-
+    
     while True:
         print "We are on trying gammu Init() %d times" % (_tries)
         try:
             print 'Going to cal gammu Init() ...'
             sm.Init()
             print 'gammu Init() done in: ' + str(_tries)
-            break
+            break 
         except Exception as inst:
             print 'Pants failed  ...'
             print type (inst)
-            print inst
-
+            print inst 
+            
         # got this far it might have failed
         _tries += 1
         time.sleep(2)
-
+        
         # tried too many times
         if _tries >= _gammuInittries:
             print 'Pants tried: ' + str(_tries) + 'times to init Gammu.... it broke'
-            exit (1)
+            return False
 
     print 'gammu init done'
+    # got this far so must be good!
+    return sm
 
+def checkAnchorAlarm(sm):
+
+   # if alarmRange is set, then check present position with old one
+   # but do not reset the old position
+
+   if alarmRange:
+
+       # get fix
+       fixStatus, newlat, newlon, speed, heading = gpsfix()
+        
+       # compare fix with saved config
+       movedDistanceKm = distance(lat, lon, newlat, newlon)
+      
+       # change the distance to meters
+       movedDistanceM = movedDistanceKm / 1000
+   
+       if movedDistanceM > alarmRange:
+           # Oh - we seem to be outside the alarm range ...
+           # Bleat
+           message = boatname + ': ANCHOR ALARM FIRED.  Distance moved: ' + str(movedDistanceM) +'M, Alarm distrance set: ' + str(alarmRange) + 'M. Present position/heading LAT: ' + str(lat) + ', LON: ' + str(lon) + ', SPEED:' + str(speed) + ', HEADING: ' + str(heading)
+           if sm:
+               sendSMS(phone, message, sm)
+
+def distance(origin, destination):
+
+    # stolen from https://github.com/sivel/speedtest-cli/blob/master/speedtest_cli.py
+    """Determine distance between 2 sets of [lat,lon] in km"""
+
+    lat1, lon1 = origin
+    lat2, lon2 = destination
+    radius = 6371  # km
+
+    dlat = math.radians(lat2 - lat1)
+    dlon = math.radians(lon2 - lon1)
+    a = (math.sin(dlat / 2) * math.sin(dlat / 2) + math.cos(math.radians(lat1))
+         * math.cos(math.radians(lat2)) * math.sin(dlon / 2)
+         * math.sin(dlon / 2))
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+    d = radius * c
+
+    return d
+
+def main():
+
+    # started ...
+
+    # global Objects
+    sm = None
+    configP = None
+
+    loadConfig()
+
+    print 'debug is: ' + str(debug)
+    print 'lat is: ' + str(lat)
+    print 'lon is: ' + str(lon)
+    print 'boatname is: ' +str(boatname)
+    print 'phone is: ' +str(phone)
+    print 'alarmRange is: ' + str(alarmRange)
+    print 'wakeInNSecs is: ' + str(wakeInNSecs)
+    print 'gpsFixTimeout is: ' + str(gpsFixTimeout)
+
+    exit()
+
+    # lets get the modem up
+    sm = setUpGammu(sm)
+    print 'gammu init done'
+
+    if sm:
+        # we have a modem lets do some SMS checking
     #if sendSMS(phone, message, sm) is False:
     #    print 'Oh my ... failed to send SMS'
 
-    if getSMS(sm) is False:
-        print 'No SMS to process'
-    else:
-        print 'Got some SMS'
+        if getSMS(sm) is False:
+            print 'No SMS to process'
+        else:
+           print 'Got some SMS'
 
-    # so now DEBUG might be on and we might want to delay reboot
-    print "Stopping, wakeInNSecs is: ", wakeInNSecs, ", debug is: ", debug
+    # if we checked SMS and things like anchor alarm or debug are on
+    # the go
+
+    # get and record a fix
+
+    # check the anchorAlarm
+
 
 if __name__ == '__main__':
     main()
