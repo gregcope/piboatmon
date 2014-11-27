@@ -10,6 +10,7 @@ import gammu
 import re
 import ConfigParser
 import math
+import sys
 
 # some defaults
 configFile = "/home/pi/rpi/files/boatmon.config"
@@ -104,7 +105,7 @@ def sendSMS(phoneNum, txt, sm):
     # for a give phoneNum and txt message
     # send the message to the phone
     # trap any nonesense
-    print 'Sending txt:' + txt + ', to: ' + phone
+    print 'Sending txt:' + str(txt) + ', to: ' + str(phoneNum)
 
     # go for it
     message = { 'Text': txt, 'SMSC': {'Location': 1}, 'Number': phoneNum }
@@ -233,8 +234,6 @@ def processSMS(sms, sm):
 
 def sendStateSms(sms, sm):
 
-    # lower case the message
-    lowertxt = sms[0]['Text'].lower()
     # get the number
     number = str(sms[0]['Number'])
     reply = None
@@ -249,8 +248,6 @@ def sendStateSms(sms, sm):
 
 def anchorAlarmOffSmsS(sms, sm):
 
-    # lower case the message
-    lowertxt = sms[0]['Text'].lower()
     # get the number
     number = str(sms[0]['Number'])
     reply = None
@@ -379,7 +376,7 @@ def loadConfig():
 def setAnchorAlarmSms(sms, sm):
 
     # lower case the message
-    lowertxt = sms[0]['Text'].lower()
+    _lowertxt = sms[0]['Text'].lower()
     # get the number
     number = str(sms[0]['Number'])
     reply = None
@@ -400,16 +397,22 @@ def setAnchorAlarmSms(sms, sm):
     # set anchor alarm
 
     # parse the SMS for alarm range
-    newRange = re.search("set anchor alarm (\d+)m", _lowertxt)
+    results = re.search("set anchor alarm (\d+)m", _lowertxt)
+    if results:
+        _newRange = results.group(1)
 
-    if newRange > 1:
+    if _newRange > 1:
 
         # so should have something sensible to set the alarmRange to
-        alarmRange = newRange
+        alarmRange = _newRange
 
     else:
         # zeros sent?  Do not reset alarmRange
-        print 'Not positive digits in: ', _lowertxt
+        print 'Not positive digits in alarmRange, using 100M: ', _lowertxt
+
+        # if not set to default 100M
+        if not alarmRange:
+            alarmRange = 100
 
     # Ok, got this far, should have something sensible to do
 
@@ -417,7 +420,7 @@ def setAnchorAlarmSms(sms, sm):
     saveConfig()
             
     # sort a message to send back
-    reply = boatname + ': Anchor alarm being set for LAT: ' + str(_lat) + ', LON: ' + str(_lon) + ', Alarm range: ', + alarmRange
+    reply = boatname + ': Anchor alarm being set for LAT: ' + str(_lat) + ', LON: ' + str(_lon) + ', Alarm range: ' + str(alarmRange)
             
     # sent the SMS
     sendSMS(number, reply, sm)
@@ -439,8 +442,9 @@ def updatePhoneSms(sms, sm):
     # parse the SMS for a phone number like
     # 07788888888
     # +0452345234
-    _newPhone = re.search("update phone (\+?\d+)", _lowertxt)
-    
+    _newPhoneRegEx = re.search("update phone (\+?\d+)", _lowertxt)
+    _newPhone = _newPhoneRegEx.group(1)   
+ 
     if _newPhone is not '':
     
         # so should have something sensible to set the alarmRange to
@@ -453,15 +457,16 @@ def updatePhoneSms(sms, sm):
         saveConfig()
 
         # sort a message to reply back letting original phone know of reset
-        reply = boatname + ': New phone being set: ' + str(phone) + '.  to reset the phone back to this phone, reply to this SMS with:\n\nupdate phone ' + str(oldphone)
+        reply = boatname + ': New phone being set: ' + str(phone) + '.  To reset the phone back to this phone, reply to this SMS with:\n\nupdate phone ' + str(oldphone)
 
         # sent the reply SMS
         sendSMS(number, reply, sm)
 
-        # send message to the new phone
-        reply = boatname + ': New phone being set: ' + str(phone) + '.  to reset the phone back to old phone, reply to this SMS with:\n\nupdate phone ' + str(oldphone)
-        # sent the reply SMS
-        sendSMS(phone, reply, sm)
+        if phone != number:
+            # send message to the new phone
+            reply = boatname + ': New phone being set: ' + str(phone) + '.  to reset the phone back to old phone, reply to this SMS with:\n\nupdate phone ' + str(oldphone)
+            # sent the reply SMS
+            sendSMS(phone, reply, sm)
  
     else:
         # zeros sent?  Do not reset phone
@@ -470,39 +475,82 @@ def updatePhoneSms(sms, sm):
 def configSms(sms, sm):
 
     _lowertxt = sms[0]['Text'].lower()
-    mins = None
     reply = None
     minutes = None
-    
+    global wakeInNSecs
+    global boatname   
+ 
     #print "Location:%s\t State:%s\t Folder:%s\t Text:%s" % (sms[0]['Location'],sms[0]['State'],sms[0]['Folder'],sms[0]['Text'])
     #print sms
     print 'Doing config'
     print 'From: ' + sms[0]['Number']
-    print 'Config message: ' + lowertxt
+    print 'Config message: ' + sms[0]['Text']
 
     # lookfing for strings like
 
     # check for config wake NUM
-    if 'wake' in _lower:
-        mins = re.search("config wake (\d+)", _lowertxt)
-        global wakeInNSecs
-        minutes = mins.group(1)
-        if minutes > 1:
-            wakeInNSecs = int(minutes) * 60
-            reply = reply + ', wakeInNSecs now: ' +  str(wakeInNSecs)
-            number = str(sms[0]['Number'])
-            sendSMS(number, reply, sm)
+    if 'wake' in _lowertxt:
+
+        # setup regex
+        results = re.search("config wake (\d+)", _lowertxt)
+
+        # check it matched
+        if results:
+
+            # fish out the first glob
+            minutes = results.group(1)
+
+            # if not less than 1!
+            if minutes > 1:
+
+                # make it seconds from (assumed minutes)
+                wakeInNSecs = int(minutes) * 60
+
+                # create a reply
+                reply = boatname + ': setting wakeInNSecs to: ' +  str(wakeInNSecs)
+
+                # find the number
+                number = str(sms[0]['Number'])
+
+                # send the SMS
+                sendSMS(number, reply, sm)
+
+            # less than one?  Zeros?
+            else:
+                print 'Not positive digits in: ', _lowertxt
+
+        # no regex match
         else:
-            # zeros sent?
-            print 'Not positive digits in: ', _lowertxt
+            print 'No regex match in: ', _lowertxt
 
     # check for config boatname
-    if 'boatname' in _lower:
-        boatname = re.search("config boatname (+)$", _lowertxt)
-        if boatname:
-            reply = boatname + ': Resetting boatname to: ' + str(boatname)
-            number = str(sms[0]['Number'])
-            sendSMS(number, reply, sm)
+    if 'config boatname' in _lowertxt:
+ 
+        # setup regex
+        results = re.search('boatname (.+)$', sms[0]['Text'])
+
+        # check it matched...
+        if results:
+
+            # fish out the first group
+            boatname = results.group(1)
+
+            # and if it is not null change config and send sms
+            if boatname:
+
+                # save the config for next checks
+                saveConfig()
+
+                # stick reply together
+                reply = boatname + ': Resetting boatname to: ' + str(boatname)
+
+                # get the number
+                number = str(sms[0]['Number'])
+
+                # send the sms
+                sendSMS(number, reply, sm)
+
+        # must have gone wrong
         else:
             print 'Confused on setting boatname: ', _lowertxt
 
@@ -600,25 +648,28 @@ def checkAnchorAlarm(sm):
        fixStatus, newlat, newlon, speed, heading = gpsfix()
         
        # compare fix with saved config
-       movedDistanceKm = distance(lat, lon, newlat, newlon)
+       movedDistanceKm = distance(float(lat), float(lon), float(newlat), float(newlon))
       
-       # change the distance to meters
-       movedDistanceM = movedDistanceKm / 1000
-   
+       # change the distance to meters rounded (not 100% accurate)
+       movedDistanceM = int(movedDistanceKm / 1000)
+
+       # work out if less than alarmRange
        if movedDistanceM > alarmRange:
            # Oh - we seem to be outside the alarm range ...
            # Bleat
            message = boatname + ': ANCHOR ALARM FIRED.  Distance moved: ' + str(movedDistanceM) +'M, Alarm distrance set: ' + str(alarmRange) + 'M. Present position/heading LAT: ' + str(lat) + ', LON: ' + str(lon) + ', SPEED:' + str(speed) + ', HEADING: ' + str(heading)
            if sm:
                sendSMS(phone, message, sm)
+       else:
+           print 'Safe: distance moved is: ' + str(movedDistanceM) + 'M is less than alarmRange: ' + str(alarmRange) + 'M'
 
-def distance(origin, destination):
+def distance(lat1, lon1, lat2, lon2):
 
     # stolen from https://github.com/sivel/speedtest-cli/blob/master/speedtest_cli.py
     """Determine distance between 2 sets of [lat,lon] in km"""
 
-    lat1, lon1 = origin
-    lat2, lon2 = destination
+    #lat1, lon1 = origin
+    #lat2, lon2 = destination
     radius = 6371  # km
 
     dlat = math.radians(lat2 - lat1)
@@ -640,7 +691,7 @@ def main():
     configP = None
 
     loadConfig()
-
+ 
     print 'debug is: ' + str(debug)
     print 'lat is: ' + str(lat)
     print 'lon is: ' + str(lon)
@@ -649,9 +700,6 @@ def main():
     print 'alarmRange is: ' + str(alarmRange)
     print 'wakeInNSecs is: ' + str(wakeInNSecs)
     print 'gpsFixTimeout is: ' + str(gpsFixTimeout)
-
-    exit()
-
     # lets get the modem up
     sm = setUpGammu(sm)
     print 'gammu init done'
@@ -672,7 +720,13 @@ def main():
     # get and record a fix
 
     # check the anchorAlarm
-
+    if alarmRange > 1:
+       if lat != '' and lon !='':
+           checkAnchorAlarm(sm)
+       else:
+           print 'No Lat/Lon to compare to:  Ops.. lat: ' + str(lat) + ', lon: ' + str(lon)
+    else:
+       print 'No Anchor alarm set'
 
 if __name__ == '__main__':
     main()
