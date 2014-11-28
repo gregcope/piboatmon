@@ -18,16 +18,16 @@ configFile = "/home/pi/rpi/files/boatmon.config"
 lat = ''
 lon = ''
 # has to be more than numberGpsFixesToAverage
-gpsFixTimeout = 20
+gpsFixTimeout = ''
 phone = ''
 boatname = ''
 debug = False
 # gammu statemachine
 sm = None
 wakeInNSecs = ''
-numberGpsFixesToAverage = 10
+numberGpsFixesToAverage = ''
 alarmRange = ''
-
+regularStatus = ''
 
 def gpsfix():
 
@@ -52,10 +52,14 @@ def gpsfix():
     _lon = 0
     _speed = 0
     _heading = 0
+    _epx = 0
+    _epy = 0 
     _sumLat = 0
     _sumLon = 0
     _sumSpeed = 0
     _sumHeading = 0
+    _sumEpx = 0
+    _sumEpy = 0
 
     while True:
         try:
@@ -64,15 +68,20 @@ def gpsfix():
 
                 _loop += 1
                 #print 'GPS fix Loop is: ', _loop
-
-                if ( hasattr(report, 'speed') and hasattr(report, 'lon') and hasattr(report, 'lat') and hasattr(report, 'track')):
+                print 'GPS report is ' + str(report)
+                if ( hasattr(report, 'speed') and hasattr(report, 'lon') 
+                        and hasattr(report, 'lat') and hasattr(report, 'track')
+                        and hasattr(report, 'epx') and hasattr(report, 'epy') ):
+                    print
+                    print 'FIX!'
+                    print 
                     # we got a fix... break
                     _sumLat = _sumLat + report.lat
                     _sumLon = _sumLon + report.lon
                     _sumSpeed = _sumSpeed + report.speed
                     _sumHeading = _sumHeading + report.track
-                    #print 'Got a fix', _sumLat, report.lat, _sumLon, report.lon, _sumSpeed,  report.speed, _sumHeading, report.track, _loop
-                    #break
+                    _sumEpx = _sumEpx + report.epx
+                    _sumEpy = _sumEpy + report.epy
 
                     # if we have enough data, calc average and break
                     if _loop == numberGpsFixesToAverage:
@@ -80,6 +89,8 @@ def gpsfix():
                         _lon = _sumLon / numberGpsFixesToAverage
                         _speed = _sumSpeed / numberGpsFixesToAverage
                         _heading = _sumHeading / numberGpsFixesToAverage
+                        _epx = _sumEpx / numberGpsFixesToAverage
+                        _epy = _sumEpy / numberGpsFixesToAverage
                         break
 
                 if _loop > gpsFixTimeout:
@@ -151,7 +162,8 @@ def getSMS(sm):
         print type (inst)
         print inst
 
-    _remain = _status['SIMUsed'] + _status['PhoneUsed'] + _status['TemplatesUsed']
+    _remain = _status['SIMUsed'] + _status['PhoneUsed'] 
+    + _status['TemplatesUsed']
     print 'there are: ', _remain, 'sms to deal with'
 
     if _remain == 0:
@@ -159,14 +171,14 @@ def getSMS(sm):
 
     while _remain > 0:
         if _start:
+            print 'in start if Processing sms: ' + str(cursms)
             cursms = sm.GetNextSMS(Start = True, Folder = 0)
             _start = False
-            #print 'Processing sms: ' + str(cursms)
             processSMS(cursms, sm)
             gotSMS += 1
         else:
+            print 'in else: ' + str(cursms)
             cursms = sm.GetNextSMS(Location = cursms[0]['Location'], Folder = 0)
-            #print 'Processing sms: ' + str(cursms)
             processSMS(cursms, sm)
             gotSMS = 1
         for x in range(len(cursms)):
@@ -221,6 +233,22 @@ def processSMS(sms, sm):
         setAnchorAlarmSms(sms, sm)
         _understoodSms = True
 
+    if 'set regular status' in _lowertxt:
+        print 'SMS txt had set regular status' + sms[0]['Text']
+        setRegularStatusSms(sms, sm)
+        _understoodSms = True
+
+    if 'regular status off' in _lowertxt:
+        print 'SMS txt had regular status off' + sms[0]['Text']
+        regularStatusOffSms(sms, sm)
+        _understoodSms = True
+
+    if 'send instructions' in _lowertxt:
+        print 'SMS txt had send instructions in it: ' + sms[0]['Text']
+        sendInstructionsSms(sms, sm)
+        _understoodSms = True
+
+    # send a status txt
     if 'send state' in _lowertxt:
         print 'SMS txt had send state: ' + sms[0]['Text']
         sendStateSms(sms, sm)
@@ -232,29 +260,120 @@ def processSMS(sms, sm):
 
     # finished!
 
-def sendStateSms(sms, sm):
+def setRegularStatusSms(sms, sm):
 
     # get the number
     number = str(sms[0]['Number'])
+    _lowertxt = sms[0]['Text'].lower()
     reply = None
 
-    ##### go gate state.... ####
+    # fish out the global var
+    global regularStatus
 
-    # sort message to send back
-    reply = boatname + ': State is fab...'
+    results = re.search("set regular status (\d+)UTC", _lowertxt)
+
+    # if we have a match
+    if results:
+
+        regularStatus = results.group(1)
+        
+        # save the config for next checks
+        saveConfig()
+
+        # sort a message to send back
+        reply = boatname + ': Regular status setup to be sent around: ' + str(regularStatus) + 'UTC each day'
+
+    else:
+        # could not parse results
+        reply = boatname + ': Regular status setup - could not parse: ' + str(_lowertxt)
 
     # sent the SMS
     sendSMS(number, reply, sm)
 
-def anchorAlarmOffSmsS(sms, sm):
+def regularStatusOffSms(sms, sm):
 
     # get the number
     number = str(sms[0]['Number'])
     reply = None
 
     # disabled the Alarm by Nulling the values
-    lat = None
-    lon = None
+    regularStatus = 0
+
+    # save the config for next checks
+    saveConfig()
+
+    # sort a message to send back
+    reply = boatname + ': Regular status SMS being disabled!'
+
+    # sent the SMS
+    sendSMS(number, reply, sm)
+
+def sendInstructionsSms(sms, sm):
+
+    # get the number
+    number = str(sms[0]['Number'])
+
+    # Put are reply together
+    reply = boatname + ': Commands:\nupdate phone NUMBER\nregular status TIMEUTC\nregular status off\nset anchor alarm DISTANCEINM\nanchor alarm off\ndebug\nsend state'
+
+    # sent the SMS
+    sendSMS(number, reply, sm)
+
+def checkRegularSatus(sm):
+
+   global phone
+   global regularStatus
+
+   if regularStatus != '':
+       # and time is past that time UTC
+       # and not sent today (check file)
+
+       # prepare reply
+       reply = boatname + ': Regular status at ' + regularStatus + ' UTC: ' + getSatus()
+
+       # send it
+       sendSMS(phone, reply, sm)
+
+   else:
+       print 'regularSatus not set'
+
+def getSatus():
+
+   _status = ''
+   print 'Getting regular status'
+
+   _status = 'Status is ... FAB'
+
+   # return what we have
+   return _status
+
+def sendStateSms(sms, sm):
+
+    # get the number
+    number = str(sms[0]['Number'])
+    reply = None
+
+    # get status and sort message to send back
+    reply = boatname + ': ' + getSatus()
+
+    # sent the SMS
+    sendSMS(number, reply, sm)
+
+def anchorAlarmOffSms(sms, sm):
+
+    # get the number
+    number = str(sms[0]['Number'])
+    reply = None
+
+    # fish out the global vars!
+    global lat
+    global lon
+    global alarmRange
+
+    # disabled the Alarm by Nulling the values
+    lat = ''
+    lon = ''
+    alarmRange = ''
  
     # save the config for next checks
     saveConfig()
@@ -306,23 +425,22 @@ def saveConfig():
 
     global configP
 
+    # all configs should have been set by loadConfig() to at least defaults
     configP.set('main', 'debug', str(debug))
-    configP.set('main', 'gpsFixTimeout', str(gpsFixTimeout))
+    configP.set('main', 'phone', str(phone))
+    configP.set('main', 'boatname', str(boatname))
     configP.set('main', 'wakeInNSecs', str(wakeInNSecs))
+    configP.set('main', 'lat', str(lat))
+    configP.set('main', 'lon', str(lon))
+    configP.set('main', 'alarmRange', str(alarmRange))
+    configP.set('main', 'regularStatus', str(regularStatus))
+    configP.set('main', 'numberGpsFixesToAverage', str(numberGpsFixesToAverage))
+    configP.set('main', 'gpsFixTimeout', str(gpsFixTimeout))
 
-    if phone:
-        configP.set('main', 'phone', str(phone))
-    if boatname:
-        configP.set('main', 'boatname', str(boatname))
-    if lat:
-        configP.set('main', 'lat', str(lat))
-    if lon:
-        configP.set('main', 'lon', str(lon))
-    if alarmRange:
-        configP.set('main', 'alarmRange', str(alarmRange))
-
+    # Print to stdout
     configP.write(sys.stdout)
 
+    # get a filehandle and write it out
     with open(configFile, 'w') as configFilehandle:
          configP.write(configFilehandle)
 
@@ -338,31 +456,69 @@ def loadConfig():
     global alarmRange
     global wakeInNSecs
     global gpsFixTimeout
+    global regularStatus
+    global numberGpsFixesToAverage
 
     # setup the config system
     configP = ConfigParser.SafeConfigParser()
     configFileRead = configP.read(configFile)
 
-    debug = configP.getboolean('main', 'debug')
-
-    # may not be set
-    try: 
+    try:
         debug = configP.getboolean('main', 'debug')
+    except:
+        # default to false
+        debug = False
+
+    try:
         phone = configP.get('main', 'phone')
+    except:
+        # default to empty
+        phone = str('')
+
+    try:
         boatname = configP.get('main', 'boatname')
+    except:
+        # default to <not set>
+        boatname = str('<not set>')
+
+    try:
+        wakeInNSecs = configP.getint('main', 'wakeInNSecs')
+    except:
+        # default to 1hr
+        wakeInNSecs = int(3600)
+
+    try:
+        gpsFixTimeout = configP.getint('main', 'gpsFixTimeout')
+    except:
+        # default to 60 tries
+        gpsFixTimeout = int(60)
+
+    try:
+        numberGpsFixesToAverage = configP.getint('numberGpsFixesToAverage')
+    except:
+        # default to 10
+        gpsFixTimeout = int(10)
+
+    try: 
         lat = configP.get('main', 'lat')
+    except:
+        # defult to 0
+        lat = 0
+    try:
         lon = configP.get('main', 'lon')
-        alarmRange = configP.getint('main', 'alarmRange')        
-
-    except Exception:
-        phone = ''
-        boatname = ''
-        lat = ''
-        lon = ''
-        alarmRange = ''
-
-    wakeInNSecs = configP.getint('main', 'wakeInNSecs')
-    gpsFixTimeout = configP.getint('main', 'gpsFixTimeout')
+    except:
+        # defult to 0
+        lon = 0
+    try:
+        alarmRange = configP.getint('main', 'alarmRange')
+    except:
+        # defult to 0
+        alarmRange = 0
+    try:
+        regularStatus = configP.get('main', 'regularStatus')
+    except:
+        # defult to 0
+        regularStatus = 0
 
     print 'debug is: ' + str(debug)
     print 'lat is: ' + str(lat)
@@ -372,6 +528,8 @@ def loadConfig():
     print 'alarmRange is: ' + str(alarmRange)
     print 'wakeInNSecs is: ' + str(wakeInNSecs)
     print 'gpsFixTimeout is: ' + str(gpsFixTimeout)
+    print 'regularStatus is: ' + str(regularStatus)
+    print 'numberGpsFixesToAverage is: ' +str (numberGpsFixesToAverage)
 
 def setAnchorAlarmSms(sms, sm):
 
@@ -420,7 +578,8 @@ def setAnchorAlarmSms(sms, sm):
     saveConfig()
             
     # sort a message to send back
-    reply = boatname + ': Anchor alarm being set for LAT: ' + str(_lat) + ', LON: ' + str(_lon) + ', Alarm range: ' + str(alarmRange)
+    reply = boatname + ': Anchor alarm being set for LAT: ' + str(_lat) 
+    + ', LON: ' + str(_lon) + ', Alarm range: ' + str(alarmRange)
             
     # sent the SMS
     sendSMS(number, reply, sm)
@@ -597,6 +756,7 @@ def setUpGammu(sm):
     try:
         print 'Going to read /home/pi/.gammurc config ...'
         sm.ReadConfig(Filename = '/home/pi/.gammurc') 
+
     except Exception as inst:
         print 'Pants failed ...'
         print type (inst)
@@ -649,15 +809,15 @@ def checkAnchorAlarm(sm):
         
        # compare fix with saved config
        movedDistanceKm = distance(float(lat), float(lon), float(newlat), float(newlon))
-      
+       print 'Distance moved is: ' + str(movedDistanceKm)
        # change the distance to meters rounded (not 100% accurate)
-       movedDistanceM = int(movedDistanceKm / 1000)
+       movedDistanceM = int(movedDistanceKm * 1000)
 
        # work out if less than alarmRange
        if movedDistanceM > alarmRange:
            # Oh - we seem to be outside the alarm range ...
            # Bleat
-           message = boatname + ': ANCHOR ALARM FIRED.  Distance moved: ' + str(movedDistanceM) +'M, Alarm distrance set: ' + str(alarmRange) + 'M. Present position/heading LAT: ' + str(lat) + ', LON: ' + str(lon) + ', SPEED:' + str(speed) + ', HEADING: ' + str(heading)
+           message = boatname + ': ANCHOR ALARM FIRED.  Distance moved: ' + str(movedDistanceM) +'M, Alarm distrance set: ' + str(alarmRange) + 'M. Present position/heading LAT: ' + str(newlat) + ', LON: ' + str(newlon) + ', SPEED:' + str(speed) + ', HEADING: ' + str(heading)
            if sm:
                sendSMS(phone, message, sm)
        else:
@@ -700,6 +860,7 @@ def main():
     print 'alarmRange is: ' + str(alarmRange)
     print 'wakeInNSecs is: ' + str(wakeInNSecs)
     print 'gpsFixTimeout is: ' + str(gpsFixTimeout)
+    print 'regularStatus is: ' + str(regularStatus)
     # lets get the modem up
     sm = setUpGammu(sm)
     print 'gammu init done'
@@ -724,11 +885,21 @@ def main():
        if lat != '' and lon !='':
            checkAnchorAlarm(sm)
        else:
-           print 'No Lat/Lon to compare to:  Ops.. lat: ' + str(lat) + ', lon: ' + str(lon)
+           print 'No Lat/Lon to compare to:  Ops.. lat: ' + str(lat) + ', lon: ' + str(lon) + ', alarmRange is: ' + str(alarmRange)
     else:
        print 'No Anchor alarm set'
+
+    # check regularStatus
+    if regularStatus > 1:
+        checkRegularSatus(sm)
+
+    #logger(getSatus())
 
 if __name__ == '__main__':
     main()
 
 # vim:ts=4:sw=4:expandtab
+# cat /home/pi/.vimrc 
+# syntax on
+# filetype indent plugin on
+# set modeline
