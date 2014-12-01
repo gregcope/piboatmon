@@ -53,9 +53,10 @@ The system understands the following config SMS
 
 * `set boatname NAME` - Sets the boatname prefix to SMS messages
 * `nupdate phone NUMBER` - Sets the phone number to send messages to
-* `regular status TIMEUTC` - Set a regular status SMS message 
+* `regular status TIMEUTC` - Sets a regular status SMS message 
 * `regular status off` - Stops the regular status SMS messages
 * `set anchor alarm DISTANCEINM` - Sets the anchor alarm (records the fix) and sets the distance given as the alarm range.  If no distance given defaults to 100M
 * `anchor alarm off` - Stops the anchor alarm tracking / SMS messages
 * `debug` - Enables Debuging (dev use only)
 * `send state` - Will reply with a status SMS
+* `send instructions` - Sends a short instructions SMS (edited version of this)
