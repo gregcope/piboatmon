@@ -749,7 +749,7 @@ def sendInstructionsSms(sms):
     number = str(sms[0]['Number'])
 
     # Put are reply together
-    reply = 'Commands:\nupdate phone NUMBER\nregular status TIMEUTC\nregular status off\nset anchor alarm DISTANCEINM\nanchor alarm off\ndebug\nsend state'
+    reply = 'Commands:\nupdate phone NUM\nregular status TIME UTC\nregular status off\nset anchor alarm DIS_IN_M\nanchor alarm off\ndebug\nsend state\nsend instructions'
 
     # sent the SMS
     sendSms(number, reply)
