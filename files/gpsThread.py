@@ -25,6 +25,7 @@ debug = False
 wakeInNSecs = ''
 alarmRange = ''
 regularStatus = ''
+lastRegularStatusCheck = ''
 
 # some object handles
 gpsd = None
@@ -55,6 +56,9 @@ class GpsPoller(threading.Thread):
         # fetch the global var
         global gpsd
 
+        if debug is True:
+            logging.debug('Setting up GpsPoller __init__ class')
+
         # fire up the gpsd conncection
         try:
             gpsd = gps.gps("localhost", "2947")
@@ -82,12 +86,17 @@ class GpsPoller(threading.Thread):
         _sumEpx = 0
         _sumEpy = 0
 
+        logging.info('Started gpsp thread')
+
         # while the thread is running
         while gpsp.running:
 
             # try and get a gpsd report
             try:
                 report = gpsd.next()
+
+                if debug is True:
+                    logging.debug('Got a gpsd report' + str(report))
 
                 # if it looks like a fix
                 if report['class'] == 'TPV':
@@ -197,6 +206,7 @@ def saveConfig():
     configP.set('main', 'lon', str(lon))
     configP.set('main', 'alarmRange', str(alarmRange))
     configP.set('main', 'regularStatus', str(regularStatus))
+    configP.set('main', 'lastRegularStatusCheck', str(lastRegularStatusCheck))
 
     logging.info(str(configP.items('main')))
 
@@ -216,6 +226,7 @@ def loadConfig():
     global alarmRange
     global wakeInNSecs
     global regularStatus
+    global lastRegularStatusCheck
 
     # starting to read config
     if debug is True:
@@ -267,8 +278,12 @@ def loadConfig():
     try:
         regularStatus = configP.get('main', 'regularStatus')
     except:
-        # defult to 0
-        regularStatus = 0
+        # defult to ''
+        regularStatus = ''
+    try:
+        lastRegularStatusCheck = configP.get('main','lastRegularStatusCheck')
+    except:
+        lastRegularStatusCheck = ''
 
     logging.info(str(configP.items('main')))
 
@@ -402,29 +417,32 @@ def checkAnchorAlarm():
         # No anchor alarm ... bale
         logging.info('No Anchor alarm set')
 
-def sendSms(number, txt):
+def sendSms(_number, _txt):
 
     # send the message to the phone
     # trap any nonesense
 
-    # Prefix with boatname
-    txt = boatname + ': ' + txt
-
-    global phone
-    if number is '':
+    if _number is '':
         # no number so use global phone
-        number = phone
+        _number = phone
 
-    if number is '':
-        logging.error('Trying to send a SMS to a phone that is not set - phone: ' + str(number))
+    if _number is '':
+        logging.error('Trying to send a SMS to a phone that is not set - phone: ' + str(_number))
         # give up
         return
 
+    if _txt is '':
+        logging.error('trying to send an empty SMS?')
+        return
+
+    # Prefix with boatname
+    _txt = boatname + ': ' + _txt
+
     if debug is True:
-        logging.debug('Trying to send SMS message: ' + str(txt) + ' to: ' + str(number))
+        logging.debug('Trying to send SMS message: ' + str(_txt) + ' to: ' + str(_number))
 
     # go for it
-    message = { 'Text': txt, 'SMSC': {'Location': 1}, 'Number': number }
+    message = { 'Text': _txt, 'SMSC': {'Location': 1}, 'Number': _number }
 
     try:
 
@@ -432,7 +450,7 @@ def sendSms(number, txt):
             logging.debug('About to try sm.SendSMS(message)')
 
         sm.SendSMS(message)
-        logging.info('Message sent to: ' + str(number))
+        logging.info('Message sent to: ' + str(_number))
 
     except Exception, e:
         logging.error('Exception: ', e)
@@ -480,7 +498,7 @@ def getSms():
     _remain = _status['SIMUsed'] + _status['PhoneUsed']
     + _status['TemplatesUsed']
 
-    logging.info('There are: ' + str(_remain) + ' SMS(s) to deal with')
+    logging.info(str(_remain) + ' SMS(s) to deal with')
 
     if _remain == 0:
         return
@@ -569,7 +587,11 @@ def processSMS(sms):
 
     # send a status txt
     if 'send status' in _lowertxt:
-        sendStatusSms(sm)
+        sendStatusSms(sms)
+        _understoodSms = True
+
+    if 'set boatname' in _lowertxt:
+        setBoatnameSms(sms)
         _understoodSms = True
 
     # no idea what the SMS is...
@@ -582,14 +604,14 @@ def setRegularStatusSms(sms):
 
     # get the number
     number = str(sms[0]['Number'])
-    _txt = sms[0]['Text'].lower()
-    _lowertxt = txt.lower()
+    _txt = sms[0]['Text']
+    _lowertxt = _txt.lower()
     reply = None
 
     # fish out the global var
     global regularStatus
 
-    results = re.search("set regular status (\d+)UTC", _lowertxt)
+    results = re.search("set regular status (\d{4})", _lowertxt)
 
     # if we have a match
     if results:
@@ -601,26 +623,76 @@ def setRegularStatusSms(sms):
         saveConfig()
 
         # reply
-        reply = 'Regular status setup to be sent around: ' + str(regularStatus) + 'UTC each day (depends on wakeUp)'
+        reply = 'Regular status setup to be sent around: ' + str(regularStatus) + ' UTC each day (depends on wakeUp)'
 
     # could not parse results
     else:
-        logging.error('Could not parse new regular status update: ' + str(txt))
-        reply = 'Could not parse new regular status update: ' + str(txt)
+        reply = 'Could not parse new regular status update: ' + str(_txt) + 'Needs to be 4 digit 24hr clock notation'
+        logging.error(reply)
 
     # sent the SMS
     sendSms(number, reply)
 
+def setBoatnameSms(sms):
+
+    # get the number
+    number = str(sms[0]['Number'])
+    _txt = sms[0]['Text']
+    _lowertxt = _txt.lower()
+    reply = None
+
+    # fish out the global
+    global boatname
+
+    if 'set boatname' in _lowertxt:
+
+        # setup regex
+        results = re.search('boatname (.+)$', _txt)
+
+        # check it matched...
+        if results:
+
+            # fish out the first group
+            boatname = results.group(1)
+
+            # and if it is not null change config and send sms
+            if boatname:
+
+                # save the config for next checks
+                saveConfig()
+
+                reply = 'Setting boatname to: ' + str(boatname)
+                logging.info(reply)
+
+            else:
+                reply = 'Could not parse: ' + str(_txt) + ' to set boatname'
+                logging.error(reply)
+
+        else:
+            # got confused
+            reply = 'Could not parse: ' + str(_txt) + ' to set boatname'
+            logging.error(reply)
+            sendSms(number, reply)
+
+        # sent the SMS
+        sendSms(number, reply)
+        return
+
 def getStatus():
 
-    return 'Everything peachy'
+    return 'Everything peachy....' + gpsp.getCurrentAvgDataText()
 
 def sendStatusSms(sms):
 
     # get the number
     number = str(sms[0]['Number'])
+
+    # get the status
     reply = getStatus()
 
+    logging.info('Sending status: ' + str(reply))
+
+    # try and send an SMS
     sendSms(number, reply)
 
 def setAnchorAlarmSms(sms):
@@ -788,31 +860,59 @@ def logStatus():
 
 def checkRegularStatus():
 
+    # if regularStatus is not set bale
+    if regularStatus == '':
+        logging.info('No regularStatus check set')
+        return
+
+    # we might set this if we run
+    global lastRegularStatusCheck
+
     # check that have not sent a status message in timeframe
 
     # what is the time now?
-    _now = datetime.datetime.now().time()
+    _now = datetime.datetime.now()
 
     # some defaults
-    _min = 0
+    _minute = 0
     _hour = 0
-    _nestAlarm = None
+    _nextAlarm = None
+
+    # have we run today - note if this is blank it will run
+
+    try:
+        _lastRun = datetime.datetime.strptime(lastRegularStatusCheck, "%Y-%m-%d %H:%M:%S.%f")
+
+        if _lastRun.date() == _now.date():
+
+            # we ran today ... exit
+            logging.info('Ran today already: ' + str(_lastRun))
+
+            return
+
+    except ValueError:
+        _lastRun = None
+        logging.info('lastRegularStatusCheck: ' + str(lastRegularStatusCheck) + 'Could not be parsed into a date')
+
+    # so ... if we got this far we need to check the time
 
     # split regularStatus into hours / minutes
     p = re.compile('..')
-    _hour, _minute = p.findall(str(regularStatus))
+
+    try:
+        _hour, _minute = p.findall(str(regularStatus))
+    except ValueError:
+        logging.error('Could not parse regularStatus: ' + str(regularStatus) + ' into _hour, _minute')
 
     # http://www.saltycrane.com/blog/2008/06/how-to-get-current-date-and-time-in/
     if _hour >=0 and _minute >= 0:
         _nextAlarm = datetime.datetime(_now.year, _now.month, _now.day, 
-                int(hour), int(minute), 0)
+                int(_hour), int(_minute), 0)
+        logging.info('Next regular check due: ' + str(_nextAlarm))
+
     else:
         logging.error('Cannot split regularStatus into _hour / _min: ' + str(regularStatus))
-        # as we have nothing to compare, bale...
-        return
-
-    if debug is True:
-        logging.debug('Next regular Status check is due: ' + _now)
+        # as we have nothing to compare, assume we need to run
 
     if _now > _nextAlarm:
 
@@ -822,12 +922,30 @@ def checkRegularStatus():
         logging.info('Regular Status check: ' + str(message))
 
         # try and send the SMS
-        if phone and sm:
-            # sent the SMS
-            sendSms(phone, message)
-        else:
-            logging.error('No Phone or SM to send Regular Status check')
+        sendSms(phone, message)
+
+        # save config to preserve fact we ran in lastRegularStatusCheck
+        lastRegularStatusCheck = _now
+        saveConfig()
+
     # done
+
+def checkBilgeSwitch():
+
+    if debug is True:
+        logging.debug('Checking Bilge Switch')
+    
+    _bilgeSwitchOn = False
+
+    if _bilgeSwitchOn is True:
+
+        # BilgeSwitch is on ... Ops:
+
+        messagge = 'Bilge Switch is on'
+        logging.info(message)
+
+        # try and send the SMS
+        sendSms(phone, message)
 
 def regularStatusOffSms(sms):
 
@@ -887,6 +1005,9 @@ if __name__ == '__main__':
 
     # check to see we need to send a status message
     checkRegularStatus()
+
+    # check bilge is ok
+    checkBilgeSwitch()
 
     # we think we are done ..
     # stop the thread and wait for it to join
