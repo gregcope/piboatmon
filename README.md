@@ -1,7 +1,7 @@
 rpi
 ===
 
-A system to turn a Raspberry PI into a boat monitoring solution.  It is configured by Puppet and then runs a Python script that;
+A system to turn a Raspberry PI into a boat monitoring solution.  It is configured by Puppet and then runs a Python script that
 
 1. Reads config
 2. Starts a GPS thread logging GPS positions
@@ -10,7 +10,7 @@ A system to turn a Raspberry PI into a boat monitoring solution.  It is configur
 5. Logs present status
 6. Checks to see if it needs to send a status SMS
 7. Goes to sleep for wakeInNSecs
-8. Rinse repeat
+8. Rinse/repeat
 
 How it works
 ------------
@@ -35,7 +35,7 @@ The Python script is configured in two ways;
 ### Config Script
 
 The python script uses a config file called `boatmon.config` which looks like:
-`[main]
+```[main]
 debug = True
 gpsfixtimeout = 10
 wakeinnsecs = 1800
@@ -44,7 +44,8 @@ lon =
 alarmrange = 0
 phone = 
 boatname = <not set>
-regularstatus = 0`
+regularstatus = 0
+```
 
 ### Config SMS
 
