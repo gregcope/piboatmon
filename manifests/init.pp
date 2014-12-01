@@ -5,6 +5,7 @@ class rpi {
   include rpi::ntp
   include rpi::3g
   include rpi::mopi
+  include rpi::fasterboot
 }
 
 # to run but do nothing

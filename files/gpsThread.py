@@ -25,7 +25,6 @@ debug = False
 wakeInNSecs = ''
 alarmRange = ''
 regularStatus = ''
-lastStatusCheck = ''
 
 # some object handles
 gpsd = None
@@ -198,7 +197,6 @@ def saveConfig():
     configP.set('main', 'lon', str(lon))
     configP.set('main', 'alarmRange', str(alarmRange))
     configP.set('main', 'regularStatus', str(regularStatus))
-    configP.set('main', 'lastStatusCheck', str(lastStatusCheck))
 
     logging.info(str(configP.items('main')))
 
@@ -218,7 +216,6 @@ def loadConfig():
     global alarmRange
     global wakeInNSecs
     global regularStatus
-    global lastStatusCheck
 
     # starting to read config
     if debug is True:
@@ -272,11 +269,6 @@ def loadConfig():
     except:
         # defult to 0
         regularStatus = 0
-    try:
-        lastStatusCheck = configP.get('main', 'lastStatusCheck')
-    except:
-        # defult to ''
-        lastStatusCheck = ''
 
     logging.info(str(configP.items('main')))
 
@@ -801,22 +793,40 @@ def checkRegularStatus():
     # what is the time now?
     _now = datetime.datetime.now().time()
 
-    # regular status is a timeStamp in hours
+    # some defaults
+    _min = 0
+    _hour = 0
+    _nestAlarm = None
 
-    if _now > lastStatusCheck + regularStatus:
+    # split regularStatus into hours / minutes
+    p = re.compile('..')
+    _hour, _minute = p.findall(str(regularStatus))
+
+    # http://www.saltycrane.com/blog/2008/06/how-to-get-current-date-and-time-in/
+    if _hour >=0 and _minute >= 0:
+        _nextAlarm = datetime.datetime(_now.year, _now.month, _now.day, 
+                int(hour), int(minute), 0)
+    else:
+        logging.error('Cannot split regularStatus into _hour / _min: ' + str(regularStatus))
+        # as we have nothing to compare, bale...
+        return
+
+    if debug is True:
+        logging.debug('Next regular Status check is due: ' + _now)
+
+    if _now > _nextAlarm:
+
+        # alarm fired, so therefore get status
         message = getStatus()
 
         logging.info('Regular Status check: ' + str(message))
 
+        # try and send the SMS
         if phone and sm:
-
             # sent the SMS
             sendSms(phone, message)
-
-        # save the fact we ran
-        lastStatusCheck = _now
-        saveConfig()
-
+        else:
+            logging.error('No Phone or SM to send Regular Status check')
     # done
 
 def regularStatusOffSms(sms):
