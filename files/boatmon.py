@@ -6,6 +6,9 @@
 # and
 # http://stackoverflow.com/questions/6146131/python-gps-module-reading-latest-gps-data
 
+# mopi API stolen from:
+# https://github.com/hamishcunningham/pi-tronics/blob/master/simbamon/mopiapi.py
+
 import os
 import gps
 import time
