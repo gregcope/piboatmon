@@ -6,6 +6,8 @@ class rpi {
   include rpi::3g
   include rpi::mopi
   include rpi::fasterboot
+  include rpi::removepackages
+  include rpi::boatmon
 }
 
 # to run but do nothing
