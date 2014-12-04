@@ -36,15 +36,17 @@ The Python script is configured in two ways;
 
 The python script uses a config file called `boatmon.config` which looks like:
 ```[main]
+[main]
 debug = True
-gpsfixtimeout = 10
-wakeinnsecs = 1800
 lat = 
 lon = 
 alarmrange = 0
-phone = 
-boatname = <not set>
-regularstatus = 0
+phone = 01234567890
+boatname = YourLovelyYachtName
+regularstatus = 0700
+lastregularstatuscheck = 2014-12-04 19:27:09.119902
+wakeinnsecs = 120
+batteryokmvolts = 1100
 ```
 
 ### Config SMS
@@ -59,4 +61,6 @@ The system understands the following config SMS
 * `anchor alarm off` - Stops the anchor alarm tracking / SMS messages
 * `debug` - Enables Debuging (dev use only)
 * `send state` - Will reply with a status SMS
+* `set sleep time MINS` - Will set the time the Pi goes to sleep - suggest around 60 mins, cannot be less than 1 (minute)
+* `set battery ok volts Mvolts` - Will set the milivolts at which the PI will report main battery OK or not
 * `send instructions` - Sends a short instructions SMS (edited version of this)

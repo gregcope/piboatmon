@@ -32,6 +32,7 @@ wakeInNSecs = ''
 alarmRange = ''
 regularStatus = ''
 lastRegularStatusCheck = ''
+batteryOkMVolts = ''
 
 # some object handles
 gpsd = None
@@ -208,8 +209,8 @@ class GpsPoller(threading.Thread):
             try:
                 report = gpsd.next()
 
-                if debug is True:
-                    logging.debug('Got a gpsd report' + str(report))
+                #if debug is True:
+                   # logging.debug('Got a gpsd report' + str(report))
 
                 # if it looks like a fix
                 if report['class'] == 'TPV':
@@ -250,8 +251,8 @@ class GpsPoller(threading.Thread):
                         _sumEpx = _sumEpx + report.epx
                         self.avEpx = _sumEpx / self.numFixes
 
-                        if debug is True:
-                            logging.debug('GPS thread stats: LAT ' + str(self.avLat) + ' LON ' +str(self.avLon) + ' VEL ' + str(self.avSpeed) + ' HEAD ' + str(self.avHeading) + 'T LAT +/- ' + str(self.avEpx) + ' LON +/- ' + str(self.avEpy) + ' No. fixes ' + str(self.numFixes))
+                 #       if debug is True:
+                         #   logging.debug('GPS thread stats: LAT ' + str(self.avLat) + ' LON ' +str(self.avLon) + ' VEL ' + str(self.avSpeed) + ' HEAD ' + str(self.avHeading) + 'T LAT +/- ' + str(self.avEpx) + ' LON +/- ' + str(self.avEpy) + ' No. fixes ' + str(self.numFixes))
 
             # oh it went a bit pete tong
             except StopIteration:
@@ -320,6 +321,7 @@ def saveConfig():
     configP.set('main', 'alarmRange', str(alarmRange))
     configP.set('main', 'regularStatus', str(regularStatus))
     configP.set('main', 'lastRegularStatusCheck', str(lastRegularStatusCheck))
+    configP.set('main', 'batteryOkMVolts', str(batteryOkMVolts))
 
     logging.info(str(configP.items('main')))
 
@@ -340,6 +342,7 @@ def loadConfig():
     global wakeInNSecs
     global regularStatus
     global lastRegularStatusCheck
+    global batteryOkMVolts
 
     # starting to read config
     if debug is True:
@@ -397,6 +400,11 @@ def loadConfig():
         lastRegularStatusCheck = configP.get('main','lastRegularStatusCheck')
     except:
         lastRegularStatusCheck = ''
+
+    try:
+        batteryOkMVolts = configP.get('main','batteryOkVolts')
+    except:
+        batteryOkMVolts = 1100
 
     logging.info(str(configP.items('main')))
 
@@ -688,6 +696,15 @@ def processSMS(sms):
         setRegularStatusSms(sms)
         _understoodSms = True
 
+    # might be a config txt to set the battery mV
+    if 'set battery ok volts' in _lowertxt:
+        setBatteryOkMVoltsSms(sms)
+        _understoodSms = True
+
+    if 'set sleep time' in _lowertxt:
+        setWakeInNSecsSms(sms)
+        _understoodSms = True
+
     # or we might be switching regular status off
     if 'regular status off' in _lowertxt:
         regularStatusOffSms(sms)
@@ -712,6 +729,82 @@ def processSMS(sms):
         logging.info('Could not parse SMS message: ' + str(_txt))
 
     # finished
+
+def setWakeInNSecsSms(sms):
+
+    # get the number
+    number = str(sms[0]['Number'])
+    _txt = sms[0]['Text']
+    _lowertxt = _txt.lower()
+    reply = None
+    _mins = 0
+
+    # fish out the global var
+    global wakeInNSecs
+
+    results = re.search("set sleep time (\d+)", _lowertxt)
+
+    if debug is True:
+        logging.debug('text is: ' + str(_txt))
+
+    # if we have a match
+    if results:
+        
+        _mins = results.group(1)
+
+        if debug is True:
+            logging.debug('Mins is : ' + str(_mins))
+
+        wakeInNSecs = int(_mins) * 60
+        
+        # round it up
+        _mins = wakeInNSecs / 60
+
+        # save the config for next checks
+        saveConfig()
+        # reply
+        reply = 'Sleep time set to: ' + str(_mins) + ' minutes'
+        logging.info(reply)
+
+    # could not parse results
+    else:
+        reply = 'Could not set sleep time: ' + str(_txt)
+        logging.error(reply)
+
+    # sent the SMS
+    sendSms(number, reply)
+
+def setBatteryOkMVoltsSms(sms):
+
+    # get the number
+    number = str(sms[0]['Number'])
+    _txt = sms[0]['Text']
+    _lowertxt = _txt.lower()
+    reply = None
+
+    # fish out the global var
+    global batteryOkMVolts
+
+    results = re.search("set regular status (\d{4})", _lowertxt)
+
+    # if we have a match
+    if results:
+
+        batteryOkMVolts = results.group(1)
+
+        # save the config for next checks
+        saveConfig()
+        # reply
+        reply = 'Battery OK volts set to: ' + str(batteryOkMVolts) + ' V'
+        logging.info(reply)
+
+    # could not parse results
+    else:
+        reply = 'Could not set battery ok volts: ' + str(_txt) + '. Must be in 4 digits long e.g. 1300'
+        logging.error(reply)
+
+    # sent the SMS
+    sendSms(number, reply)
 
 def setRegularStatusSms(sms):
 
@@ -798,13 +891,15 @@ def setPowerOnDelay():
     global wakeInNSecs
 
     # set the PowerOnDelay to wak
-    if wakeInNSecs < 600:
-        logging.error(wakeInNSecs, 'below 600 secs, setting to 600 min...')
-        wakeInNSecs = 600
+    if wakeInNSecs < 60:
+        logging.error(str(wakeInNSecs) + ' below 60 secs, setting to 60 min...')
+        wakeInNSecs = 60
 
     logging.info('Setting mopi mopi.setPowerOnDelay to: ' + str(wakeInNSecs))
 
     mopi.setPowerOnDelay(wakeInNSecs)
+
+    print 'Setting wake on delay to: ' + str(wakeInNSecs)
 
 def getInputmV():
 
@@ -828,9 +923,9 @@ def getBatteryText():
     # below 
     if _input1mv > 1300:
        status = status + 'Batt1 Charging: ' + str(_input1mv / 1000) + 'V'
-    elif _input1mv > 1100:
+    elif _input1mv > batteryOkMVolts:
        status = status + 'Batt1 Ok: ' + str(_input1mv / 1000) + 'V'
-    elif _input1mv == 0:
+    elif _input1mv == batteryOkMVolts:
        status = status + 'Batt1 Missing: 0V'
     elif _input1mv < 1100:
        status = status + 'Batt1 Low: ' + str(_input1mv / 1000) + 'V'
@@ -857,7 +952,7 @@ def checkBattery():
     # get battery volts from mopi
     _input1mv, _input2mv = getInputmV()
 
-    if _input1mv > 1100:
+    if _input1mv > batteryOkMVolts:
         return True
     else:
         return False
@@ -1028,7 +1123,7 @@ def sendInstructionsSms(sms):
     number = str(sms[0]['Number'])
 
     # Put are reply together
-    reply = 'Commands:\nupdate phone NUM\nregular status TIME UTC\nregular status off\nset anchor alarm DIS_IN_M\nanchor alarm off\ndebug\nsend state\nsend instructions'
+    reply = 'Commands:\nupdate phone NUM\nregular status TIME UTC\nregular status off\nset anchor alarm DIS_IN_M\nanchor alarm off\ndebug\nsend state\nset sleep time MINS\nset battery ok volts Mvolts\nsend instructions'
 
     # sent the SMS
     sendSms(number, reply)
