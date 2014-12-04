@@ -785,7 +785,7 @@ def setBatteryOkMVoltsSms(sms):
     # fish out the global var
     global batteryOkMVolts
 
-    results = re.search("set regular status (\d{4})", _lowertxt)
+    results = re.search("set battery ok volts (\d{4})", _lowertxt)
 
     # if we have a match
     if results:
@@ -795,7 +795,7 @@ def setBatteryOkMVoltsSms(sms):
         # save the config for next checks
         saveConfig()
         # reply
-        reply = 'Battery OK volts set to: ' + str(batteryOkMVolts) + ' V'
+        reply = 'Battery OK volts set to: ' + str(batteryOkMVolts) + ' mV'
         logging.info(reply)
 
     # could not parse results
@@ -1234,20 +1234,28 @@ def checkRegularStatus():
 
 def checkBilgeSwitch():
 
-    if debug is True:
-        logging.debug('Checking Bilge Switch')
-    
-    _bilgeSwitchOn = False
 
-    if _bilgeSwitchOn is True:
+    if debug is True:
+        logging.debug('Setting up GPIO pins')
+
+    # from http://razzpisampler.oreilly.com/ch07.html
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(18, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+
+    _input18State = GPIO.input(18)
+
+    if _input18State is False:
 
         # BilgeSwitch is on ... Ops:
 
-        messagge = 'Bilge Switch is on'
+        messagge = 'Bilge Switch is ON !!!')
         logging.info(message)
 
         # try and send the SMS
         sendSms(phone, message)
+
+    else:
+        logging.info('Bilge Swich is off')
 
 def regularStatusOffSms(sms):
 
