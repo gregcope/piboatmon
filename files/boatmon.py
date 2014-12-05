@@ -1337,8 +1337,13 @@ def regularStatusOffSms(sms):
 
 def sendDebugMessage():
 
+    # fetch global
+    global sendStatus
+
     if debug is True:
         logging.debug('Debug is true, sending debug status')
+        # pretend we have not sent a status
+        # yes you might get a few ...
         sendStatus = True
         sendAndLogStatus()
 
