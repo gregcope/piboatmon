@@ -1113,15 +1113,15 @@ def debugSms(sms):
     # set global var
     global debug
 
-    if 'true' in _lowertxt:
+    if 'true' or 'on' in _lowertxt:
         debug = True
-        logging.info('Setting debug to True')
         reply = 'Setting debug to True'
+        logging.info(reply)
 
     elif 'off' in _lowertxt:
         debug = False
-        logging.info('Setting debug to False')
         reply = 'Setting debug to False'
+        logging.info(reply)
 
     else:
         logging.info('No idea what that txt was...')
@@ -1335,6 +1335,13 @@ def regularStatusOffSms(sms):
     # sent the SMS
     sendSms(number, reply)
 
+def sendDebugMessage():
+
+    if debug is True:
+        logging.debug('Debug is true, sending debug status')
+        sendStatus = True
+        sendAndLogStatus()
+
 if __name__ == '__main__':
 
     # check we are running as sudo
@@ -1388,8 +1395,7 @@ if __name__ == '__main__':
     checkLogStatus()
 
     # for debug...
-    sendStatus = True
-    sendAndLogStatus()
+    sendDebugMessage()
 
     # setPowerOnDelay
     setPowerOnDelay()
