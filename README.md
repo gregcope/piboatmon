@@ -1,7 +1,9 @@
 rpi
 ===
 
-A system to turn a Raspberry PI into a boat monitoring solution.  It is configured by Puppet and then runs a Python script that
+A system to turn a Raspberry PI into a boat monitoring solution.  It is configured by Puppet and then runs a Python script that checks the systems like Bilge Switch, GPS location, battery volts and sends an SMS if in alarm.
+
+Logic is;
 
 1. Reads config
 2. Starts a GPS thread logging GPS positions
@@ -21,7 +23,7 @@ How it works
 * Uses a 3G USB modem to send/receive SMS messages
 * Uses a mopi to sleep/wake, get battery Volts and have backup power
 * Is mostly writen in Python with a bit of shell
-* (TBC) Will act on a bilge float switch going off to warn of rising Bilge levels 
+* Uses GPIO pin 18 connected to a bilge switch and can alarm on that
 * Puppet is used to configure the host and install all the needed packages and configure the services
 
 Configuration
@@ -51,7 +53,7 @@ batteryokmvolts = 1100
 
 ### Config SMS
 
-The system understands the following config SMS
+The system understands the following config SMS messages - if it does not understand you will either get a hint as a reply or no reply...
 
 * `set boatname NAME` - Sets the boatname prefix to SMS messages
 * `nupdate phone NUMBER` - Sets the phone number to send messages to
@@ -64,3 +66,7 @@ The system understands the following config SMS
 * `set sleep time MINS` - Will set the time the Pi goes to sleep - suggest around 60 mins, cannot be less than 1 (minute)
 * `set battery ok volts Mvolts` - Will set the milivolts at which the PI will report main battery OK or not
 * `send instructions` - Sends a short instructions SMS (edited version of this)
+
+## Install
+
+TBC
