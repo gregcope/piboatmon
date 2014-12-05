@@ -23,6 +23,7 @@ import datetime
 import smbus
 import errno
 import RPi.GPIO
+import ctypes
 
 # global Vars
 phone = ''
@@ -334,6 +335,11 @@ def saveConfig():
     # get a filehandle and write it out
     with open(configFile, 'w') as configFilehandle:
          configP.write(configFilehandle)
+
+    # now be nice and flush
+    # http://stackoverflow.com/questions/15983272/does-python-have-sync
+    libc = ctypes.CDLL("libc.so.6")
+    libc.sync()
 
 def loadConfig():
 
@@ -1117,11 +1123,13 @@ def debugSms(sms):
         debug = True
         reply = 'Setting debug to True'
         logging.info(reply)
+        saveConfig()
 
     elif 'off' in _lowertxt:
         debug = False
         reply = 'Setting debug to False'
         logging.info(reply)
+        saveConfig()
 
     else:
         logging.info('No idea what that txt was...')

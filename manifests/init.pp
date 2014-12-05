@@ -6,7 +6,7 @@ class rpi {
   include rpi::3g
   include rpi::mopi
   include rpi::fasterboot
-  include rpi::removepackages
+#  include rpi::removepackages
   include rpi::boatmon
 }
 
