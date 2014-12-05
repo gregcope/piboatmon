@@ -33,7 +33,7 @@ alarmRange = ''
 regularStatus = ''
 lastRegularStatusCheck = ''
 batteryOkMVolts = ''
-sendStatus = ''
+sendStatus = False
 logStatus = True
 
 # some object handles
@@ -283,26 +283,29 @@ class GpsPoller(threading.Thread):
         # return some nice text
         prefix = ''
 
-        # if the number of fixes is low, pass comment
-        if self.numFixes < 10:
+        if self.numFixes == 0:
+            # No GPS fix (yet)
+            return 'NO GPS FIX!'
 
-            prefix = 'Low No. fixes '
-
-        if int(self.avEpx) > 15 or int(self.avEpy) > 15:
+        # if the number of fixes is low, or EP low
+        if self.numFixes < 10 or int(self.avEpx) > 15 or int(self.avEpy) > 15:
 
             # prefix poor fix
-            prefix = prefix + 'Large Lat/Lon error '
+            prefix = prefix + 'POOR '
 
         # rounding
         roundedAvEpx = int(self.avEpx)
         roundedAvEpy = int(self.avEpy)
         roundedAvHeading = int(self.avHeading)
 
+        # find the biggest EP error and report on that
+        roundedEp = max(roundedAvEpx, roundedAvEpy)
+
         # convert km/h to knots
         roundedAvSpeedKn = int(self.avSpeed / 0.539957)
 
         # return what we have
-        return 'GPS fix: ' + prefix + 'Lat ' + str(self.avLat) + ' Lon ' + str(self.avLon) + ' ' + str(roundedAvSpeedKn) + 'KN HEAD ' +str(roundedAvHeading) + 'T Lat +/-' + str(roundedAvEpx) + 'M + Lon +/- ' + str(roundedAvEpy) + 'M Fixes ' + str(self.numFixes)
+        return 'GPS fix: ' + prefix + 'Lat ' + str(self.avLat) + ' Lon ' + str(self.avLon) + ' ' + str(roundedAvSpeedKn) + 'KN HEAD ' +str(roundedAvHeading) + 'T EP +/-' + str(roundedEp)
 
 def saveConfig():
 
@@ -324,7 +327,7 @@ def saveConfig():
     configP.set('main', 'regularStatus', str(regularStatus))
     configP.set('main', 'lastRegularStatusCheck', str(lastRegularStatusCheck))
     configP.set('main', 'batteryOkMVolts', str(batteryOkMVolts))
-    configP.set('main', 'sendStatus', str(batteryOkMVolts))
+    configP.set('main', 'sendStatus', str(sendStatus))
 
     logging.info(str(configP.items('main')))
 
@@ -383,13 +386,13 @@ def loadConfig():
     try:
         lat = configP.get('main', 'lat')
     except:
-        # defult to 0
-        lat = 0
+        # defult to ''
+        lat = ''
     try:
         lon = configP.get('main', 'lon')
     except:
-        # defult to 0
-        lon = 0
+        # defult to ''
+        lon = ''
     try:
         alarmRange = configP.getint('main', 'alarmRange')
     except:
@@ -565,8 +568,8 @@ def sendSms(_number, _txt):
         logging.error('trying to send an empty SMS?')
         return False
 
-    # Prefix with boatname
-    _txt = boatname + ': ' + _txt
+    # Prefix with boatname and time
+    _txt = datetime.datetime.now().strftime("%a %X") + ' ' + boatname + ': ' + _txt
 
     if debug is True:
         logging.debug('Trying to send SMS message: ' + str(_txt) + ' to: ' + str(_number))
@@ -935,7 +938,7 @@ def getBatteryText():
     # lower than 1100 low
     # 0 == missing/dead
     # below 
-    if _input1mv > 1300:
+    if _input1mv < 1300:
        status = status + 'Batt1 Charging: ' + str(_input1mv / 1000) + 'V'
     elif _input1mv > batteryOkMVolts:
        status = status + 'Batt1 Ok: ' + str(_input1mv / 1000) + 'V'
@@ -992,49 +995,11 @@ def getStatusText():
     status = 'Status: ' + getBatteryText() + ' ' + checkBilgeText() + ' ' + gpsp.getCurrentAvgDataText()
 
     if checkBilge() and checkBattery():
-        status = 'Everything peachy ... ' + status
+        status = 'OK ' + status
     else:
-        status = 'Oh ... ' + status
+        status = 'NOT OK ' + status
 
     return status
-
-def checkStatus():
-
-    # check to see if we need to send a status message (ie failed, or each time we run)
-    
-    # fish out the global
-    global sendStatus
-
-    if sendStatus == True:
-
-        # try to send an SMS
-        if sendAndLogStatus():
-
-            # went ok - clear any flags
-            sendStatus = False
-            saveConfig()
-
-        else:
-            logging.error('Failed to send status SMS')
-            # else it barfed again
-
-#def sendStatusSms():
-
-    # get the status
- #   reply = getStatusText()
-
-#    logging.info('Sending status: ' + str(reply))
-
-    # try and send an SMS
-#    if sendSms(phone, reply):
-        # yay
-#        return True
-
-#    else:
-        # went wrong save state so that we try again
-#        sendStatus = True
-#        saveConfig()
-#        return False
 
 def setAnchorAlarmSms(sms):
 
@@ -1066,19 +1031,27 @@ def setAnchorAlarmSms(sms):
             # so should have something sensible to set the alarmRange to
             # make it an int for sanity...
             alarmRange = int(_newRange)
-            logging.info('Setting new anchor alarm: ' + alarmRange)
 
         else:
 
             # less than 10
             reply = 'New Anchor Alarm appears to be less than 10M ... please try again (with a higher number)'
-            loggin.info('New Anchor Alarm appears to be less than 10M.  SMS reply asking for higher number')
+            loggin.info(reply)
             sendSms(number, reply)
+            saveConfig()
             return
 
+    else:
+        # not re match set 20M as default
+        alarmRange = 20
+        
+    # so we should have something sensible by now ..
     _presentLat, _presentLon = gpsp.getCurretAvgLatLon()
     reply = 'Anchor Alarm being set for Lat: ' + str(_presentLat) + ' Lon: ' + str(_presentLon) + ' Alarm range: ' + str(alarmRange)
 
+    logging.info(reply)
+    saveConfig()
+    
     sendSms(number, reply)
 
 def updatePhoneSms(sms):
@@ -1261,7 +1234,11 @@ def checkRegularStatus():
 
     if _now > _nextAlarm:
 
+        if debug is True:
+            logging.debug('alarm fired')
+
         # alarm fired, so therefore send status
+        sendStatus = True
 
         if sendAndLogStatus() is True:
 
@@ -1271,28 +1248,47 @@ def checkRegularStatus():
             lastRegularStatusCheck = _now
             saveConfig()
 
+            logging.info('Regular SMS sent, lastRegularStatusCheck updated to: ' + str(lastRegularStatusCheck))
+
         else:
             # log the fact we ops'ed
             logging.error('Failed to send regular SMS - should try again next run')
 
-    # done
-
 def sendAndLogStatus():
 
     # sends a status message - either add hoc or regular
- 
-    # global loggedStatus flag
+    # check to see if we need to send a status message (ie failed, or each time we run)
+
+    # fish out the global
+    global sendStatus
     global logStatus
 
-    # get some text
-    message = getStatusText()
-    logging.info(str(message))
+    _sent = False
 
-    # as we have logged the status message, clear this flag
-    logStatus = False
+    if debug is True:
+        logging.debug('sendStatus is: ' +str(sendStatus) + ', logStatus is: ' +str(logStatus))
 
-    # try sending it
-    return sendSms(phone, message)
+    if sendStatus is True:
+
+        # get some text
+        message = getStatusText()
+        logging.info(str(message))
+
+        # clear the flag
+        logStatus = False
+
+        if sendSms(phone, message):
+            # went ok - clear any flags
+            sendStatus = False
+            _sent = True
+        else:
+            logging.error('Failed to send status ... will try next run as sendStatus is: ' + str(sendStatus))
+            sendStatus = True
+
+        # either way save state
+        saveConfig()
+
+    return _sent
 
 def checkBilgeSwitch():
 
@@ -1390,6 +1386,10 @@ if __name__ == '__main__':
 
     # log status in case nothing has fired log status anyway
     checkLogStatus()
+
+    # for debug...
+    sendStatus = True
+    sendAndLogStatus()
 
     # setPowerOnDelay
     setPowerOnDelay()
