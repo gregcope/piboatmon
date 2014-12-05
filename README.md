@@ -3,16 +3,18 @@ rpi
 
 A system to turn a Raspberry PI into a boat monitoring solution.  It is configured by Puppet and then runs a Python script that checks the systems like Bilge Switch, GPS location, battery volts and sends an SMS if in alarm.
 
-Logic is;
+Logic summary
+-------------
 
 1. Reads config
 2. Starts a GPS thread logging GPS positions
 3. Checks for inbound SMS messages from a 3G USB modem
 4. Checks the anchor Alarm
 5. Logs present status
-6. Checks to see if it needs to send a status SMS
-7. Goes to sleep for wakeInNSecs
-8. Rinse/repeat
+6. Checks a bilge switch
+7. Checks to see if it needs to send a status SMS
+8. Goes to sleep for a configurable time
+9. Rinse/repeat
 
 How it works
 ------------
@@ -24,7 +26,7 @@ How it works
 * Uses a mopi to sleep/wake, get battery Volts and have backup power
 * Is mostly writen in Python with a bit of shell
 * Uses GPIO pin 18 connected to a bilge switch and can alarm on that
-* Puppet is used to configure the host and install all the needed packages and configure the services
+* Puppet is used to configure the host, install all the needed packages and configure the services
 
 Configuration
 -------------
@@ -33,6 +35,8 @@ The Python script is configured in two ways;
 
 1. By a confuration file `boatmon.config`
 2. By sending the SMS number configuration messages
+
+By far the easiest is config by SMS
 
 ### Config Script
 
@@ -50,6 +54,8 @@ lastregularstatuscheck = 2014-12-04 19:27:09.119902
 wakeinnsecs = 120
 batteryokmvolts = 1100
 ```
+
+Note this config file also has state info in it.  Naughty I know.
 
 ### Config SMS
 
@@ -69,4 +75,16 @@ The system understands the following config SMS messages - if it does not unders
 
 ## Install
 
-TBC
+From Memory, untested on a new install - will take a while
+
+* Assumes the PI has a network connection
+* Assumes the GPS and 3G modem are connected/working 
+
+```
+git clone https://github.com/gregcope/rpi.git
+apt-get install puppet
+cd rpi/manifests
+sudo puppet apply init.pp --modulepath=/home/pi
+sudo /etc/rc.local
+```
+
