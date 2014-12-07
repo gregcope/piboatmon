@@ -9,7 +9,7 @@
 # oldskhol...
 /bin/sync;/bin/sync;/bin/sync
 
-sleep 120
+sleep 360
 
 # force a nice power off in 1 sec
 /usr/bin/sudo /usr/sbin/mopicli -wsd 1

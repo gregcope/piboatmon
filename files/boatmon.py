@@ -449,6 +449,8 @@ def setUpGammu():
 
     except Exception, e:
         logging.error('gammu Readconfig failed' + str(e))
+        sm = None
+        return
 
         # ok went bad - return false
         return False
@@ -481,6 +483,7 @@ def setUpGammu():
         except Exception, e:
             logging.error('setUpGammu - sm.Init failed' +str(e))
             sm = None
+            return
 
         # got this far it might have failed
         _tries += 1
@@ -689,23 +692,18 @@ def processSMS(sms):
     global debug
     global sendStatus
 
-    if 'debug' in _lowertxt:
+    if 'set debug' in _lowertxt:
         debugSms(sms)
         _understoodSms = True
 
     # might be a phone set command
-    if 'update phone' in _lowertxt:
+    if 'set phone' in _lowertxt:
         updatePhoneSms(sms)
         _understoodSms = True
     
     # might be an anchor alarm off
-    if 'anchor alarm off' in _lowertxt:
+    if 'set anchor alarm off' in _lowertxt:
         anchorAlarmOffSms(sms)
-        _understoodSms = True
-
-    # might be a config message
-    if 'config' in _lowertxt:
-        configSms(sms)
         _understoodSms = True
 
     # set the anchor alarm
@@ -719,7 +717,7 @@ def processSMS(sms):
         _understoodSms = True
 
     # might be a config txt to set the battery mV
-    if 'set battery ok volts' in _lowertxt:
+    if 'set battery ok mvolts' in _lowertxt:
         setBatteryOkMVoltsSms(sms)
         _understoodSms = True
 
@@ -728,7 +726,7 @@ def processSMS(sms):
         _understoodSms = True
 
     # or we might be switching regular status off
-    if 'regular status off' in _lowertxt:
+    if 'set regular status off' in _lowertxt:
         regularStatusOffSms(sms)
         _understoodSms = True
 
@@ -808,7 +806,7 @@ def setBatteryOkMVoltsSms(sms):
     # fish out the global var
     global batteryOkMVolts
 
-    results = re.search("set battery ok volts (\d{4})", _lowertxt)
+    results = re.search("set battery ok mvolts (\d{4})", _lowertxt)
 
     # if we have a match
     if results:
@@ -818,12 +816,12 @@ def setBatteryOkMVoltsSms(sms):
         # save the config for next checks
         saveConfig()
         # reply
-        reply = 'Battery OK volts set to: ' + str(batteryOkMVolts) + ' mV'
+        reply = 'Battery OK mvolts set to: ' + str(batteryOkMVolts) + ' mV'
         logging.info(reply)
 
     # could not parse results
     else:
-        reply = 'Could not set battery ok volts: ' + str(_txt) + '. Must be in 4 digits long e.g. 1300'
+        reply = 'Could not set battery ok mvolts: ' + str(_txt) + '. Must be in 4 digits long e.g. 1300'
         logging.error(reply)
 
     # sent the SMS
@@ -1077,7 +1075,19 @@ def updatePhoneSms(sms):
     # parse the SMS for a phone number like
     # 07788888888
     # +0452345234
-    _newPhoneRegEx = re.search("update phone (\+?\d+)", _lowertxt)
+
+    if debug is True:
+        logging.debug('update phone message is: ' + str(sms[0]['Text']))
+
+    _newPhoneRegEx = re.search("set phone (\+*\d+)", _lowertxt)
+
+    if _newPhoneRegEx is None:
+
+        reply = 'Could not parse: ' + str(str(sms[0]['Text']))
+        logging.info(reply)
+        sendSms(number, reply)
+        return
+
     _newPhone = _newPhoneRegEx.group(1)
 
     if _newPhone is not '':
@@ -1119,16 +1129,31 @@ def debugSms(sms):
     # set global var
     global debug
 
-    if 'true' or 'on' in _lowertxt:
+    if debug is True:
+        logging.debug('Message to parse is: ' + str(sms[0]['Text']))
+
+    if 'set debug on' in _lowertxt:
+
+        if debug is True:
+            reply = 'debug already set to true - keeping it on'
+
+        else:
+            reply = 'debug was off - being set to true'
+
         debug = True
-        reply = 'Setting debug to True'
         logging.info(reply)
         saveConfig()
 
-    elif 'off' in _lowertxt:
-        debug = False
-        reply = 'Setting debug to False'
+    elif 'set debug off' in _lowertxt:
+
+        if debug is True:
+            reply = 'debug was on - setting to off'
+
+        else:
+            reply = ' debug already off - keeping it off'
+
         logging.info(reply)
+        debug = False
         saveConfig()
 
     else:
@@ -1143,7 +1168,7 @@ def sendInstructionsSms(sms):
     number = str(sms[0]['Number'])
 
     # Put are reply together
-    reply = 'Commands:\nupdate phone NUM\nregular status TIME UTC\nregular status off\nset anchor alarm DIS_IN_M\nanchor alarm off\ndebug\nsend state\nset sleep time MINS\nset battery ok volts Mvolts\nsend instructions'
+    reply = 'Commands - set followed by;\nphone NUM\nregular status [TIME|off]\nset anchor alarm [M|off]\ndebug [on|off]\nbatter ok volts\nsleep time MINS\nsend state\nset battery ok mvolts [mvolts]\nsend instructions'
 
     # sent the SMS
     sendSms(number, reply)
@@ -1285,6 +1310,9 @@ def sendAndLogStatus():
         # clear the flag
         logStatus = False
 
+        if debug is True:
+            logging.debug('About to call sendSMS as sendStatus is: ' +str(sendStatus))
+
         if sendSms(phone, message):
             # went ok - clear any flags
             sendStatus = False
@@ -1353,7 +1381,6 @@ def sendDebugMessage():
         # pretend we have not sent a status
         # yes you might get a few ...
         sendStatus = True
-        sendAndLogStatus()
 
 if __name__ == '__main__':
 
@@ -1392,6 +1419,9 @@ if __name__ == '__main__':
             logging.debug('Going to try getting SMS messages getSms()')
         getSms()
 
+    # for debug...
+    sendDebugMessage()
+
     # check anchor alarm
     checkAnchorAlarm()
 
@@ -1406,9 +1436,6 @@ if __name__ == '__main__':
 
     # log status in case nothing has fired log status anyway
     checkLogStatus()
-
-    # for debug...
-    sendDebugMessage()
 
     # setPowerOnDelay
     setPowerOnDelay()
