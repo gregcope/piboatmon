@@ -2,22 +2,27 @@
 
 class rpi::mopi {
 
-# install some sensible packages
+  # install some sensible packages
   package { 'simbamond': ensure => installed }
 
-# fire up simbamond
+  # fire up simbamond
+  # require package to be installed and config file, 
   service { 'simbamond':
     ensure => running,
     hasstatus => true,
     hasrestart => true,
-    require => Package['simbamond'],
+    require => [ Package['simbamond'], File [ '/etc/default/simbamond' ] ],
   }
 
+
+  # put config file in
+  # restart service
   file { '/etc/default/simbamond':
     owner => root,
     group => root,
     ensure => file,
     source => '/home/pi/rpi/manifests/simbamond',
+    notify => Service [ 'simbamond' ],
   }
    # /bin/sed -n "/^# local config - DON'T/,/^# end of local config - DON'T/p" /etc/default/simbamond  | /bin/sed -n '2,$p' | /bin/sed '$d'
    # # wc1: -wc1 1 15000 12500 11000 11000

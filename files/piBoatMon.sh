@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# fire off logrotate manually in background
+/usr/bin/logrotate -f /etc/logrotate.conf &
+
 # start off old skhooollllll
 /bin/sync; /bin/sync; /bin/sync
 
