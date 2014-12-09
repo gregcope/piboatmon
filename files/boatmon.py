@@ -1382,6 +1382,11 @@ def sendDebugMessage():
         # yes you might get a few ...
         sendStatus = True
 
+def logUptime()
+
+    uptime, idletime = [float(f) for f in open("/proc/uptime").read().split()]
+    logging.info('Uptime: ' + str(uptime) + ' secs, idletime: ' + str(idletime) + ' secs')
+
 if __name__ == '__main__':
 
     # check we are running as sudo
@@ -1397,6 +1402,8 @@ if __name__ == '__main__':
         sys.exit(1)
     
     logging.info('Started ...')
+
+    logUptime()
 
     # load config
     loadConfig()
