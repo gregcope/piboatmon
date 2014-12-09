@@ -1382,7 +1382,7 @@ def sendDebugMessage():
         # yes you might get a few ...
         sendStatus = True
 
-def logUptime()
+def logUptime():
 
     uptime, idletime = [float(f) for f in open("/proc/uptime").read().split()]
     logging.info('Uptime: ' + str(uptime) + ' secs, idletime: ' + str(idletime) + ' secs')
