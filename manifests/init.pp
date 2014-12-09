@@ -1,17 +1,17 @@
-class rpi {
+class piboatmon {
 
-  include rpi::python
-  include rpi::gps
-  include rpi::ntp
-  include rpi::3g
-  include rpi::mopi
-  include rpi::fasterboot
-#  include rpi::removepackages
-  include rpi::boatmon
+  include piboatmon::python
+  include piboatmon::gps
+  include piboatmon::ntp
+  include piboatmon::3g
+  include piboatmon::mopi
+  include piboatmon::fasterboot
+#  include piboatmon::removepackages
+  include piboatmon::boatmon
 }
 
 # to run but do nothing
 # sudo puppet apply init.pp --modulepath=/home/pi
 # and to run doing stuff
 # sudo puppet apply init.pp --modulepath=/home/pi --noop
-include rpi
+include piboatmon

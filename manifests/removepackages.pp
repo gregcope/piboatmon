@@ -1,5 +1,5 @@
-# class to make a rpi boot faster
-class rpi::removepackages {
+# class to make a piboatmon boot faster
+class piboatmon::removepackages {
 
   # remove a load of guff
   # http://www.raspberrypi.org/forums/viewtopic.php?f=29&t=25777

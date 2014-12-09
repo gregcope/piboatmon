@@ -1,6 +1,4 @@
-# class to install / configure gps on rpi UART port
-
-class rpi::mopi {
+class piboatmon::mopi {
 
   # install some sensible packages
   package { 'simbamond': ensure => installed }
@@ -21,7 +19,7 @@ class rpi::mopi {
     owner => root,
     group => root,
     ensure => file,
-    source => '/home/pi/rpi/manifests/simbamond',
+    source => '/home/pi/piboatmon/manifests/simbamond',
     notify => Service [ 'simbamond' ],
   }
    # /bin/sed -n "/^# local config - DON'T/,/^# end of local config - DON'T/p" /etc/default/simbamond  | /bin/sed -n '2,$p' | /bin/sed '$d'

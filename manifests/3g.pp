@@ -1,6 +1,6 @@
 # class to install 3G dongle bits
 
-class rpi::3g {
+class piboatmon::3g {
 
 # install packages
   package { 'usb-modeswitch': }

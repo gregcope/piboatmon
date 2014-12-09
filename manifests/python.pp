@@ -1,5 +1,5 @@
 # class to install python bits
-class rpi::python {
+class piboatmon::python {
 
   # install some packages we will need
   package { 'python-rpi.gpio': ensure => installed }

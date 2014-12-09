@@ -1,6 +1,6 @@
-# class to install / configure gps on rpi UART port
+# class to install / configure gps on piboatmon UART port
 
-class rpi::gps {
+class boatmon::gps {
 
 # install some sensible packages
   package { 'gpsd': ensure => installed }

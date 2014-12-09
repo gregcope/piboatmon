@@ -81,9 +81,15 @@ From Memory, untested on a new install - will take a while
 * Assumes the GPS and 3G modem are connected/working 
 
 ```
-git clone https://github.com/gregcope/rpi.git
-apt-get install puppet
-cd rpi/manifests
+sudo apt-get update
+sudo apt-get upgrade
+sudo raspi-config (make the SD card bigger) # you need the space!!!
+
+reboot
+
+git clone https://github.com/gregcope/piboatmon.git
+sudo apt-get install puppet
+cd piboatmon/manifests
 sudo puppet apply init.pp --modulepath=/home/pi
 sudo /etc/rc.local
 ```

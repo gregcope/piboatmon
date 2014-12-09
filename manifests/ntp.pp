@@ -1,6 +1,6 @@
 # class to config ntp to prefer NMEA from GPS
 
-class rpi::ntp {
+class piboatmon::ntp {
 
 # install packages
   package { 'ntp': }

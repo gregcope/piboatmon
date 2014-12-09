@@ -1,5 +1,5 @@
-# class to make a rpi boot faster
-class rpi::fasterboot {
+# class to make a piboatmon boot faster
+class piboatmon::fasterboot {
 
   # disable swap at boot
   # http://www.element14.com/community/thread/21377/l/how-do-i-permanently-disable-the-swap-service
