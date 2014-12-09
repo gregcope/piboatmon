@@ -53,8 +53,8 @@ FIRMMINR=5
 MAXTRIES=3
 
 # some hard config
-logfile = '/home/pi/rpi/files/boatmon.log'
-configFile = "/home/pi/rpi/files/piboatmon.config"
+logfile = '/home/pi/piboatmon/files/piboatmon.log'
+configFile = "/home/pi/piboatmon/files/piboatmon.config"
 
 ###### Code below here
 
@@ -942,14 +942,14 @@ def getBatteryText():
     # lower than 1100 low
     # 0 == missing/dead
     # below 
-    if _input1mv < 1300:
-       status = status + 'Batt1 Charging: ' + str(_input1mv / 1000) + 'V'
+    if _input1mv < 13000:
+       status = status + 'Batt1 Charging: ' + str(float(_input1mv) / 1000) + 'V'
     elif _input1mv > batteryOkMVolts:
-       status = status + 'Batt1 Ok: ' + str(_input1mv / 1000) + 'V'
+       status = status + 'Batt1 Ok: ' + str(float(_input1mv) / 1000) + 'V'
     elif _input1mv == batteryOkMVolts:
        status = status + 'Batt1 Missing: 0V'
-    elif _input1mv < 1100:
-       status = status + 'Batt1 Low: ' + str(_input1mv / 1000) + 'V'
+    elif _input1mv < 11000:
+       status = status + 'Batt1 Low: ' + str(float(_input1mv) / 1000) + 'V'
     else:
        status = status + 'Batt1 state unkown'
 
@@ -958,11 +958,11 @@ def getBatteryText():
     # below 5200 is low
     # 0 == mising/dead
     if _input2mv > 9000:
-       status = status + ' Batt2 Ok: ' + str(_input1mv / 1000) + 'V'
+       status = status + ' Batt2 Ok: ' + str(float(_input1mv) / 1000) + 'V'
     elif _input2mv == 0:
        status = status + ' Batt2 Missing: 0V'
     elif _input2mv < 5200:
-       status = status + ' Batt2 Low: ' + str(_input1mv / 1000) + 'V'
+       status = status + ' Batt2 Low: ' + str(float(_input1mv) / 1000) + 'V'
     else:
        status = status + 'Batt2 state unkown'
 
