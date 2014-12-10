@@ -28,6 +28,10 @@ Basically it works thus;
 8. Goes to sleep for a configurable time
 9. Rinse/repeat
 
+1. Foo
+2. Bar
+
+
 How it works
 ------------
 
