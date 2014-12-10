@@ -312,7 +312,7 @@ class GpsPoller(threading.Thread):
         roundedAvSpeedKn = int(self.avSpeed / 0.539957)
 
         # return what we have
-        return 'GPS fix: ' + prefix + 'Lat ' + "{0:.6f}".format(self.avLat) + ' Lon ' + "{0:.6f}".format(self.avLon) + ' ' + str(roundedAvSpeedKn) + 'KN HEAD ' +str(roundedAvHeading) + 'T EP +/-' + str(roundedEp)
+        return 'GPS fix: ' + prefix + 'Lat ' + "{0:.6f}".format(self.avLat) + ' Lon ' + "{0:.6f}".format(self.avLon) + ' ' + str(roundedAvSpeedKn) + 'KN ' +str(roundedAvHeading) + 'T EP +/-' + str(roundedEp)
 
 def saveConfig():
 
