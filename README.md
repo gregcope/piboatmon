@@ -75,8 +75,6 @@ The system understands the following config SMS messages - if it does not unders
 
 ## Install
 
-From Memory, untested on a new install - will take a while
-
 * Assumes the PI has a network connection
 * Assumes the GPS and 3G modem are connected/working 
 

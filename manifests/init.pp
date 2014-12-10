@@ -8,6 +8,7 @@ class piboatmon {
   include piboatmon::fasterboot
 #  include piboatmon::removepackages
   include piboatmon::boatmon
+  include piboatmon::logrotate
 }
 
 # to run but do nothing
