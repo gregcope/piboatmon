@@ -940,34 +940,34 @@ def getBatteryText():
         logging.debug('_input1mv is: ' + str(float(_input1mv)) + ' mv _input2mv is: ' + str(float(_input2mv)) + ' mv' )
 
     # for each battery define a state
-    # above 1300 charging
-    # above 1100 ok
-    # lower than 1100 low
+    # above 13000 charging
+    # above 11000 ok
+    # lower than 11000 low
     # 0 == missing/dead
     # below 
     if _input1mv > 13000:
-       status = status + 'Batt1 Charging: ' + str(float(_input1mv) / 1000) + 'V'
+       status = status + 'Bat1 Charging: ' + str(float(_input1mv) / 1000) + 'V'
     elif _input1mv > batteryOkMVolts:
-       status = status + 'Batt1 Ok: ' + str(float(_input1mv) / 1000) + 'V'
+       status = status + 'Bat1 OK: ' + str(float(_input1mv) / 1000) + 'V'
     elif _input1mv == 0:
-       status = status + 'Batt1 Missing: 0V'
+       status = status + 'Bat1 Missing: 0V'
     elif _input1mv < 11000:
-       status = status + 'Batt1 Low: ' + str(float(_input1mv) / 1000) + 'V'
+       status = status + 'Bat1 Low: ' + str(float(_input1mv) / 1000) + 'V'
     else:
-       status = status + 'Batt1 state unkown'
+       status = status + 'Bat1 state unkown'
 
     # Battery2 is assumed to be a 9v
     # above 9000 is Ok
     # below 5200 is low
     # 0 == mising/dead
     if _input2mv > 7000:
-       status = status + ' Batt2 Ok: ' + str(float(_input2mv) / 1000) + 'V'
+       status = status + ' Bat2 OK: ' + str(float(_input2mv) / 1000) + 'V'
     elif _input2mv == 0:
-       status = status + ' Batt2 Missing: 0V'
+       status = status + ' Bat2 Missing: 0V'
     elif _input2mv < 5200:
-       status = status + ' Batt2 Low: ' + str(float(_input2mv) / 1000) + 'V'
+       status = status + ' Bat2 Low: ' + str(float(_input2mv) / 1000) + 'V'
     else:
-       status = status + 'Batt2 state unkown'
+       status = status + 'Bat2 state unkown'
 
     return status
 
@@ -976,32 +976,41 @@ def checkBattery():
     # get battery volts from mopi
     _input1mv, _input2mv = getInputmV()
 
-    if _input1mv > batteryOkMVolts:
+    if _input1mv > batteryOkMVolts and _input2mv > 5200:
         return True
     else:
         return False
 
-def checkBilge():
-
-    return True
-
 def checkBilgeText():
 
-    if checkBilge() is True:
-        status = 'Bilge Ok'
+    if checkBilgeSwitch() is True:
+        status = 'Bilge ALARM'
     else:
-        status = 'BILGE ALARM'
+        status = 'BILGE OK'
 
     logging.info(status)
 
     return status
 
+def checkBilge():
+
+    # checks switch and bleats if not ok
+
+    if checkBilgeSwitch() is True: 
+
+        if debug is True:
+            logging.debug('CheckBilgeSwitch returned true ... about to try to send SMS')
+
+        # oh pants!!!
+        # try and send the SMS
+        sendSms(phone, 'Bilge ALARM, Bilge switch is on')
+
 def getStatusText():
 
     # build a status string
-    status = 'Status: ' + getBatteryText() + ' ' + checkBilgeText() + ' ' + gpsp.getCurrentAvgDataText()
+    status = getBatteryText() + ' ' + checkBilgeText() + ' ' + gpsp.getCurrentAvgDataText()
 
-    if checkBilge() and checkBattery():
+    if checkBilgeSwitch() and checkBattery():
         status = 'OK ' + status
     else:
         status = 'NOT OK ' + status
@@ -1331,6 +1340,8 @@ def sendAndLogStatus():
 
 def checkBilgeSwitch():
 
+    # return the state of the bilge switch
+    # false means ON so inverse these in the if statement
 
     if debug is True:
         logging.debug('Setting up RPi.GPIO pins')
@@ -1348,11 +1359,12 @@ def checkBilgeSwitch():
         messagge = 'Bilge Switch is ON !!!'
         logging.info(message)
 
-        # try and send the SMS
-        sendSms(phone, message)
+        return True
 
     else:
         logging.info('Bilge Swich is off')
+
+        return False
 
 def regularStatusOffSms(sms):
 
@@ -1442,7 +1454,7 @@ if __name__ == '__main__':
     sendAndLogStatus()
 
     # check bilge is ok
-    checkBilgeSwitch()
+    checkBilge()
 
     # log status in case nothing has fired log status anyway
     checkLogStatus()
