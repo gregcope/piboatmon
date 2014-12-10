@@ -1012,7 +1012,11 @@ def getStatusText():
 
     if checkBilgeSwitch() and checkBattery():
         status = 'OK ' + status
+
     else:
+
+        if debug is True:
+            logging.debug('checkBilgeSwitch() is ' + str(checkBilgeSwitch()) + ' and checkBattery() is: ' + str(checkBattery()))
         status = 'NOT OK ' + status
 
     return status
