@@ -1,4 +1,4 @@
-rpi
+PiBoatMon
 ===
 
 A system to turn a Raspberry PI into a low power boat monitoring solution.  It is configured by Puppet and then runs a Python script that checks the systems like Bilge Switch, GPS location, battery volts and sends an SMS if in alarm.
