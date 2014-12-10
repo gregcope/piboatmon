@@ -1507,6 +1507,10 @@ if __name__ == '__main__':
     logging.info('Killing gps Thread...')
     gpsp.running = False
     gpsp.join() # wait for the thread to finish what it's doing
+
+    # dump the uptime into the logs
+    logUptime()
+
     logging.info('Done. Exiting.')
 
     exit(0)
