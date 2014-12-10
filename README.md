@@ -63,8 +63,8 @@ lon =
 alarmrange = 0
 phone = 01234567890
 boatname = YourLovelyYachtName
-regularstatus = 0700
-lastregularstatuscheck = 2014-12-04 19:27:09.119902
+dailystatus = 0700
+lastdailystatuscheck = 2014-12-04 19:27:09.119902
 wakeinnsecs = 120
 batteryokmvolts = 1100
 ```
@@ -77,8 +77,8 @@ The system understands the following config SMS messages - if it does not unders
 
 * `set boatname NAME` - Sets the boatname prefix to SMS messages
 * `nupdate phone NUMBER` - Sets the phone number to send messages to
-* `regular status TIMEUTC` - Sets a regular status SMS message 
-* `regular status off` - Stops the regular status SMS messages
+* `daily status TIMEUTC` - Sets a daily status SMS message 
+* `daily status off` - Stops the daily status SMS messages
 * `set anchor alarm DISTANCEINM` - Sets the anchor alarm (records the fix) and sets the distance given as the alarm range.  If no distance given defaults to 100M
 * `anchor alarm off` - Stops the anchor alarm tracking / SMS messages
 * `debug` - Enables Debuging (dev use only)
