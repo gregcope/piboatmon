@@ -1010,7 +1010,7 @@ def getStatusText():
     # build a status string
     status = getBatteryText() + ' ' + checkBilgeText() + ' ' + gpsp.getCurrentAvgDataText()
 
-    if checkBilgeSwitch() and checkBattery():
+    if checkBilgeSwitch() is False and checkBattery() is True:
         status = 'OK ' + status
 
     else:
