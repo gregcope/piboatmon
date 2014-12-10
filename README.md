@@ -28,8 +28,15 @@ Basically it works thus;
 8. Goes to sleep for a configurable time
 9. Rinse/repeat
 
-1. Foo
-2. Bar
+1. Reads config
+2. Starts a GPS thread logging GPS positions
+3. Checks for inbound SMS messages from a 3G USB modem
+4. Checks the anchor Alarm
+5. Checks battery state
+6. Checks a bilge switch
+7. Checks to see if it needs to send a status SMS
+8. Logs present status
+
 
 
 How it works
