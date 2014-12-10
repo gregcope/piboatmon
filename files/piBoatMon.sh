@@ -9,15 +9,15 @@
 # start off old skhooollllll
 /bin/sync; /bin/sync; /bin/sync
 
-/usr/bin/logger -t piBoatMon "Starting /home/pi/rpi/files/piboatmon.py"
+/usr/bin/logger -t piBoatMon "Starting /home/pi/piboatmon/files/piboatmon.py"
 # unleash the python
-/usr/bin/timeout 90s /usr/bin/sudo /home/pi/rpi/files/piboatmon.py
+/usr/bin/timeout 90s /usr/bin/sudo /home/pi/piboatmon/files/piboatmon.py
 
 /usr/bin/logger -t piBoatMon "Calling sync 3 times"
 # oldskhol...
 /bin/sync;/bin/sync;/bin/sync
 
-sleep 360
+sleep 600
 
 /usr/bin/logger -t piBoatMon "Going to sleep, sync"
 /bin/sync
