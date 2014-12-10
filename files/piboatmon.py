@@ -1417,7 +1417,7 @@ def checkUptime():
     _uptime, _idletime = [float(f) for f in open("/proc/uptime").read().split()]
     _loop = 0
 
-    while _uptime < 60:
+    while _uptime < 55:
 
         # we have run at least once
         _loop += 1
