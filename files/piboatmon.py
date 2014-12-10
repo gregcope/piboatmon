@@ -31,8 +31,8 @@ boatname = ''
 debug = False
 wakeInNSecs = ''
 alarmRange = ''
-regularStatus = ''
-lastRegularStatusCheck = ''
+dailyStatus = ''
+lastDailyStatusCheck = ''
 batteryOkMVolts = ''
 sendStatus = False
 logStatus = True
@@ -325,8 +325,8 @@ def saveConfig():
     configP.set('main', 'lat', str(lat))
     configP.set('main', 'lon', str(lon))
     configP.set('main', 'alarmRange', str(alarmRange))
-    configP.set('main', 'regularStatus', str(regularStatus))
-    configP.set('main', 'lastRegularStatusCheck', str(lastRegularStatusCheck))
+    configP.set('main', 'dailyStatus', str(dailyStatus))
+    configP.set('main', 'lastDailyStatusCheck', str(lastDailyStatusCheck))
     configP.set('main', 'batteryOkMVolts', str(batteryOkMVolts))
     configP.set('main', 'sendStatus', str(sendStatus))
 
@@ -352,8 +352,8 @@ def loadConfig():
     global phone
     global alarmRange
     global wakeInNSecs
-    global regularStatus
-    global lastRegularStatusCheck
+    global dailyStatus
+    global lastDailyStatusCheck
     global batteryOkMVolts
     global sendStatus
 
@@ -405,14 +405,14 @@ def loadConfig():
         # defult to ''
         alarmRange = ''
     try:
-        regularStatus = configP.get('main', 'regularStatus')
+        dailyStatus = configP.get('main', 'dailyStatus')
     except:
         # defult to ''
-        regularStatus = ''
+        dailyStatus = ''
     try:
-        lastRegularStatusCheck = configP.get('main','lastRegularStatusCheck')
+        lastDailyStatusCheck = configP.get('main','lastDailyStatusCheck')
     except:
-        lastRegularStatusCheck = ''
+        lastDailyStatusCheck = ''
 
     try:
         batteryOkMVolts = configP.get('main','batteryOkVolts')
@@ -711,9 +711,9 @@ def processSMS(sms):
         setAnchorAlarmSms(sms)
         _understoodSms = True
 
-    # might be a set regular status
-    if 'set regular status' in _lowertxt:
-        setRegularStatusSms(sms)
+    # might be a set daily status
+    if 'set daily status' in _lowertxt:
+        setDailyStatusSms(sms)
         _understoodSms = True
 
     # might be a config txt to set the battery mV
@@ -725,9 +725,9 @@ def processSMS(sms):
         setWakeInNSecsSms(sms)
         _understoodSms = True
 
-    # or we might be switching regular status off
-    if 'set regular status off' in _lowertxt:
-        regularStatusOffSms(sms)
+    # or we might be switching dailystatus off
+    if 'set daily status off' in _lowertxt:
+        dailyStatusOffSms(sms)
         _understoodSms = True
 
     # send instructions SMS
@@ -737,7 +737,7 @@ def processSMS(sms):
 
     # send a status txt
     if 'send status' in _lowertxt:
-        # fire at least a statusTxt or regularStatus to avoid 2 SMS
+        # fire at least a statusTxt or dailyStatus to avoid 2 SMS
         sendStatus == True
         _understoodSms = True
 
@@ -827,7 +827,7 @@ def setBatteryOkMVoltsSms(sms):
     # sent the SMS
     sendSms(number, reply)
 
-def setRegularStatusSms(sms):
+def setDailyStatusSms(sms):
 
     # get the number
     number = str(sms[0]['Number'])
@@ -836,25 +836,25 @@ def setRegularStatusSms(sms):
     reply = None
 
     # fish out the global var
-    global regularStatus
+    global dailyStatus
 
-    results = re.search("set regular status (\d{4})", _lowertxt)
+    results = re.search("set daily status (\d{4})", _lowertxt)
 
     # if we have a match
     if results:
 
-        regularStatus = results.group(1)
+        dailyStatus = results.group(1)
 
         # save the config for next checks
         saveConfig()
 
         # reply
-        reply = 'Regular status setup to be sent around: ' + str(regularStatus) + ' UTC each day (depends on wakeUp)'
+        reply = 'Daily status setup to be sent around: ' + str(dailyStatus) + ' UTC each day (depends on wakeUp)'
         logging.info(reply)
 
     # could not parse results
     else:
-        reply = 'Could not parse new regular status update: ' + str(_txt) + 'Needs to be 4 digit 24hr clock notation'
+        reply = 'Could not parse new daily status update: ' + str(_txt) + 'Needs to be 4 digit 24hr clock notation'
         logging.error(reply)
 
     # sent the SMS
@@ -1180,7 +1180,7 @@ def sendInstructionsSms(sms):
     number = str(sms[0]['Number'])
 
     # Put are reply together
-    reply = 'Commands - set followed by;\nphone NUM\nregular status [TIME|off]\nset anchor alarm [M|off]\ndebug [on|off]\nbatter ok volts\nsleep time MINS\nsend state\nset battery ok mvolts [mvolts]\nsend instructions'
+    reply = 'Commands - set followed by;\nphone NUM\ndaily status [TIME|off]\nset anchor alarm [M|off]\ndebug [on|off]\nbatter ok volts\nsleep time MINS\nsend state\nset battery ok mvolts [mvolts]\nsend instructions'
 
     # sent the SMS
     sendSms(number, reply)
@@ -1220,15 +1220,15 @@ def checkLogStatus():
     elif debug is True:
         logging.debug('called, but already run as logStatus is: ' + str(logStatus))
 
-def checkRegularStatus():
+def checkDailyStatus():
 
-    # if regularStatus is not set bale
-    if regularStatus == '':
-        logging.info('No regularStatus check set')
+    # if dailyStatus is not set bale
+    if dailyStatus == '':
+        logging.info('No dailyStatus check set')
         return
 
     # we might set this if we run
-    global lastRegularStatusCheck
+    global lastDailyStatusCheck
     global sendStatus
 
     # check that have not sent a status message in timeframe
@@ -1244,7 +1244,7 @@ def checkRegularStatus():
     # have we run today - note if this is blank it will run
 
     try:
-        _lastRun = datetime.datetime.strptime(lastRegularStatusCheck, "%Y-%m-%d %H:%M:%S.%f")
+        _lastRun = datetime.datetime.strptime(lastDailyStatusCheck, "%Y-%m-%d %H:%M:%S.%f")
 
         if _lastRun.date() == _now.date():
 
@@ -1255,26 +1255,26 @@ def checkRegularStatus():
 
     except ValueError:
         _lastRun = None
-        logging.info('lastRegularStatusCheck: ' + str(lastRegularStatusCheck) + 'Could not be parsed into a date')
+        logging.info('lastDailyStatusCheck: ' + str(lastDailyStatusCheck) + 'Could not be parsed into a date')
 
     # so ... if we got this far we need to check the time
 
-    # split regularStatus into hours / minutes
+    # split dailyStatus into hours / minutes
     p = re.compile('..')
 
     try:
-        _hour, _minute = p.findall(str(regularStatus))
+        _hour, _minute = p.findall(str(dailyStatus))
     except ValueError:
-        logging.error('Could not parse regularStatus: ' + str(regularStatus) + ' into _hour, _minute')
+        logging.error('Could not parse dailyStatus: ' + str(dailyStatus) + ' into _hour, _minute')
 
     # http://www.saltycrane.com/blog/2008/06/how-to-get-current-date-and-time-in/
     if _hour >=0 and _minute >= 0:
         _nextAlarm = datetime.datetime(_now.year, _now.month, _now.day, 
                 int(_hour), int(_minute), 0)
-        logging.info('Next regular check due: ' + str(_nextAlarm))
+        logging.info('Next daily check due: ' + str(_nextAlarm))
 
     else:
-        logging.error('Cannot split regularStatus into _hour / _min: ' + str(regularStatus))
+        logging.error('Cannot split dailyStatus into _hour / _min: ' + str(dailyStatus))
         # as we have nothing to compare, assume we need to run
 
     if _now > _nextAlarm:
@@ -1288,20 +1288,20 @@ def checkRegularStatus():
         if sendAndLogStatus() is True:
 
             # clear any sendStatus flag
-            # save config to preserve fact we ran in lastRegularStatusCheck
+            # save config to preserve fact we ran in lastDailyStatusCheck
             sendStatus = False
-            lastRegularStatusCheck = _now
+            lastDailyStatusCheck = _now
             saveConfig()
 
-            logging.info('Regular SMS sent, lastRegularStatusCheck updated to: ' + str(lastRegularStatusCheck))
+            logging.info('Daily SMS sent, lastDailyStatusCheck updated to: ' + str(lastDailyStatusCheck))
 
         else:
             # log the fact we ops'ed
-            logging.error('Failed to send regular SMS - should try again next run')
+            logging.error('Failed to send daily SMS - should try again next run')
 
 def sendAndLogStatus():
 
-    # sends a status message - either add hoc or regular
+    # sends a status message - either add hoc or daily
     # check to see if we need to send a status message (ie failed, or each time we run)
 
     # fish out the global
@@ -1366,22 +1366,25 @@ def checkBilgeSwitch():
 
         return False
 
-def regularStatusOffSms(sms):
+def dailyStatusOffSms(sms):
 
     # get the number
     number = str(sms[0]['Number'])
     reply = None
 
+    # fish out the global
+    global dailyStatus
+
     logging.info('Disabling regluar status checks')
 
     # disabled the Alarm by Nulling the values
-    regularStatus = ''
+    dailyStatus = ''
 
     # save the config for next checks
     saveConfig()
 
     # sort a message to send back
-    reply = 'Regular status SMS being disabled!'
+    reply = 'Daily status SMS being disabled!'
 
     # sent the SMS
     sendSms(number, reply)
@@ -1435,7 +1438,7 @@ if __name__ == '__main__':
     setUpGammu()
 
     # if we have a modem configured
-    # check SMS, check the anchor watch and check the regular status
+    # check SMS, check the anchor watch and check the daily status
     if sm:
         if debug is True:
             logging.debug('Going to try getting SMS messages getSms()')
@@ -1447,10 +1450,10 @@ if __name__ == '__main__':
     # check anchor alarm
     checkAnchorAlarm()
 
-    # check to see we need to send a regular status message
-    checkRegularStatus()
+    # check to see we need to send a daily status message
+    checkDailyStatus()
 
-    # check to see if we still need to send a status message (regular alarm may have not fired or been set)
+    # check to see if we still need to send a status message (daily alarm may have not fired or been set)
     sendAndLogStatus()
 
     # check bilge is ok
