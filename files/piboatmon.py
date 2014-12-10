@@ -1423,7 +1423,12 @@ def checkUptime():
     _uptime, _idletime = [float(f) for f in open("/proc/uptime").read().split()]
     _loop = 0
 
-    while _uptime < 55:
+    #
+    # check we have been up one minute
+    # otherwie mopi will not obey the shutdown call
+    # plus it gives us time to get a goodish GPS fix
+    #
+    while _uptime < 60:
 
         # we have run at least once
         _loop += 1
@@ -1453,8 +1458,10 @@ if __name__ == '__main__':
         print 'Logging problem' + str(e)
         sys.exit(1)
     
+    # log we have started
     logging.info('Started ...')
 
+    # record the uptime
     logUptime()
 
     # load config
@@ -1511,6 +1518,7 @@ if __name__ == '__main__':
     # dump the uptime into the logs
     logUptime()
 
+    # log we are stopping ...
     logging.info('Done. Exiting.')
 
     exit(0)
