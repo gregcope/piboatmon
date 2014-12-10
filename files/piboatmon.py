@@ -306,7 +306,7 @@ class GpsPoller(threading.Thread):
         roundedAvSpeedKn = int(self.avSpeed / 0.539957)
 
         # return what we have
-        return 'GPS fix: ' + prefix + 'Lat ' + str(self.avLat) + ' Lon ' + str(self.avLon) + ' ' + str(roundedAvSpeedKn) + 'KN HEAD ' +str(roundedAvHeading) + 'T EP +/-' + str(roundedEp)
+        return 'GPS fix: ' + prefix + 'Lat ' + "{0:.6f}".format(self.avLat) + ' Lon ' + "{0:.6f}".format(self.avLon) + ' ' + str(roundedAvSpeedKn) + 'KN HEAD ' +str(roundedAvHeading) + 'T EP +/-' + str(roundedEp)
 
 def saveConfig():
 
@@ -609,7 +609,10 @@ def distance(lat1, lon1, lat2, lon2):
     """Determine distance between 2 sets of [lat,lon] in km"""
 
     # assume a round earth ...
-    radius = 6371  # km
+    # radius = 6371  # km
+    # more accurate wikipedia number?
+    # http://en.wikipedia.org/wiki/Decimal_degrees
+    radius = 6378.169
 
     dlat = math.radians(lat2 - lat1)
     dlon = math.radians(lon2 - lon1)
@@ -1409,6 +1412,27 @@ def logUptime():
     uptime, idletime = [float(f) for f in open("/proc/uptime").read().split()]
     logging.info('Uptime: ' + str(uptime) + ' secs, idletime: ' + str(idletime) + ' secs')
 
+def checkUptime():
+
+    _uptime, _idletime = [float(f) for f in open("/proc/uptime").read().split()]
+    _loop = 0
+
+    while _uptime < 60:
+
+        # we have run at least once
+        _loop += 1
+   
+        # wait a bit
+        time.sleep(1)
+
+        # get
+        _uptime, _idletime = [float(f) for f in open("/proc/uptime").read().split()]
+
+        if debug is True:
+            logging.debug('_uptime is: ' + str(_uptime) + ', we have looped: ' + str(_loop) + ' times')
+
+    logging.info('Uptime now: ' + str(_uptime))
+
 if __name__ == '__main__':
 
     # check we are running as sudo
@@ -1447,6 +1471,9 @@ if __name__ == '__main__':
         if debug is True:
             logging.debug('Going to try getting SMS messages getSms()')
         getSms()
+
+    # check and spin till we have been up 60 secs otherwise mopi will not shutdown
+    checkUptime()
 
     # for debug...
     sendDebugMessage()
