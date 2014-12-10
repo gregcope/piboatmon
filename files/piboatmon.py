@@ -9,6 +9,9 @@
 # mopi API stolen from:
 # https://github.com/hamishcunningham/pi-tronics/blob/master/simbamon/mopiapi.py
 
+# rounding stolen from:
+# http://stackoverflow.com/questions/455612/limiting-floats-to-two-decimal-points
+
 import os
 import gps
 import time
@@ -288,12 +291,6 @@ class GpsPoller(threading.Thread):
             # No GPS fix (yet)
             return 'NO GPS FIX!'
 
-        # if the number of fixes is low, or EP low
-        if self.numFixes < 10 or int(self.avEpx) > 15 or int(self.avEpy) > 15:
-
-            # prefix poor fix
-            prefix = prefix + 'POOR '
-
         # rounding
         roundedAvEpx = int(self.avEpx)
         roundedAvEpy = int(self.avEpy)
@@ -301,6 +298,15 @@ class GpsPoller(threading.Thread):
 
         # find the biggest EP error and report on that
         roundedEp = max(roundedAvEpx, roundedAvEpy)
+
+        # if the number of fixes is low, or EP low
+        if self.numFixes < 10 or roundedEp > 15:
+
+            # prefix poor fix
+            prefix = prefix + 'POOR '
+
+            if debug is True:
+                logging.debug('numFixes: ' + str(self.numFixes) + ' roundedEp: ' + str(roundedEp))
 
         # convert km/h to knots
         roundedAvSpeedKn = int(self.avSpeed / 0.539957)
