@@ -1,10 +1,22 @@
 rpi
 ===
 
-A system to turn a Raspberry PI into a boat monitoring solution.  It is configured by Puppet and then runs a Python script that checks the systems like Bilge Switch, GPS location, battery volts and sends an SMS if in alarm.
+A system to turn a Raspberry PI into a low power boat monitoring solution.  It is configured by Puppet and then runs a Python script that checks the systems like Bilge Switch, GPS location, battery volts and sends an SMS if in alarm.
+
+It's design requirements are;
+
+* Low power (20ma idle)
+* Anchor / Mooring Alarm
+* Battery monitoring (simple volts)
+* Bilge switch monitoring
+* Not designed to be on all the time (due to power)
+* Use SMS as the lower common demoninator of coms
+* Daily status messages
 
 Logic summary
 -------------
+
+Basically it works thus;
 
 1. Reads config
 2. Starts a GPS thread logging GPS positions
@@ -92,3 +104,11 @@ sudo puppet apply init.pp --modulepath=/home/pi
 sudo /etc/rc.local
 ```
 
+Code to send SMS messages with AT commands;
+http://www.cooking-hacks.com/documentation/tutorials/arduino-gprs-gsm-quadband-sim900
+
+More AT examples in Python;
+https://garretlabs.wordpress.com/2014/06/05/raspberry-and-the-remote-controlled-relay-a-low-level-approach-a-k-a-at-modem-commands-the-usual-suspects/
+
+AT commands in detail
+http://www.developershome.com/sms/cmgdCommand.asp
