@@ -1011,13 +1011,13 @@ def getStatusText():
     status = getBatteryText() + ' ' + checkBilgeText() + ' ' + gpsp.getCurrentAvgDataText()
 
     if checkBilgeSwitch() is False and checkBattery() is True:
-        status = 'OK ' + status
+        status = 'OK\n' + status
 
     else:
 
         if debug is True:
             logging.debug('checkBilgeSwitch() is ' + str(checkBilgeSwitch()) + ' and checkBattery() is: ' + str(checkBattery()))
-        status = 'NOT OK ' + status
+        status = 'NOT OK\n' + status
 
     return status
 
