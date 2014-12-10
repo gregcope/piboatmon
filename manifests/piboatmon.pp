@@ -13,4 +13,15 @@ class piboatmon::boatmon {
     command => '/usr/bin/git https://github.com/gregcope/piboatmon.git',
     unless => '/bin/ls /home/pi/piboatmon',
   }
+
+  # put config file in
+  # restart service
+  file { '/etc/rc.local':
+    owner => root,
+    group => root,
+    ensure => file,
+    mode => '0755',
+    source => '/home/pi/piboatmon/manifests/rc.local',
+  }
+
 }
