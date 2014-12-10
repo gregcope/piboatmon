@@ -806,7 +806,7 @@ def setBatteryOkMVoltsSms(sms):
     # fish out the global var
     global batteryOkMVolts
 
-    results = re.search("set battery ok mvolts (\d{4})", _lowertxt)
+    results = re.search("set battery ok mvolts (\d{5})", _lowertxt)
 
     # if we have a match
     if results:
@@ -821,7 +821,7 @@ def setBatteryOkMVoltsSms(sms):
 
     # could not parse results
     else:
-        reply = 'Could not set battery ok mvolts: ' + str(_txt) + '. Must be in 4 digits long e.g. 1300'
+        reply = 'Could not set battery ok mvolts: ' + str(_txt) + '. Must be in 5 digits long e.g. 13000'
         logging.error(reply)
 
     # sent the SMS
@@ -936,17 +936,20 @@ def getBatteryText():
     # get battery volts from mopi
     _input1mv, _input2mv = getInputmV()
 
+    if debug is True:
+        logging.debug('_input1mv is: ' + str(float(_input1mv)) + ' mv _input2mv is: ' + str(float(_input2mv)) + ' mv' )
+
     # for each battery define a state
     # above 1300 charging
     # above 1100 ok
     # lower than 1100 low
     # 0 == missing/dead
     # below 
-    if _input1mv < 13000:
+    if _input1mv > 13000:
        status = status + 'Batt1 Charging: ' + str(float(_input1mv) / 1000) + 'V'
     elif _input1mv > batteryOkMVolts:
        status = status + 'Batt1 Ok: ' + str(float(_input1mv) / 1000) + 'V'
-    elif _input1mv == batteryOkMVolts:
+    elif _input1mv == 0:
        status = status + 'Batt1 Missing: 0V'
     elif _input1mv < 11000:
        status = status + 'Batt1 Low: ' + str(float(_input1mv) / 1000) + 'V'
@@ -957,12 +960,12 @@ def getBatteryText():
     # above 9000 is Ok
     # below 5200 is low
     # 0 == mising/dead
-    if _input2mv > 9000:
-       status = status + ' Batt2 Ok: ' + str(float(_input1mv) / 1000) + 'V'
+    if _input2mv > 7000:
+       status = status + ' Batt2 Ok: ' + str(float(_input2mv) / 1000) + 'V'
     elif _input2mv == 0:
        status = status + ' Batt2 Missing: 0V'
     elif _input2mv < 5200:
-       status = status + ' Batt2 Low: ' + str(float(_input1mv) / 1000) + 'V'
+       status = status + ' Batt2 Low: ' + str(float(_input2mv) / 1000) + 'V'
     else:
        status = status + 'Batt2 state unkown'
 
