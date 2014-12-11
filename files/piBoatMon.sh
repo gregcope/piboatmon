@@ -2,17 +2,25 @@
 
 
 /usr/bin/logger -t piBoatMon "About to run logrotate"
-# fire off logrotate manually in background
-/usr/sbin/logrotate -f /etc/logrotate.conf &
+# fire off logrotate manually
+/usr/sbin/logrotate -f /etc/logrotate.conf
 
 /usr/bin/logger -t piBoatMon "Calling sync 3 times"
 # start off old skhooollllll
 /bin/sync; /bin/sync; /bin/sync
 
+# log the battery volts
+/usr/bin/logger -t piBoatMon `/usr/bin/sudo /usr/sbin/mopicli -v1`
+/usr/bin/logger -t piBoatMon `/usr/bin/sudo /usr/sbin/mopicli -v2`
+
 /usr/bin/logger -t piBoatMon "Starting /home/pi/piboatmon/files/piboatmon.py"
 # unleash the python
 /usr/bin/timeout 90s /usr/bin/sudo /home/pi/piboatmon/files/piboatmon.py
 /usr/bin/logger -t piBoatMon "Finished /home/pi/piboatmon/files/piboatmon.py"
+
+# log the battery volts
+/usr/bin/logger -t piBoatMon `/usr/bin/sudo /usr/sbin/mopicli -v1`
+/usr/bin/logger -t piBoatMon `/usr/bin/sudo /usr/sbin/mopicli -v2`
 
 /usr/bin/logger -t piBoatMon "Calling sync 3 times"
 # oldskhol...
