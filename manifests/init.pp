@@ -6,7 +6,7 @@ class piboatmon {
   include piboatmon::3g
   include piboatmon::mopi
   include piboatmon::fasterboot
-#  include piboatmon::removepackages
+  include piboatmon::removepackages
   include piboatmon::boatmon
   include piboatmon::logrotate
 }
