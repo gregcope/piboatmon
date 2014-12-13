@@ -34,6 +34,8 @@ boatname = ''
 debug = False
 wakeInNSecs = ''
 alarmRange = ''
+alarmLat = ''
+alarmLon = ''
 dailyStatus = ''
 lastDailyStatusCheck = ''
 batteryOkMVolts = ''
@@ -946,22 +948,23 @@ def getBatteryText():
     _input1mv, _input2mv = getInputmV()
 
     if debug is True:
-        logging.debug('_input1mv is: ' + str(float(_input1mv)) + ' mv _input2mv is: ' + str(float(_input2mv)) + ' mv' )
+        logging.debug('_input1mv is: ' + str(_input1mv) + ' mv _input2mv is: ' + str(_input2mv) + ' mv' )
 
     # for each battery define a state
     # above 13000 charging
     # above 11000 ok
     # lower than 11000 low
     # 0 == missing/dead
-    # below 
+    # below
+    # "{0:.2f}".format((_input1mv) / 1000) 
     if _input1mv > 13000:
-       status = status + 'Bat1 Charging: ' + str(float(_input1mv) / 1000) + 'V'
+       status = status + 'Bat1 Charging: ' + "{0:.2f}".format((_input1mv) / 1000) + 'V'
     elif _input1mv > batteryOkMVolts:
-       status = status + 'Bat1 OK: ' + str(float(_input1mv) / 1000) + 'V'
+       status = status + 'Bat1 OK: ' + "{0:.2f}".format((_input1mv) / 1000) + 'V'
     elif _input1mv == 0:
        status = status + 'Bat1 Missing: 0V'
     elif _input1mv < 11000:
-       status = status + 'Bat1 Low: ' + str(float(_input1mv) / 1000) + 'V'
+       status = status + 'Bat1 Low: ' + "{0:.2f}".format((_input1mv) / 1000) + 'V'
     else:
        status = status + 'Bat1 state unkown'
 
@@ -970,11 +973,11 @@ def getBatteryText():
     # below 5200 is low
     # 0 == mising/dead
     if _input2mv > 7000:
-       status = status + ' Bat2 OK: ' + str(float(_input2mv) / 1000) + 'V'
+       status = status + ' Bat2 OK: ' + "{0:.2f}".format((_input2mv) / 1000) + 'V'
     elif _input2mv == 0:
        status = status + ' Bat2 Missing: 0V'
     elif _input2mv < 5200:
-       status = status + ' Bat2 Low: ' + str(float(_input2mv) / 1000) + 'V'
+       status = status + ' Bat2 Low: ' + "{0:.2f}".format((_input2mv) / 1000) + 'V'
     else:
        status = status + 'Bat2 state unkown'
 
