@@ -119,13 +119,13 @@ sudo puppet apply init.pp --modulepath=/home/pi
 
 ## FAQ
 
-* Can it do WIFI?
+* **Can it do WIFI?**
 No It is designed to be mostly off.  Might do another version with that
-* Can it alarm when the bilge switch goes off immediately?
+* **Can it alarm when the bilge switch goes off immediately?**
 No as it might be alseep.  There is lots of logic complexity there (ie if on, what do you do when you've run and the switch is still high?
-* Can I run a bilge pump off the switch
+* **Can I run a bilge pump off the switch**
 No as this is connected directly to the PI 5V - 12V would really upset it
-* Can it run a relay, to say run a bilge pump?
+* **Can it run a relay, to say run a bilge pump?**
 Not in this version, but this should be easy to parse an SMS and put a relay on for X amount of time.
 
 ## Referances / Notes
