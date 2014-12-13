@@ -1076,12 +1076,23 @@ def setAnchorAlarmSms(sms):
         
     # so we should have something sensible by now ..
     _presentLat, _presentLon = gpsp.getCurretAvgLatLon()
-    reply = 'Anchor Alarm being set for Lat: ' + str(_presentLat) + ' Lon: ' + str(_presentLon) + ' Alarm range: ' + str(alarmRange)
 
-    logging.info(reply)
-    saveConfig()
+    if _presentLat is '' or _presentLon is '':
+
+        reply = ('Trying to set Anchor Alarm, but Present Lat is: ' + str(_presentLat) + ' or Lon is: ' + str(_presentLon) + ' ie we have no fix to alarm from!!!')
+
+        logging.error(reply)
+
+    else:
+        # ok we got this far ... should be good
+        reply = 'Anchor Alarm being set for Lat: ' + str(_presentLat) + ' Lon: ' + str(_presentLon) + ' Alarm range: ' + str(alarmRange)
+
+        logging.info(reply)
+        saveConfig()
     
+    # send replry
     sendSms(number, reply)
+
 
 def updatePhoneSms(sms):
 
@@ -1418,7 +1429,7 @@ def logUptime():
     uptime, idletime = [float(f) for f in open("/proc/uptime").read().split()]
     logging.info('Uptime: ' + str(uptime) + ' secs, idletime: ' + str(idletime) + ' secs')
 
-def checkUptime():
+def waitTillUptime(requiredUptime):
 
     _uptime, _idletime = [float(f) for f in open("/proc/uptime").read().split()]
     _loop = 0
@@ -1428,7 +1439,7 @@ def checkUptime():
     # otherwie mopi will not obey the shutdown call
     # plus it gives us time to get a goodish GPS fix
     #
-    while _uptime < 60:
+    while _uptime < requiredUptime:
 
         # we have run at least once
         _loop += 1
@@ -1442,7 +1453,7 @@ def checkUptime():
         if debug is True:
             logging.debug('_uptime is: ' + str(_uptime) + ', we have looped: ' + str(_loop) + ' times')
 
-    logging.info('Uptime now: ' + str(_uptime))
+    logging.info('Uptime now: ' + str(_uptime) + ', we looped: ' + str(_loop) + ' secs')
 
 if __name__ == '__main__':
 
@@ -1486,7 +1497,7 @@ if __name__ == '__main__':
         getSms()
 
     # check and spin till we have been up 60 secs otherwise mopi will not shutdown
-    checkUptime()
+    waitTillUptime(50)
 
     # for debug...
     sendDebugMessage()
@@ -1515,8 +1526,8 @@ if __name__ == '__main__':
     gpsp.running = False
     gpsp.join() # wait for the thread to finish what it's doing
 
-    # dump the uptime into the logs
-    logUptime()
+    # Wait till we get to 60 secs uptime
+    waitTillUptime(60)
 
     # log we are stopping ...
     logging.info('Done. Exiting.')
