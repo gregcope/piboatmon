@@ -1,15 +1,14 @@
 class piboatmon::gpsdate {
 
-  # service to ensure the right rc links go in
+# service to ensure the right rc links go in
   service { 'gpsdate':
     ensure => false,
-    enabled => true,
+    enable => true,
     require => File [ '/etc/init.d/gpsdate' ],
   }
 
-
-  # put the start script in
-  # call the service
+# put the start script in
+# call the service
   file { '/etc/init.d/gpsdate':
     owner => root,
     group => root,

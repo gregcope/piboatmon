@@ -18,17 +18,18 @@ Logic summary
 
 Basically it works thus;
 
-0. Runs logrotate
+0. Runs logrotate, gpsDate
 1. Reads config
-2. Starts a GPS thread logging GPS positions
-3. Checks for inbound SMS messages from a 3G USB modem
-4. Checks the anchor Alarm
-5. Checks battery state
-6. Checks a bilge switch
-7. Checks to see if it needs to send a status SMS
-8. Logs present status
-9. Goes to sleep for a configurable time (rinse/repeate)
-
+2. Wait till uptime is 55 secs as mopi will not shutdown 
+3. Starts a GPS thread logging GPS positions
+4. Checks for inbound SMS messages from a 3G USB modem
+5. Checks the anchor Alarm
+6. Checks battery state
+7. Checks a bilge switch
+8. Checks to see if it needs to send a status SMS
+9. Logs present status
+10. Waits till uptime is 60 secs (otherwise mopi will not shutdown)
+11. Goes to sleep for a configurable time (rinse/repeate)
 
 How it works
 ------------
@@ -76,12 +77,10 @@ Note this config file also has state info in it.  Naughty I know.
 The system understands the following config SMS messages - if it does not understand you will either get a hint as a reply or no reply...
 
 * `set boatname NAME` - Sets the boatname prefix to SMS messages
-* `nupdate phone NUMBER` - Sets the phone number to send messages to
-* `daily status TIMEUTC` - Sets a daily status SMS message 
-* `daily status off` - Stops the daily status SMS messages
-* `set anchor alarm DISTANCEINM` - Sets the anchor alarm (records the fix) and sets the distance given as the alarm range.  If no distance given defaults to 100M
-* `anchor alarm off` - Stops the anchor alarm tracking / SMS messages
-* `debug` - Enables Debuging (dev use only)
+* `set phone NUMBER` - Sets the phone number to send messages to remeber to include the International STD code (ie +44 for UK)
+* `set daily status TIMEUTC|off` - Sets/Disables a daily status SMS message 
+* `set anchor alarm DISTANCEINM|off` - Sets/Disables the anchor alarm (records the fix) and sets the distance given as the alarm range.  If no distance given defaults to 100M
+* `set debug on|off` - Enables|disabled Debuging (dev use only)
 * `send state` - Will reply with a status SMS
 * `set sleep time MINS` - Will set the time the Pi goes to sleep - suggest around 60 mins, cannot be less than 1 (minute)
 * `set battery ok volts Mvolts` - Will set the milivolts at which the PI will report main battery OK or not
@@ -103,8 +102,16 @@ git clone https://github.com/gregcope/piboatmon.git
 sudo apt-get install puppet
 cd piboatmon/manifests
 sudo puppet apply init.pp --modulepath=/home/pi
-sudo /etc/rc.local
 ```
+
+## Running it
+
+* You must have run the install without any errors
+* This is basically what will run at boot ...
+
+`sudo /home/pi/files/piBoatMon.sh`
+
+## Referances / Notes
 
 Code to send SMS messages with AT commands;
 http://www.cooking-hacks.com/documentation/tutorials/arduino-gprs-gsm-quadband-sim900
