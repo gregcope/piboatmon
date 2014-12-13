@@ -7,11 +7,11 @@ It's design requirements are;
 
 * Low power (20ma idle)
 * Anchor / Mooring Alarm
-* Battery monitoring (simple volts)
+* Battery monitoring (volts)
 * Bilge switch monitoring
 * Not designed to be on all the time (due to power)
-* Use SMS as the lower common demoninator of coms
-* Daily status messages
+* Use SMS as the lower common demoninator of communication
+* Daily status messages SMS messages
 
 Logic summary
 -------------
@@ -34,14 +34,14 @@ Basically it works thus;
 How it works
 ------------
 
-* It is based on a Rasberry PI with a stripped down Rasbian image.
 * Uses a PI Model A+ for size, cost and low power
+* Uses a stripped down Rasbian image
 * Uses an Adafruit Ultimate GPS connected to the PI reconfigured UART
 * Uses a 3G USB modem to send/receive SMS messages
 * Uses a mopi to sleep/wake, get battery Volts and have backup power
-* Is mostly writen in Python with a bit of shell
+* Uses Python with a bit of shell
 * Uses GPIO pin 18 connected to a bilge switch and can alarm on that
-* Puppet is used to configure the host, install all the needed packages and configure the services
+* Uses Puppet to configure the host, install all the needed packages and configure the services
 
 Configuration
 -------------
@@ -80,11 +80,17 @@ The system understands the following config SMS messages - if it does not unders
 * `set phone NUMBER` - Sets the phone number to send messages to remeber to include the International STD code (ie +44 for UK)
 * `set daily status TIMEUTC|off` - Sets/Disables a daily status SMS message 
 * `set anchor alarm DISTANCEINM|off` - Sets/Disables the anchor alarm (records the fix) and sets the distance given as the alarm range.  If no distance given defaults to 100M
-* `set debug on|off` - Enables|disabled Debuging (dev use only)
+* `set debug on|off` - Enables|disabled Debuging - basically lots of logging, however will also always send an SMS Status message when it runs
 * `send state` - Will reply with a status SMS
 * `set sleep time MINS` - Will set the time the Pi goes to sleep - suggest around 60 mins, cannot be less than 1 (minute)
 * `set battery ok volts Mvolts` - Will set the milivolts at which the PI will report main battery OK or not
 * `send instructions` - Sends a short instructions SMS (edited version of this)
+
+## Logging
+
+* It will info log to `/home/pi/piboatmon/files/piboatmon.log`
+* If debugging is on, it will log all sorts of usefull info
+* Info logging just records changes of state
 
 ## Install
 
@@ -110,6 +116,17 @@ sudo puppet apply init.pp --modulepath=/home/pi
 * This is basically what will run at boot ...
 
 `sudo /home/pi/files/piBoatMon.sh`
+
+## FAQ
+
+* Can it do WIFI?
+No It is designed to be mostly off.  Might do another version with that
+* Can it alarm when the bilge switch goes off immediately?
+No as it might be alseep.  There is lots of logic complexity there (ie if on, what do you do when you've run and the switch is still high?
+* Can I run a bilge pump off the switch
+No as this is connected directly to the PI 5V - 12V would really upset it
+* Can it run a relay, to say run a bilge pump?
+Not in this version, but this should be easy to parse an SMS and put a relay on for X amount of time.
 
 ## Referances / Notes
 
