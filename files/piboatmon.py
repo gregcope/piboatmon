@@ -1376,11 +1376,11 @@ def checkBilgeSwitch():
 
     _input18State = RPi.GPIO.input(18)
 
-    if _input18State is False:
+    if _input18State == False:
 
         # BilgeSwitch is on ... Ops:
 
-        messagge = 'Bilge Switch is ON !!!'
+        message = 'Bilge Switch is ON !!!'
         logging.info(message)
 
         return True
