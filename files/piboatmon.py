@@ -49,11 +49,11 @@ mopi = None
 
 # mopi API config
 # For at least mopi firmware vX.YY...
-FIRMMAJ=3
-FIRMMINR=5
+FIRMMAJ = 3
+FIRMMINR = 5
 
 # Number of times to retry a failed I2C read/write to the MoPi
-MAXTRIES=3
+MAXTRIES = 3
 
 # some hard config
 logfile = '/home/pi/piboatmon/files/piboatmon.log'
@@ -1468,7 +1468,7 @@ if __name__ == '__main__':
     except Exception, e:
         print 'Logging problem' + str(e)
         sys.exit(1)
-    
+
     # log we have started
     logging.info('Started ...')
 
@@ -1524,7 +1524,7 @@ if __name__ == '__main__':
     # stop the thread and wait for it to join
     logging.info('Killing gps Thread...')
     gpsp.running = False
-    gpsp.join() # wait for the thread to finish what it's doing
+    gpsp.join()  # wait for the thread to finish what it's doing
 
     # Wait till we get to 60 secs uptime
     waitTillUptime(60)
