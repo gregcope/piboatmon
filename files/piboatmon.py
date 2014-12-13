@@ -328,8 +328,8 @@ def saveConfig():
     configP.set('main', 'phone', str(phone))
     configP.set('main', 'boatname', str(boatname))
     configP.set('main', 'wakeInNSecs', str(wakeInNSecs))
-    configP.set('main', 'lat', str(lat))
-    configP.set('main', 'lon', str(lon))
+    configP.set('main', 'alarmLat', str(alarmLat))
+    configP.set('main', 'alarmLon', str(alarmLon))
     configP.set('main', 'alarmRange', str(alarmRange))
     configP.set('main', 'dailyStatus', str(dailyStatus))
     configP.set('main', 'lastDailyStatusCheck', str(lastDailyStatusCheck))
@@ -352,8 +352,8 @@ def loadConfig():
     # fish out the global var
     global configP
     global debug
-    global lat
-    global lon
+    global alarmLat
+    global alarmLon
     global boatname
     global phone
     global alarmRange
@@ -396,15 +396,15 @@ def loadConfig():
         wakeInNSecs = int(3600)
 
     try:
-        lat = configP.get('main', 'lat')
+        lat = configP.get('main', 'alarmLat')
     except:
         # defult to ''
-        lat = ''
+        alarmLat = ''
     try:
-        lon = configP.get('main', 'lon')
+        alarmLon = configP.get('main', 'alarmLon')
     except:
         # defult to ''
-        lon = ''
+        alarmLon = ''
     try:
         alarmRange = configP.getint('main', 'alarmRange')
     except:
@@ -512,17 +512,17 @@ def setUpGammu():
 def checkAnchorAlarm():
 
     global alarmRange
-    global lat
-    global lon
+    global alarmLat
+    global alarmLon
     global gpsp
 
     if debug is True:
-        logging.debug('alarmRange is: ' + str(alarmRange) + ' Lat: ' +str(lat) + ' Lon: ' + str(lon))
+        logging.debug('alarmRange is: ' + str(alarmRange) + ' alarmLat: ' +str(alarmLat) + ' alarmLon: ' + str(alarmLon))
 
     if alarmRange > 1:
 
         # check we have a lat/lon to compare to
-        if lat != '' and lon !='':
+        if alarmLat != '' and alarmLon !='':
 
             # if we have a lat/lon to compare to
             # get fix
@@ -538,7 +538,7 @@ def checkAnchorAlarm():
                 logging.debug('Present lat: ' + str(newlat) + ' lon: ' + str(newlon))
 
             # compare fix with saved config
-            movedDistanceKm = distance(float(lat), float(lon), float(newlat), float(newlon))
+            movedDistanceKm = distance(float(alarmLat), float(alarmLon), float(newlat), float(newlon))
             # change the distance to meters rounded (not 100% accurate)
             movedDistanceM = int(movedDistanceKm * 1000)
 
@@ -1042,6 +1042,8 @@ def setAnchorAlarmSms(sms):
 
     # fish out the global
     global alarmRange
+    global alarmLat
+    global alarmLon
 
     # lookfing for string like
     # set anchor alarm 100m or
@@ -1086,7 +1088,8 @@ def setAnchorAlarmSms(sms):
     else:
         # ok we got this far ... should be good
         reply = 'Anchor Alarm being set for Lat: ' + str(_presentLat) + ' Lon: ' + str(_presentLon) + ' Alarm range: ' + str(alarmRange)
-
+        lat = _presentLat
+        lon = _presentLon
         logging.info(reply)
         saveConfig()
     
@@ -1218,13 +1221,13 @@ def anchorAlarmOffSms(sms):
     logging.info('Disabling the Anchor Alarm')
 
     # fish out the global vars!
-    global lat
-    global lon
+    global alarmLat
+    global alarmLon
     global alarmRange
 
     # disabled the Alarm by Nulling the values
-    lat = ''
-    lon = ''
+    alarmLat = ''
+    alarmLon = ''
     alarmRange = ''
 
     # save the config for next checks
