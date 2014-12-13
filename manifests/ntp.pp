@@ -19,6 +19,7 @@ class piboatmon::ntp {
 # ntp service
   service { 'ntp':
     require => [ Package [ 'ntp' ], Exec [ 'configNtp' ] ],
-    ensure => stopped,
+    ensure => running,
+    enable => true,
   }
 }

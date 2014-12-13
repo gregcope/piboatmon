@@ -5,11 +5,6 @@
 # fire off logrotate manually
 /usr/sbin/logrotate -f /etc/logrotate.conf &
 
-# set the date from GPS
-GPSDATE=`/usr/bin/gpspipe -w | /usr/bin/head -10 | /bin/grep TPV | /bin/sed -r 's/.*"time":"([^"]*)".*/\1/' | /usr/bin/head -1`
-/bin/date -s "$GPSDATE"
-/usr/bin/logger -t piBoatMon "Setting date to: $GPSDATE"
-
 /usr/bin/logger -t piBoatMon "Calling sync 3 times"
 # start off old skhooollllll
 /bin/sync; /bin/sync; /bin/sync
