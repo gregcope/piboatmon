@@ -1,0 +1,30 @@
+#!/bin/sh
+
+#
+# Script to set the date on the GPS TPV data
+# until NTP can get more accurate
+#
+# Polls the GPS for 10 lines
+# and checks the extracted GPSDATE looks like;
+# DDDD-DD-DDTDD:DD:DD
+# 2014-12-13T15:13:22.000Z
+#
+# Otherwise the TPV data can have the following if there is no fix
+# {"class":"TPV","tag":"GGA","device":"/dev/ttyAMA0","mode":3,"lat":51.013665000,"lon":-0.449583333,"alt":13.900}#015
+#
+# then just calls the date command and logs
+
+# start with something that will not match
+GPSDATE=0
+
+/usr/bin/logger -t gpsDate "Polling GPS for TPV time sentence ..."
+
+# go for the loop
+until [ `echo $GPSDATE | /bin/grep  -P "^(19|20)\d{2}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}"` ]
+do
+    GPSDATE=`/usr/bin/gpspipe -w | /usr/bin/head -10 | /bin/grep TPV | /bin/sed -r 's/.*"time":"([^"]*)".*/\1/' | /usr/bin/head -1`
+done
+
+# got this far, should have a GPS Date that looks good ...
+/bin/date -s "$GPSDATE" && /usr/bin/logger -t gpsDate "Setting date to: $GPSDATE, exiting"
+
