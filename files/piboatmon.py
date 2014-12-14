@@ -398,7 +398,7 @@ def loadConfig():
         wakeInNSecs = int(3600)
 
     try:
-        lat = configP.get('main', 'alarmLat')
+        alarmLat = configP.get('main', 'alarmLat')
     except:
         # defult to ''
         alarmLat = ''
@@ -532,7 +532,7 @@ def checkAnchorAlarm():
                 # loop till we get 10 fixes... should not be long
                 time.sleep(1)
                 if debug is True:
-                    logging.debug('Not enough gps fixes - we want 10 - gpsp.getCurrentNoFixes()' + str(gpsp.getCurrentNoFixes()))
+                    logging.debug('Not enough gps fixes - we want 10 - gpsp.getCurrentNoFixes() is: ' + str(gpsp.getCurrentNoFixes()))
 
             # fetch a good fix
             newlat, newlon = gpsp.getCurretAvgLatLon()
@@ -553,16 +553,20 @@ def checkAnchorAlarm():
                 if debug is True:
                     logging.info('Moved distance: ' + str(movedDistanceM) + 'M is more than alarmRange: ' + str(alarmRange) + 'M')
 
-                txt = 'ANCHOR ALARM FIRED.  Distance moved: ' + str(movedDistanceM) +'M, Alarm distrance set: ' + str(alarmRange) + 'M. Present position/heading LAT: ' + str(newlat) + ', LON: ' + str(newlon)
+                txt = 'ANCHOR ALARM FIRED.  Distance moved: ' + str(movedDistanceM) +'M, Alarm distrance set: ' + str(alarmRange) + 'M. Present position LAT: ' + str(newlat) + ', LON: ' + str(newlon) + '\n\nhttp://maps.google.com/maps?z=12&t=m&q=loc:' + str(newlat) + '+' + str(newlon)
 
                 if sm and phone:
                     sendSms(txt)
                 else:
                     logging.error('No SMS statemachine, or phone configured - cannot send anchor alarm SMS')
 
+            else:
+                # we have moved less than the alarm
+                logging.info('We have moved: ' + str(movedDistanceM) + ', which is not enough to setoff alarm: ' + str(alarmRange))
+
         else:
             # lat / lon are empty !!!!
-            logging.error('Anchor alarm set: ' + str(alarmRange) + ' Lat/Lon are empty')
+            logging.error('Anchor alarm set: ' + str(alarmRange) + ' , but Lat or Lon are empty')
     else:
         # No anchor alarm ... bale
         logging.info('No Anchor alarm set')
@@ -996,7 +1000,7 @@ def checkBattery():
 def checkBilgeText():
 
     if checkBilgeSwitch() is True:
-        status = 'Bilge ALARM'
+        status = 'BILGE ALARM'
     else:
         status = 'BILGE OK'
 
@@ -1015,7 +1019,7 @@ def checkBilge():
 
         # oh pants!!!
         # try and send the SMS
-        sendSms(phone, 'Bilge ALARM, Bilge switch is on')
+        sendSms(phone, 'BILGE ALARM, BILGE SWITCH IS ON!!!')
 
 def getStatusText():
 
@@ -1053,7 +1057,7 @@ def setAnchorAlarmSms(sms):
     # set anchor alarm
 
     # parse the SMS for alarm range
-    results = re.search("set anchor alarm (\d+)m", _lowertxt)
+    results = re.search("set anchor alarm (\d+)", _lowertxt)
     if results:
 
         _newRange = results.group(1)
@@ -1072,7 +1076,6 @@ def setAnchorAlarmSms(sms):
             reply = 'New Anchor Alarm appears to be less than 10M ... please try again (with a higher number)'
             loggin.info(reply)
             sendSms(number, reply)
-            saveConfig()
             return
 
     else:
@@ -1091,8 +1094,8 @@ def setAnchorAlarmSms(sms):
     else:
         # ok we got this far ... should be good
         reply = 'Anchor Alarm being set for Lat: ' + str(_presentLat) + ' Lon: ' + str(_presentLon) + ' Alarm range: ' + str(alarmRange)
-        lat = _presentLat
-        lon = _presentLon
+        alarmLat = _presentLat
+        alarmLon = _presentLon
         logging.info(reply)
         saveConfig()
     
@@ -1459,7 +1462,7 @@ def waitTillUptime(requiredUptime):
         if debug is True:
             logging.debug('_uptime is: ' + str(_uptime) + ', we have looped: ' + str(_loop) + ' times')
 
-    logging.info('Uptime now: ' + str(_uptime) + ', we looped: ' + str(_loop) + ' secs')
+    logging.info('Uptime now: ' + str(_uptime) + ', uptime required: ' + str(_uptime) + ', we looped: ' + str(_loop) + ' secs')
 
 if __name__ == '__main__':
 

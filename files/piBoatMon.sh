@@ -9,6 +9,9 @@
 # start off old skhooollllll
 /bin/sync; /bin/sync; /bin/sync
 
+# log the ntp status
+/usr/bin/logger -t piBoatMon ntpq status `/usr/bin/ntpq -p | grep NMEA`
+
 # log the battery volts
 /usr/bin/logger -t piBoatMon `/usr/bin/sudo /usr/sbin/mopicli -v1`
 /usr/bin/logger -t piBoatMon `/usr/bin/sudo /usr/sbin/mopicli -v2`
@@ -18,17 +21,16 @@
 /usr/bin/timeout 90s /usr/bin/sudo /home/pi/piboatmon/files/piboatmon.py
 /usr/bin/logger -t piBoatMon "Finished /home/pi/piboatmon/files/piboatmon.py"
 
-# log the battery volts
-/usr/bin/logger -t piBoatMon `/usr/bin/sudo /usr/sbin/mopicli -v1`
-/usr/bin/logger -t piBoatMon `/usr/bin/sudo /usr/sbin/mopicli -v2`
-
 /usr/bin/logger -t piBoatMon "Calling sync 3 times"
 # oldskhol...
 /bin/sync;/bin/sync;/bin/sync
 
 sleep 600
 
-/usr/bin/logger -t piBoatMon "Going to sleep, sync"
+# log the ntp status
+/usr/bin/logger -t piBoatMon ntpq status `/usr/bin/ntpq -p | grep NMEA`
+
+/usr/bin/logger -t piBoatMon "Going to sleep ... nite sync, mopciki -wsd 1"
 /bin/sync
 
 # force a nice power off in 1 sec
