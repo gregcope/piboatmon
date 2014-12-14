@@ -38,9 +38,9 @@ How it works
 * Uses a stripped down Rasbian image
 * Uses an [Adafruit Ultimate GPS](http://shop.pimoroni.com/products/adafruit-ultimate-gps-breakout) connected to the PI reconfigured UART
 * Uses a 3G USB modem to send/receive SMS messages
-* Uses a mopi to sleep/wake, get battery Volts and have backup power
+* Uses a [mopi stackable](http://shop.pimoroni.com/products/mopi-mobile-pi-power) to sleep/wake, get battery Volts and have backup power
 * Uses Python with a bit of shell
-* Uses GPIO pin 18 connected to a bilge switch and can alarm on that
+* Uses GPIO pin 18 connected to a [bilge switch](http://www.ebay.co.uk/sch/i.html?_odkw=bilge+switch+seaflo&_from=R40%7CR40%7CR40&_osacat=0&_from=R40&_trksid=p2045573.m570.l1313.TR0.TRC0.H0.Xbilge+switch+seaflo+float&_nkw=bilge+switch+seaflo+float&_sacat=0) and can alarm on that
 * Uses Puppet to configure the host, install all the needed packages and configure the services
 
 Configuration
