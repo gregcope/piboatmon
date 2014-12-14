@@ -49,8 +49,14 @@ This is the developement board in the best tupperware I could find.  This is not
 
 ![A raspberry PI in a tupperware box with a 3G modem, GPS and bilge switch connected](https://raw.githubusercontent.com/gregcope/piboatmon/master/mk1a-development.jpg "MK1a developement system")
 
-The production system is based on a different Modem, Raspberry Pi A+ and different box.  TBC.
+Production Version
+------------------
 
+The production system is different and based on
+
+* SIM900 Modem, smaller, better antenna
+* Raspberry Pi A+, smaller, lower power
+* External GPS antenna so that we get a better fix
 
 Configuration
 -------------
