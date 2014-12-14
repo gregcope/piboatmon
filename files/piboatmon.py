@@ -569,7 +569,7 @@ def checkAnchorAlarm():
 
             else:
                 # we have moved less than the alarm
-                logging.info('We have moved: ' + str(movedDistanceM) + ', which is not enough to setoff alarm: ' + str(alarmRange))
+                logging.info('We have moved: ' + str(movedDistanceM) + 'M, which is not enough to setoff alarm: ' + str(alarmRange) + 'M')
 
         else:
             # lat / lon are empty !!!!
@@ -951,8 +951,8 @@ def setPowerOnDelay():
 
 def getInputmV():
 
-    _input1mv = mopi.getVoltage(1)
-    _input2mv = mopi.getVoltage(2)
+    _input1mv = float(mopi.getVoltage(1))
+    _input2mv = float(mopi.getVoltage(2))
     
     return _input1mv, _input2mv
 
@@ -962,6 +962,10 @@ def getBatteryText():
 
     # get battery volts from mopi
     _input1mv, _input2mv = getInputmV()
+
+    # cast them into floats
+    _input1mv = float(_input1mv)
+    _input2mv = float(_input2mv)
 
     if debug is True:
         logging.debug('_input1mv is: ' + str(_input1mv) + ' mv _input2mv is: ' + str(_input2mv) + ' mv' )
