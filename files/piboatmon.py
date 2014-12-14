@@ -517,6 +517,7 @@ def checkAnchorAlarm():
     global alarmLat
     global alarmLon
     global gpsp
+    global sm
 
     if debug is True:
         logging.debug('alarmRange is: ' + str(alarmRange) + ' alarmLat: ' +str(alarmLat) + ' alarmLon: ' + str(alarmLon))
@@ -553,10 +554,16 @@ def checkAnchorAlarm():
                 if debug is True:
                     logging.info('Moved distance: ' + str(movedDistanceM) + 'M is more than alarmRange: ' + str(alarmRange) + 'M')
 
-                txt = 'ANCHOR ALARM FIRED.  Distance moved: ' + str(movedDistanceM) +'M, Alarm distrance set: ' + str(alarmRange) + 'M. Present position LAT: ' + str(newlat) + ', LON: ' + str(newlon) + '\n\nhttp://maps.google.com/maps?z=12&t=m&q=loc:' + str(newlat) + '+' + str(newlon)
+                txt = 'ANCHOR ALARM.  Distance moved: ' + str(movedDistanceM) +'M, Alarm Range: ' + str(alarmRange) + 'M. New position - Lat: ' + str(newlat) + ', Lon: ' + str(newlon)
 
-                if sm and phone:
-                    sendSms(txt)
+                txt2 = 'ANCHOR ALARM: http://maps.google.com/maps?z=12&t=m&q=loc:' + str(newlat) + '+' + str(newlon)
+
+                if sm != '' and phone != '' :
+
+                    # send both texts  
+                    sendSms(phone, txt)
+                    sendSms(phone, txt2)
+
                 else:
                     logging.error('No SMS statemachine, or phone configured - cannot send anchor alarm SMS')
 
@@ -700,6 +707,10 @@ def processSMS(sms):
     # lower text the message so we can parse it
     # anoying the iPhone capitalising first char
     _txt = sms[0]['Text']
+
+    # trap any uuencode - thx Giffgaff!!!
+    _txt = _txt.encode('ascii', 'ignore')
+ 
     _lowertxt = _txt.lower()
     _understoodSms = False
 
@@ -762,6 +773,7 @@ def processSMS(sms):
 
     # no idea what the SMS is...
     if _understoodSms is False:
+
         logging.info('Could not parse SMS message: ' + str(_txt))
 
     # finished
