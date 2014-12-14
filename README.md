@@ -34,9 +34,9 @@ Basically it works thus;
 How it works
 ------------
 
-* Uses a PI Model A+ for size, cost and low power
+* Uses a PI for size, cost and low power - in developement I use a Model B, so that I can ssh into it.  The production version is a Model A+
 * Uses a stripped down Rasbian image
-* Uses an Adafruit Ultimate GPS connected to the PI reconfigured UART
+* Uses an [Adafruit Ultimate GPS](http://shop.pimoroni.com/products/adafruit-ultimate-gps-breakout) connected to the PI reconfigured UART
 * Uses a 3G USB modem to send/receive SMS messages
 * Uses a mopi to sleep/wake, get battery Volts and have backup power
 * Uses Python with a bit of shell
