@@ -43,6 +43,15 @@ How it works
 * Uses GPIO pin 18 connected to a [bilge switch](http://www.ebay.co.uk/sch/i.html?_odkw=bilge+switch+seaflo&_from=R40%7CR40%7CR40&_osacat=0&_from=R40&_trksid=p2045573.m570.l1313.TR0.TRC0.H0.Xbilge+switch+seaflo+float&_nkw=bilge+switch+seaflo+float&_sacat=0) and can alarm on that
 * Uses Puppet to configure the host, install all the needed packages and configure the services
 
+Picture
+-------
+This is the developement board in the best tupperware I could find.  This is not supposed to be used on a boat for a few reasons.  Gives you an idea of parts etc...
+
+![A raspberry PI in a tupperware box with a 3G modem, GPS and bilge switch connected](https://raw.githubusercontent.com/gregcope/piboatmon/master/mk1a-development.jpg "MK1a developement system")
+
+The production system is based on a different Modem, Raspberry Pi A+ and different box.  TBC.
+
+
 Configuration
 -------------
 
