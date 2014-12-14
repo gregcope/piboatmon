@@ -25,7 +25,7 @@
 # oldskhol...
 /bin/sync;/bin/sync;/bin/sync
 
-sleep 600
+sleep 60
 
 # log the ntp status
 /usr/bin/logger -t piBoatMon ntpq status `/usr/bin/ntpq -p | grep NMEA`
