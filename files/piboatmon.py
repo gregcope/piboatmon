@@ -1490,7 +1490,7 @@ def waitTillUptime(requiredUptime):
         if debug is True:
             logging.debug('_uptime is: ' + str(_uptime) + ', we have looped: ' + str(_loop) + ' times')
 
-    logging.info('Uptime now: ' + str(_uptime) + ', uptime required: ' + str(_uptime) + ', we looped: ' + str(_loop) + ' secs')
+    logging.info('Uptime now: ' + str(_uptime) + ', uptime required: ' + str(requiredUptime) + ', we looped: ' + str(_loop) + ' secs')
 
 if __name__ == '__main__':
 
