@@ -745,11 +745,6 @@ def processSMS(sms):
         updatePhoneSms(sms)
         _understoodSms = True
     
-    # might be an anchor alarm off
-    if 'set anchor alarm off' in _lowertxt:
-        anchorAlarmOffSms(sms)
-        _understoodSms = True
-
     # set the anchor alarm
     if 'set anchor alarm' in _lowertxt:
         setAnchorAlarmSms(sms)
@@ -1087,8 +1082,32 @@ def setAnchorAlarmSms(sms):
     global alarmLon
 
     # lookfing for string like
-    # set anchor alarm 100m or
+    # set anchor alarm 100m
     # set anchor alarm
+    # set anchor alarm off
+
+    # deal with an off first
+    if 'set anchor alarm off' in  _lowertxt:
+
+        logging.info('Disabling the Anchor Alarm')
+        # disabled the Alarm by Nulling the values
+        alarmLat = ''
+        alarmLon = ''
+        alarmRange = ''
+
+        # save the config for next checks
+        saveConfig()
+
+        # sort a message to send back
+        reply = ': Anchor alarm being diabled!'
+   
+        # sent the SMS
+        sendSms(number, reply)
+
+        # done - return
+        return
+
+    # got this far assume it is a set anchor alarm on
 
     # parse the SMS for alarm range
     results = re.search("set anchor alarm (\d+)", _lowertxt)
@@ -1252,32 +1271,6 @@ def sendInstructionsSms(sms):
     # sent the SMS
     sendSms(number, reply)
 
-def anchorAlarmOffSms(sms):
-
-    # get the number
-    number = str(sms[0]['Number'])
-    reply = None
-
-    logging.info('Disabling the Anchor Alarm')
-
-    # fish out the global vars!
-    global alarmLat
-    global alarmLon
-    global alarmRange
-
-    # disabled the Alarm by Nulling the values
-    alarmLat = ''
-    alarmLon = ''
-    alarmRange = ''
-
-    # save the config for next checks
-    saveConfig()
-
-    # sort a message to send back
-    reply = ': Anchor alarm being diabled!'
-   
-    # sent the SMS
-    sendSms(number, reply)
 
 def checkLogStatus():
 
@@ -1286,6 +1279,7 @@ def checkLogStatus():
         logging.info(getStatusText())
     elif debug is True:
         logging.debug('called, but already run as logStatus is: ' + str(logStatus))
+
 
 def checkDailyStatus():
 
