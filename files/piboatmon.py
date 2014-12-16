@@ -538,7 +538,7 @@ def checkAnchorAlarm():
                     logging.debug('Not enough gps fixes - we want 10 - gpsp.getCurrentNoFixes() is: ' + str(gpsp.getCurrentNoFixes()) + ', we have looped: ' + str(_loop))
                 _loop += 1
 
-                if _loop = 15:
+                if _loop == 15:
                     logging.error('Not enough GPS fixes, tried: ' + str(_loop) + ' times')
                     break
 
