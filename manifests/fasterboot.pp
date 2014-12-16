@@ -26,7 +26,7 @@ class piboatmon::fasterboot {
   # https://extremeshok.com/1081/raspberry-pi-raspbian-tuning-optimising-optimizing-for-reduced-memory-usage/
   exec { 'removeGettys':
     logoutput => true,
-    command => '/bin/sed -i "/[2-6]:23:respawn:\/sbin\/getty 38400 tty[2-6]/s%^%#%g" /etc/inittab',
-    unless => '/bin/grep "#[2-6]:23:respawn:\/sbin\/getty 38400 tty[2-6]" /etc/inittab'
+    command => '/bin/sed -i "/[3-6]:23:respawn:\/sbin\/getty 38400 tty[3-6]/s%^%#%g" /etc/inittab',
+    unless => '/bin/grep "#[3-6]:23:respawn:\/sbin\/getty 38400 tty[3-6]" /etc/inittab'
   }
 }

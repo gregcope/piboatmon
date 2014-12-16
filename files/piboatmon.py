@@ -41,6 +41,7 @@ lastDailyStatusCheck = ''
 batteryOkMVolts = ''
 sendStatus = False
 logStatus = True
+shutdown = False
 
 # some object handles
 gpsd = None
@@ -784,12 +785,41 @@ def processSMS(sms):
         setBoatnameSms(sms)
         _understoodSms = True
 
+    if 'shutdown' in _lowertxt:
+        shutdownSms(sms)
+        _understoodSms = True
+
     # no idea what the SMS is...
     if _understoodSms is False:
 
         logging.info('Could not parse SMS message: ' + str(_txt))
 
     # finished
+
+
+def shutdownSms(sms):
+
+    # this should only work from the registered phone number
+    # otherwise barf out and SMS
+
+    number = str(sms[0]['Number'])
+    reply = None
+
+    # fish out the global
+    global shutdown
+
+    if number == phone:
+        reply = 'Recieved shutdown command from phone: ' + str(phone) + ', will shutdown and not wake up!!! Will need to be manually restarted'
+        logging.info(reply)
+        shutdown = True
+
+    else:
+        # else not from registered number
+        reply = 'Recieved shutdown command from: ' + str(number) + ', which is not registered phone: ' + str(phone) + ', ignoring'
+        logging.info(reply)
+
+    # sent the SMS
+    sendSms(phone, reply)
 
 def setWakeInNSecsSms(sms):
 
@@ -950,11 +980,18 @@ def setPowerOnDelay():
     # fish out the global object
     global mopi
     global wakeInNSecs
+    global shutdown
 
     # set the PowerOnDelay to wak
     if wakeInNSecs < 60:
         logging.error(str(wakeInNSecs) + ' below 60 secs, setting to 60 min...')
         wakeInNSecs = 60
+
+    if shutdown is True:
+        wakeInNSecs = 0
+
+        if debug is True:
+            logging.debug('shutdown is true, so setting wakeInNSecs to 0 to never wake up')
 
     logging.info('Setting mopi mopi.setPowerOnDelay to: ' + str(wakeInNSecs))
 
@@ -1450,6 +1487,7 @@ def dailyStatusOffSms(sms):
     # sent the SMS
     sendSms(number, reply)
 
+
 def sendDebugMessage():
 
     # fetch global
@@ -1460,6 +1498,7 @@ def sendDebugMessage():
         # pretend we have not sent a status
         # yes you might get a few ...
         sendStatus = True
+
 
 def logUptime():
 
