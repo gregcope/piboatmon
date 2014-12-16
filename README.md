@@ -92,13 +92,14 @@ Note this config file also has state info in it.  Naughty I know.
 The system understands the following config SMS messages - if it does not understand you will either get a hint as a reply or no reply...
 
 * `set boatname NAME` - Sets the boatname prefix to SMS messages
-* `set phone NUMBER` - Sets the phone number to send messages to remeber to include the International STD code (ie +44 for UK)
+* `set phone NUMBER` - Sets the registered phone number to send messages to remeber to include the International STD code (ie +44 for UK)
 * `set daily status TIMEUTC|off` - Sets/Disables a daily status SMS message 
 * `set anchor alarm DISTANCEINM|off` - Sets/Disables the anchor alarm (records the fix) and sets the distance given as the alarm range.  If no distance given defaults to 100M
 * `set debug on|off` - Enables|disabled Debuging - basically lots of logging, however will also always send an SMS Status message when it runs
 * `send state` - Will reply with a status SMS
 * `set sleep time MINS` - Will set the time the Pi goes to sleep - suggest around 60 mins, cannot be less than 1 (minute)
 * `set battery ok volts Mvolts` - Will set the milivolts at which the PI will report main battery OK or not
+* `shutdown` - Will shutdown and never wake up.  Only from the registered phone.  Replies with an SMS.  Will need to be manually restarted.
 * `send instructions` - Sends a short instructions SMS (edited version of this)
 
 ## Logging

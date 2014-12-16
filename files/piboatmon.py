@@ -1303,7 +1303,7 @@ def sendInstructionsSms(sms):
     number = str(sms[0]['Number'])
 
     # Put are reply together
-    reply = 'Commands - set followed by;\nphone NUM\ndaily status [TIME|off]\nset anchor alarm [M|off]\ndebug [on|off]\nbatter ok volts\nsleep time MINS\nsend state\nset battery ok mvolts [mvolts]\nsend instructions'
+    reply = 'Commands - set followed by;\nphone NUM\ndaily status [TIME|off]\nset anchor alarm [M|off]\ndebug [on|off]\nbatter ok volts\nsleep time MINS\nsend state\nset battery ok mvolts [mvolts]\nshutdown\nsend instructions'
 
     # sent the SMS
     sendSms(number, reply)
