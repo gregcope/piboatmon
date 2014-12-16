@@ -528,15 +528,33 @@ def checkAnchorAlarm():
         if alarmLat != '' and alarmLon !='':
 
             # if we have a lat/lon to compare to
-            # get fix
+            # get fix, wait for 15 tries
+
+            _loop = 0
             while gpsp.getCurrentNoFixes() < 10:
                 # loop till we get 10 fixes... should not be long
                 time.sleep(1)
                 if debug is True:
-                    logging.debug('Not enough gps fixes - we want 10 - gpsp.getCurrentNoFixes() is: ' + str(gpsp.getCurrentNoFixes()))
+                    logging.debug('Not enough gps fixes - we want 10 - gpsp.getCurrentNoFixes() is: ' + str(gpsp.getCurrentNoFixes()) + ', we have looped: ' + str(_loop))
+                _loop += 1
 
-            # fetch a good fix
+                if _loop = 15:
+                    logging.error('Not enough GPS fixes, tried: ' + str(_loop) + ' times')
+                    break
+
+            # fetch a fix, may / may not be good
             newlat, newlon = gpsp.getCurretAvgLatLon()
+
+            if newlat == "" or newlon == "":
+
+                # got an empty fix
+                _txt = 'No present position fix to compare to set anchor alarm - alarm range is: ' + str(alarmRange) + ' alarm Lat: ' +str(alarmLat) + ' alarm Lon: ' + str(alarmLon)
+
+                # log the error, send an SMS and return
+                logging.error(_txt)
+                sendSms(phone, _txt)
+                return
+
             if debug is True:
                 logging.debug('Present lat: ' + str(newlat) + ' lon: ' + str(newlon))
 
