@@ -645,12 +645,17 @@ def distance(lat1, lon1, lat2, lon2):
 
     # stolen from https://github.com/sivel/speedtest-cli/blob/master/speedtest_cli.py
     """Determine distance between 2 sets of [lat,lon] in km"""
+    # aka Great Circle distance use a spherical model and can be out up to 0.5%
+    # which on 100M is 50cm... hardly significant on a boat.
 
     # assume a round earth ...
     # radius = 6371  # km
     # more accurate wikipedia number?
     # http://en.wikipedia.org/wiki/Decimal_degrees
-    radius = 6378.169
+    # radius = 6378.169
+    # Geopi numbers - average great cicle
+    # https://github.com/geopy/geopy/blob/master/geopy/distance.py
+    radius = 6372.795
 
     dlat = math.radians(lat2 - lat1)
     dlon = math.radians(lon2 - lon1)
