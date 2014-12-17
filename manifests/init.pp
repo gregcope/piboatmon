@@ -10,7 +10,6 @@ class piboatmon {
   include piboatmon::boatmon
   include piboatmon::logrotate
   include piboatmon::puppet
-  include piboatmon::gpsdate
 }
 
 # to run but do nothing

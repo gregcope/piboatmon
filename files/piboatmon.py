@@ -1142,7 +1142,7 @@ def setAnchorAlarmSms(sms):
         saveConfig()
 
         # sort a message to send back
-        reply = ': Anchor alarm being diabled!'
+        reply = 'Anchor alarm being diabled!'
    
         # sent the SMS
         sendSms(number, reply)
@@ -1309,7 +1309,10 @@ def sendInstructionsSms(sms):
     number = str(sms[0]['Number'])
 
     # Put are reply together
-    reply = 'Commands - set followed by;\nphone NUM\ndaily status [TIME|off]\nset anchor alarm [M|off]\ndebug [on|off]\nbatter ok volts\nsleep time MINS\nsend state\nset battery ok mvolts [mvolts]\nshutdown\nsend instructions'
+    #reply = 'Commands - set followed by;\nphone NUM\ndaily status [TIME|off]\nset anchor alarm [M|off]\ndebug [on|off]\nbatter ok volts\nsleep time MINS\nsend state\nset battery ok mvolts [mvolts]\nshutdown'
+
+    reply = "set then\nphone NUM\ndaily status [TIME|off]\nset anchor alarm [M|off]\ndebug [on|off]\nbattery ok volts\nsleep time MINS\nsend state\nset battery ok mvolts [mvolts]shutdown\n"
+    logging.info('Sending instructions SMS')
 
     # sent the SMS
     sendSms(number, reply)

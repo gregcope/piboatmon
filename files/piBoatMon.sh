@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# try and set the date from GPS to kickoff ntpd
+/usr/bin/logger -t piBoatMon "Starting gpsDate in the background"
+/home/pi/piboatmon/files/gpsDate &
 
 /usr/bin/logger -t piBoatMon "About to run logrotate in the background"
 # fire off logrotate manually
