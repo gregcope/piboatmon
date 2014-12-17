@@ -644,9 +644,10 @@ def sendSms(_number, _txt):
 def distance(lat1, lon1, lat2, lon2):
 
     # stolen from https://github.com/sivel/speedtest-cli/blob/master/speedtest_cli.py
-    """Determine distance between 2 sets of [lat,lon] in km"""
+    # Determine distance between 2 sets of [lat,lon] in km 
     # aka Great Circle distance use a spherical model and can be out up to 0.5%
     # which on 100M is 50cm... hardly significant on a boat.
+    # https://en.wikipedia.org/wiki/Great-circle_distance
 
     # assume a round earth ...
     # radius = 6371  # km
