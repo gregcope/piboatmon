@@ -96,7 +96,8 @@ The system understands the following config SMS messages - if it does not unders
 * `set phone NUMBER` - Sets the registered phone number to send messages to remeber to include the International STD code (ie +44 for UK)
 * `set daily status TIMEUTC|off` - Sets/Disables a daily status SMS message 
 * `set anchor alarm DISTANCEINM|off` - Sets/Disables the anchor alarm (records the fix) and sets the distance given as the alarm range.  If no distance given defaults to 100M
-* `set debug on|off` - Enables|disabled Debuging - basically lots of logging, however will also always send an SMS Status message when it runs
+* `set debug on|off` - Enables|Disabled Debuging - basically lots of logging, however will also always send an SMS Status message when it runs
+* `set regular status on|off` - Enables|Disables a regular status message each time it runs.  This can be a used as a regular running log when moving, if an anchor alarm has been set before departure. 
 * `send state` - Will reply with a status SMS
 * `set sleep time MINS` - Will set the time the Pi goes to sleep - suggest around 60 mins, cannot be less than 1 (minute)
 * `set battery ok volts Mvolts` - Will set the milivolts at which the PI will report main battery OK or not
