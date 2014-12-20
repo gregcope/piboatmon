@@ -91,6 +91,7 @@ Note this config file also has state info in it.  Naughty I know.
 
 The system understands the following config SMS messages - if it does not understand you will either get a hint as a reply or no reply...
 
+* `setup` - Sets the registers phone, and ensures it can get a GPS fix
 * `set boatname NAME` - Sets the boatname prefix to SMS messages
 * `set phone NUMBER` - Sets the registered phone number to send messages to remeber to include the International STD code (ie +44 for UK)
 * `set daily status TIMEUTC|off` - Sets/Disables a daily status SMS message 
