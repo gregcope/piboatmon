@@ -8,6 +8,7 @@ class piboatmon::3g {
   package { 'wvdial': }
   package { 'gammu': }
   package { 'python-gammu': }
+  package { 'minicom": }
 
 # config gammu
 # only if installed
