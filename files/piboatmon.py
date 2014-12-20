@@ -546,7 +546,7 @@ def checkAnchorAlarm():
             # fetch a fix, may / may not be good
             newlat, newlon = gpsp.getCurretAvgLatLon()
 
-            if newlat == "" or newlon == "":
+            if newlat is 0 or newlon is 0:
 
                 # got an empty fix
                 _txt = 'No present position fix to compare to set anchor alarm - alarm range is: ' + str(alarmRange) + ' alarm Lat: ' +str(alarmLat) + ' alarm Lon: ' + str(alarmLon)

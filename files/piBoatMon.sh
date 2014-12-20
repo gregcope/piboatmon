@@ -16,11 +16,11 @@
 /usr/bin/logger -t piBoatMon ntpq status `/usr/bin/ntpq -p | grep NMEA`
 
 # log the battery volts
-/usr/bin/logger -t piBoatMon `/usr/bin/sudo /usr/sbin/mopicli -v1`
-/usr/bin/logger -t piBoatMon `/usr/bin/sudo /usr/sbin/mopicli -v2`
+/usr/bin/logger -t piBoatMon `/usr/bin/sudo /usr/sbin/mopicli -v1` &
+/usr/bin/logger -t piBoatMon `/usr/bin/sudo /usr/sbin/mopicli -v2` &
 
-/usr/bin/logger -t piBoatMon "Setting the mopi power on timer to default of 3600 secs (piboatmon.py should overwrite it"
-/usr/bin/sudo /usr/sbin/mopicli -won 3600
+/usr/bin/logger -t piBoatMon "Setting the mopi power on timer to default of 3600 secs - piboatmon.py should overwrite it"
+/usr/bin/sudo /usr/sbin/mopicli -won 3600 &
 
 /usr/bin/logger -t piBoatMon "Starting /home/pi/piboatmon/files/piboatmon.py"
 # unleash the python
