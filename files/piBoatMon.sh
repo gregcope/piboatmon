@@ -2,7 +2,7 @@
 
 # start gps logging
 /usr/bin/logger -t piBoatMon "Starting gpspipe to /home/pi/piboatmon/files/gpspipe.log"
-/usr/bin/gpspipe -d -w -l -t -o /home/pi/piboatmon/files/gpspipe.log
+#/usr/bin/gpspipe -d -w -l -t -o /home/pi/piboatmon/files/gpspipe.log
 
 # try and set the date from GPS to kickoff ntpd
 /usr/bin/logger -t piBoatMon "Starting gpsDate in the background"

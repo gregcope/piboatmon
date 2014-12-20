@@ -3,8 +3,6 @@ class piboatmon::removepackages {
 
   # remove a load of guff
   # http://www.raspberrypi.org/forums/viewtopic.php?f=29&t=25777
-  package { 'libfreetype6': ensure => 'purged' }
-  package { 'libx11-6': ensure => 'purged' }
   package { 'libgtk-3-common': ensure => 'purged' }
   package { 'xkb-data': ensure => 'purged' }
   package { 'lxde-icon-theme': ensure => 'purged' }
