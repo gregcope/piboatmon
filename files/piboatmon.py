@@ -909,7 +909,8 @@ def setupSms(sms):
         phone = number
         saveConfig()
 
-        reply = 'Setup: GPS got a fix.  Also setting the phone number to this number: ' + str(phone)
+        reply = 'Setup: GPS got: ' + str(gpsp.getCurrentNoFixes()) \
+                 +' fix(s).  Also setting the phone number to this number: ' + str(phone)
         logging.info(reply)
 
     # we should have a reply eitherway ... 
