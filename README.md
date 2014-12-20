@@ -151,7 +151,7 @@ Do you have SMS credit?  Is the modem unlocked to your network, is it is working
 * **GPS criteria** We need a GPS with an RTC Battery to enable fast fixes, otherwise it take most GPS units over a minute to fix... which is too long, as the code is running 25 secs afterboot.
 * **GPS Accuracy** Do you have an external SMA antenna fitted, does it have a good view of the sky?  Otherwise GPS accuracy is likely to be poor.
 * **The SMS messages have the wrong time** The timezone is based on UTC, but if this is not a timezone issue, it is likely that the unit is not getting a GPS fix in time as it depends on this to set the time, as the RPI has no RTC.  Try texting `setup` to the unit to get GPS feedback.
-* **What does BatX Missing mean**  One of the batteries is either very dead, or disconnected
+* **What does BatX Missing mean**  One of the batteries is either very dead, or disconnected.  If Bat2 then please replace the 9v reserve battery.
 
 
 ## Referances / Notes
