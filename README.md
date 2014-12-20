@@ -54,9 +54,9 @@ Production Version
 
 The production system is different and based on
 
-* SIM900 Modem, smaller, better antenna
+* SIM800 or SIM900 or equiv Modem with a smaller, better antenna, as these are smaller, simpler (no usbswitch) and use less power
 * Raspberry Pi A+, smaller, lower power
-* External GPS antenna so that we get a better fix
+* External GPS antenna so that we can get a better fix
 
 Configuration
 -------------
@@ -71,18 +71,19 @@ By far the easiest is config by SMS
 ### Config Script
 
 The python script uses a config file called `boatmon.config` which looks like:
-```[main]
-[main]
-debug = True
-lat = 
-lon = 
-alarmrange = 0
-phone = 01234567890
-boatname = YourLovelyYachtName
-dailystatus = 0700
-lastdailystatuscheck = 2014-12-04 19:27:09.119902
-wakeinnsecs = 120
+```
+debug = False
+phone = +44123456789
+boatname = Regina
+wakeinnsecs = 900
 batteryokmvolts = 1100
+sendstatus = False
+dailystatus = 0800
+lastdailystatuscheck = 2014-12-20 09:25:49.846478
+alarmlat = 0
+alarmlon = 0
+alarmrange = 0
+regularstatus = True
 ```
 
 Note this config file also has state info in it.  Naughty I know.
