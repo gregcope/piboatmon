@@ -833,12 +833,18 @@ def regularStatusSms(sms):
 
     if 'set regular status on' in _lowertxt:
 
+        _mins = wakeInNSecs / 60
+
         if regularStatus is True:
-            reply = 'regularStatus is already True, keeping it.'
+            reply = 'regularStatus is already True, keeping it.  You will get' \
+                    + ' SMS status messages approx.  every' + str(_mins) \
+                    + ' minutes.'
 
         else:
 
-            reply = 'regularStatus being set to True'
+            reply = 'Regular status being set to True, you will get SMS status' \
+                    +  ' messages approx. every' + str(_mins) + ' minutes.'
+
             regularStatus = True
             saveConfig()
 
@@ -895,7 +901,9 @@ def setupSms(sms):
             # we got this far ... ops
             # create a reply, log it, and break
 
-            reply = 'Timed out getting GPS Fix whilst running setup.  We tried: ' + str(_loop) + ' times.  Please check GPS anntena/connections'
+            reply = 'Timed out getting GPS Fix whilst running setup.' \
+                    + '  We tried: ' + str(_loop) \
+                    + ' times.  Please check GPS anntena/connections'
             logging.error(reply)
 
             break
@@ -910,7 +918,8 @@ def setupSms(sms):
         saveConfig()
 
         reply = 'Setup: GPS got: ' + str(gpsp.getCurrentNoFixes()) \
-                 +' fix(s).  Also setting the phone number to this number: ' + str(phone)
+                +' fix(s).  Also setting the phone number to this number: ' \
+                + str(phone)
         logging.info(reply)
 
     # we should have a reply eitherway ... 
@@ -928,13 +937,19 @@ def shutdownSms(sms):
     global shutdown
 
     if number == phone:
-        reply = 'Recieved shutdown command from phone: ' + str(phone) + ', will shutdown and not wake up!!! Will need to be manually restarted'
+        reply = 'Recieved shutdown command from phone: ' + str(phone) \
+                + ', will shutdown and not wake up!!! Will need to be' \
+                + '  manually restarted'
+
         logging.info(reply)
         shutdown = True
 
     else:
         # else not from registered number
-        reply = 'Recieved shutdown command from: ' + str(number) + ', which is not registered phone: ' + str(phone) + ', ignoring'
+        reply = 'Recieved shutdown command from: ' + str(number) \
+                + ', which is not registered phone: ' + str(phone) \
+                + ', ignoring'
+
         logging.info(reply)
 
     # sent the SMS
