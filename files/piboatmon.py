@@ -44,7 +44,6 @@ logStatus = True
 shutdown = False
 regularStatus = False
 
-
 # some object handles
 gpsd = None
 sm = None
@@ -736,7 +735,6 @@ def getSms():
         _remain = _remain - len(cursms)
         sms.append(cursms)
 
-
 def processSMS(sms):
 
     # lower text the message so we can parse it
@@ -820,6 +818,103 @@ def processSMS(sms):
     # finished
 
 
+def regularStatusSms(sms):
+
+    # either put regularStatus on/off
+    _lowertxt = sms[0]['Text'].lower()
+
+    reply = None
+
+    # set global var
+    global regularStatus
+
+    if debug is True:
+        logging.debug('Message to parse is: ' + str(sms[0]['Text']))
+
+    if 'set regular status on' in _lowertxt:
+
+        if regularStatus is True:
+            reply = 'regularStatus is already True, keeping it.'
+
+        else:
+
+            reply = 'regularStatus being set to True'
+            regularStatus = True
+            saveConfig()
+
+    elif 'set regular status off' in _lowertxt:
+
+        if regularStatus is True:
+
+            reply = 'regularStatus being turned off'
+            regularStatus = False
+            saveConfig()
+
+        else:
+
+            reply = 'regularStatus already off'
+    else:
+
+        # could not parse sms
+        reply = 'Could not parse: ' + str(sms[0]['Text'])
+
+    # got this far ... log reply, send SMS reponse
+    logging.info(reply)
+    sendSms(phone, reply)
+
+
+def setupSms(sms):
+
+    # try for a long time to get a GPS fix and report OK if true
+    # otherwise reply that we could not - and re-run and check GPS
+
+    # fish out the global
+    global phone
+
+    _lowertxt = sms[0]['Text'].lower()
+    number = str(sms[0]['Number'])
+
+    reply = None
+
+    if debug is True:
+        logging.debug('Running setup ...')
+
+    _loop = 0
+    while gpsp.getCurrentNoFixes() < 1:
+    # loop till we get a fixes... or exit should not be long
+
+        if debug is True:
+            logging.debug('Not gps fixs, we have looped: ' + str(_loop))
+
+        # up loop counter
+        _loop += 1
+
+        if _loop == 45:
+
+
+            # we got this far ... ops
+            # create a reply, log it, and break
+
+            reply = 'Timed out getting GPS Fix whilst running setup.  We tried: ' + str(_loop) + ' times.  Please check GPS anntena/connections'
+            logging.error(reply)
+
+            break
+
+        # wait a bit
+        time.sleep(1)
+
+    if gpsp.getCurrentNoFixes() > 1:
+
+        # we got one fix... yay!
+        phone = number
+        saveConfig()
+
+        reply = 'Setup: GPS got a fix.  Also setting the phone number to this number: ' + str(phone)
+        logging.info(reply)
+
+    # we should have a reply eitherway ... 
+    sendSms(number, reply)
+
 def shutdownSms(sms):
 
     # this should only work from the registered phone number
@@ -850,14 +945,6 @@ def setWakeInNSecsSms(sms):
     number = str(sms[0]['Number'])
     _txt = sms[0]['Text']
     _lowertxt = _txt.lower()
-    reply = None
-    _mins = 0
-
-    # fish out the global var
-    reply = None
-    _mins = 0
-
-    # fish out the global var
     reply = None
     _mins = 0
 
@@ -1263,6 +1350,14 @@ def updatePhoneSms(sms):
 
         # keep the old phone
         oldphone = phone
+        phone = _newPhone
+
+        # got this far, should have something sensible to set
+        logging.info('Changing phone from: ' + str(oldphone) + ' to: ' + str(_newPhone))
+        # save the config for next checks
+        saveConfig()
+
+        if oldphone != '':
             # sort a message to reply back letting original phone know of reset
             reply = ': New phone being set: ' + str(phone) + '.  To reset the phone back to this phone, reply to this SMS with:\n\nupdate phone ' + str(oldphone)
 
@@ -1275,104 +1370,6 @@ def updatePhoneSms(sms):
 
     else:
         logging.error('Not a phone number we could parse in: ' + str (sms[0]['Text']))
-
-
-def setupSms(sms):
-
-    # try for a long time to get a GPS fix and report OK if true
-    # otherwise reply that we could not - and re-run and check GPS
-
-    # fish out the global
-    global phone
-
-    _lowertxt = sms[0]['Text'].lower()
-    number = str(sms[0]['Number'])
-
-    reply = None
-
-    if debug is True:
-        logging.debug('Running setup ...')
-
-    _loop = 0
-    while gpsp.getCurrentNoFixes() < 1:
-    # loop till we get a fixes... or exit should not be long
-
-        if debug is True:
-            logging.debug('Not gps fixs, we have looped: ' + str(_loop))
-
-        # up loop counter
-        _loop += 1
-
-        if _loop == 45:
-
-
-            # we got this far ... ops
-            # create a reply, log it, and break
-
-            reply = 'Timed out getting GPS Fix whilst running setup.  We tried: ' + str(_loop) + ' times.  Please check GPS anntena/connections'
-            logging.error(reply)
-
-            break
-
-        # wait a bit
-        time.sleep(1)
-
-    if gpsp.getCurrentNoFixes() > 1:
-
-        # we got one fix... yay!
-        phone = number
-        saveConfig()
-
-        reply = 'Setup: GPS got a fix.  Also setting the phone number to this number: ' + str(phone)
-        logging.info(reply)
-
-    # we should have a reply eitherway ... 
-    sendSms(number, reply)
-
-
-def regularStatusSms(sms):
-
-    # either put regularStatus on/off
-    _lowertxt = sms[0]['Text'].lower()
-
-    reply = None
-
-    # set global var
-    global regularStatus
-
-    if debug is True:
-        logging.debug('Message to parse is: ' + str(sms[0]['Text']))
-
-    if 'set regular status on' in _lowertxt:
-
-        if regularStatus is True:
-            reply = 'regularStatus is already True, keeping it.'
-
-        else:
-
-            reply = 'regularStatus being set to True'
-            regularStatus = True
-            saveConfig()
-
-    elif 'set regular status off' in _lowertxt:
-
-        if regularStatus is True:
-
-            reply = 'regularStatus being turned off'
-            regularStatus = False
-            saveConfig()
-
-        else:
-
-            reply = 'regularStatus already off'
-    else:
-
-        # could not parse sms
-        reply = 'Could not parse: ' + str(sms[0]['Text'])
-
-    # got this far ... log reply, send SMS reponse
-    logging.info(reply)
-    sendSms(phone, reply)
 
 def debugSms(sms):
 
@@ -1448,13 +1445,14 @@ def checkRegularStatus()
     global sendStatus
 
     if debug is True:
-        logging.debug('
+        logging.debug('regularStatus is: ' + str(regularStatus) + ',sendStatus is: ' + str(sendStatus))
 
     # check if we need to send regular Status
     if regularStatus is True:
 
         sendStatus = True
         logging.info('regularStatus is: ' + str(regularStatus) + ', therefore we are setting sendStatus to: ' + str(sendStatus))
+
 
 def checkDailyStatus():
 
@@ -1466,76 +1464,6 @@ def checkDailyStatus():
     # we might set this if we run
     global lastDailyStatusCheck
     global sendStatus
-
-    # check that have not sent a status message in timeframe
-
-    # what is the time now?
-    _now = datetime.datetime.now()
-
-    # some defaults
-    _minute = 0
-    _hour = 0
-    _nextAlarm = None
-
-    # have we run today - note if this is blank it will run
-
-    try:
-        _lastRun = datetime.datetime.strptime(lastDailyStatusCheck, "%Y-%m-%d %H:%M:%S.%f")
-
-        if _lastRun.date() == _now.date():
-
-            # we ran today ... exit
-            logging.info('Ran today already: ' + str(_lastRun))
-
-            return
-
-    except ValueError:
-        _lastRun = None
-        logging.info('lastDailyStatusCheck: ' + str(lastDailyStatusCheck) + 'Could not be parsed into a date')
-
-    # so ... if we got this far we need to check the time
-
-    # split dailyStatus into hours / minutes
-    p = re.compile('..')
-
-    try:
-        _hour, _minute = p.findall(str(dailyStatus))
-    except ValueError:
-
-    # check that have not sent a status message in timeframe
-
-    # what is the time now?
-    _now = datetime.datetime.now()
-
-    # some defaults
-    _minute = 0
-    _hour = 0
-    _nextAlarm = None
-
-    # have we run today - note if this is blank it will run
-
-    try:
-        _lastRun = datetime.datetime.strptime(lastDailyStatusCheck, "%Y-%m-%d %H:%M:%S.%f")
-
-        if _lastRun.date() == _now.date():
-
-            # we ran today ... exit
-            logging.info('Ran today already: ' + str(_lastRun))
-
-            return
-
-    except ValueError:
-        _lastRun = None
-        logging.info('lastDailyStatusCheck: ' + str(lastDailyStatusCheck) + 'Could not be parsed into a date')
-
-    # so ... if we got this far we need to check the time
-
-    # split dailyStatus into hours / minutes
-    p = re.compile('..')
-
-    try:
-        _hour, _minute = p.findall(str(dailyStatus))
-    except ValueError:
 
     # check that have not sent a status message in timeframe
 
@@ -1633,6 +1561,76 @@ def sendAndLogStatus():
 
         if sendSms(phone, message):
             # went ok - clear any flags
+            sendStatus = False
+            _sent = True
+        else:
+            logging.error('Failed to send status ... will try next run as sendStatus is: ' + str(sendStatus))
+            sendStatus = True
+
+        # either way save state
+        saveConfig()
+
+    return _sent
+
+def checkBilgeSwitch():
+
+    # return the state of the bilge switch
+    # false means ON so inverse these in the if statement
+
+    if debug is True:
+        logging.debug('Setting up RPi.GPIO pins')
+
+    # from http://razzpisampler.oreilly.com/ch07.html
+    RPi.GPIO.setmode(RPi.GPIO.BCM)
+    RPi.GPIO.setup(18, RPi.GPIO.IN, pull_up_down=RPi.GPIO.PUD_UP)
+
+    _input18State = RPi.GPIO.input(18)
+
+    if _input18State == False:
+
+        # BilgeSwitch is on ... Ops:
+
+        message = 'Bilge Switch is ON !!!'
+        logging.info(message)
+
+        return True
+
+    else:
+        logging.info('Bilge Swich is off')
+
+        return False
+
+def dailyStatusOffSms(sms):
+
+    # get the number
+    number = str(sms[0]['Number'])
+    reply = None
+
+    # fish out the global
+    global dailyStatus
+
+    logging.info('Disabling regluar status checks')
+
+    # disabled the Alarm by Nulling the values
+    dailyStatus = ''
+
+    # save the config for next checks
+    saveConfig()
+
+    # sort a message to send back
+    reply = 'Daily status SMS being disabled!'
+
+    # sent the SMS
+    sendSms(number, reply)
+
+
+def sendDebugMessage():
+
+    # fetch global
+    global sendStatus
+
+    if debug is True:
+        logging.debug('Debug is true, sending debug status')
         # pretend we have not sent a status
         # yes you might get a few ...
         sendStatus = True
