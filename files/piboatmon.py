@@ -1439,7 +1439,7 @@ def checkLogStatus():
         logging.debug('called, but already run as logStatus is: ' + str(logStatus))
 
 
-def checkRegularStatus()
+def checkRegularStatus():
 
     # fish out the global
     global sendStatus

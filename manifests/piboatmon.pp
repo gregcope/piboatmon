@@ -27,7 +27,7 @@ class piboatmon::boatmon {
   # add a logrotate for piboatmon
   file { '/etc/logrotate.d/boatmon':
     ensure => present,
-    content => "/home/pi/piboatmon/files/boatmon.log\n/home/pi/piboatmon/files/gpspipe.log {\n\tdaily\n\trotate 31\n\tmissingok\n\tnotifempty\n\tcompress\n\tnocreate\n}\n",
+    content => "/home/pi/piboatmon/files/piboatmon.log\n/home/pi/piboatmon/files/gpspipe.log {\n\tdaily\n\trotate 31\n\tmissingok\n\tnotifempty\n\tcompress\n\tnocreate\n}\n",
   }
 
 }
