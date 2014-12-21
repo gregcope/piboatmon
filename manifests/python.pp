@@ -5,5 +5,6 @@ class piboatmon::python {
   package { 'python-rpi.gpio': ensure => installed }
   package { 'python3-rpi.gpio': ensure => installed }
   package { 'python-gps': ensure => installed }
+  package { 'python-requests': ensure => installed }
 
 }
