@@ -48,4 +48,17 @@ class piboatmon::removepackages {
   package { 'x11-common': ensure => 'purged' }
   package { 'x11-session utils': ensure => 'purged' }
   package { 'triggerhappy': ensure => 'purged' }
+  # new from: http://blog.gegg.us/2014/03/a-raspbian-read-only-root-fs-howto/
+  package { 'xserver-common': ensure => 'purged' }
+  package { 'cron': ensure => 'purged' }
+  package { 'anacron': ensure => 'purged' } 
+  package { 'logrotate': ensure => 'purged' }
+  package { 'dbus': ensure => 'purged' }
+  package { 'dphys-swapfile': ensure => 'purged' } 
+  package { 'busybox-syslogd': ensure => 'installed' }
+  package { 'rsyslog':
+    ensure => 'purged',
+    require => Package [ 'busybox-syslogd' ],
+  }
+
 }
