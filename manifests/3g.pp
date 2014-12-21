@@ -17,13 +17,13 @@ class piboatmon::3g {
 # should see
 # If you want break, press Ctrl+C...
 # Sending SMS 1/1....waiting for network answer..OK, message reference=4
-file { '/home/pi/.gammurc':
+  file { '/home/pi/.gammurc':
     ensure => 'present',
     owner => pi,
     group => pi,
     content => "[gammu]\n\nport = /dev/ttyUSB0\nmodel = \nconnection = at19200\nsynchronizetime = yes\nlogfile = \nlogformat = nothing\nuse_locking = \ngammuloc = \n",
     require => Package [ 'gammu' ],
-}
+  }
 
 # config usb switch for Huaewei
 #  file { '/etc/usb_modeswitch.conf':
