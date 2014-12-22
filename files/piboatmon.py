@@ -1475,13 +1475,16 @@ def checkRegularStatus():
     global sendStatus
 
     if debug is True:
-        logging.debug('regularStatus is: ' + str(regularStatus) + ',sendStatus is: ' + str(sendStatus))
+        logging.debug('regularStatus is: ' + str(regularStatus) \
+                      + ',sendStatus is: ' + str(sendStatus))
 
     # check if we need to send regular Status
     if regularStatus is True:
 
         sendStatus = True
-        logging.info('regularStatus is: ' + str(regularStatus) + ', therefore we are setting sendStatus to: ' + str(sendStatus))
+        logging.info('regularStatus is: ' + str(regularStatus) \
+                     + ', therefore we are going to send status this run' \
+                     + ', by setting sendStatus to: ' + str(sendStatus))
 
 
 def checkDailyStatus():
@@ -1519,7 +1522,8 @@ def checkDailyStatus():
 
     except ValueError:
         _lastRun = None
-        logging.info('lastDailyStatusCheck: ' + str(lastDailyStatusCheck) + 'Could not be parsed into a date')
+        logging.error('lastDailyStatusCheck: ' + str(lastDailyStatusCheck) \
+                     + 'Could not be parsed into a date')
 
     # so ... if we got this far we need to check the time
 
@@ -1529,7 +1533,8 @@ def checkDailyStatus():
     try:
         _hour, _minute = p.findall(str(dailyStatus))
     except ValueError:
-        logging.error('Could not parse dailyStatus: ' + str(dailyStatus) + ' into _hour, _minute')
+        logging.error('Could not parse dailyStatus: ' + str(dailyStatus) \
+                      + ' into _hour, _minute')
 
     # http://www.saltycrane.com/blog/2008/06/how-to-get-current-date-and-time-in/
     if _hour >=0 and _minute >= 0:
@@ -1538,7 +1543,8 @@ def checkDailyStatus():
         logging.info('Next daily check due: ' + str(_nextAlarm))
 
     else:
-        logging.error('Cannot split dailyStatus into _hour / _min: ' + str(dailyStatus))
+        logging.error('Cannot split dailyStatus into _hour / _min: ' \
+                      + str(dailyStatus))
         # as we have nothing to compare, assume we need to run
 
     if _now > _nextAlarm:
@@ -1557,11 +1563,13 @@ def checkDailyStatus():
             lastDailyStatusCheck = _now
             saveConfig()
 
-            logging.info('Daily SMS sent, lastDailyStatusCheck updated to: ' + str(lastDailyStatusCheck))
+            logging.info('Daily SMS sent, lastDailyStatusCheck updated to: ' \
+                         + str(lastDailyStatusCheck))
 
         else:
             # log the fact we ops'ed
-            logging.error('Failed to send daily SMS - should try again next run')
+            logging.error('Failed to send daily SMS' \
+                          + ' - should try again next run')
 
 def sendAndLogStatus():
 
@@ -1575,7 +1583,8 @@ def sendAndLogStatus():
     _sent = False
 
     if debug is True:
-        logging.debug('sendStatus is: ' +str(sendStatus) + ', logStatus is: ' +str(logStatus))
+        logging.debug('sendStatus is: ' +str(sendStatus) \
+                      + ', logStatus is: ' +str(logStatus))
 
     if sendStatus is True:
 
