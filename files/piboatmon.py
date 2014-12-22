@@ -43,6 +43,9 @@ sendStatus = False
 logStatus = True
 shutdown = False
 regularStatus = False
+bilgeSwitchState = False
+bat1Mv = 0
+bat2Mv = 0
 
 # some object handles
 gpsd = None
@@ -1135,24 +1138,25 @@ def setPowerOnDelay():
 
 def getInputmV():
 
-    _input1mv = float(mopi.getVoltage(1))
-    _input2mv = float(mopi.getVoltage(2))
-    
-    return _input1mv, _input2mv
+    global bat1Mv
+    global bat2Mv
+
+    bat1Mv = float(mopi.getVoltage(1))
+    bat2Mv = float(mopi.getVoltage(2))
 
 def getBatteryText():
 
     status = ''
 
     # get battery volts from mopi
-    _input1mv, _input2mv = getInputmV()
+    getInputmV()
 
     # cast them into floats
-    _input1mv = float(_input1mv)
-    _input2mv = float(_input2mv)
+    bat1Mv = float(bat1Mv)
+    bat2Mv = float(bat2Mv)
 
     if debug is True:
-        logging.debug('_input1mv is: ' + str(_input1mv) + ' mv _input2mv is: ' + str(_input2mv) + ' mv' )
+        logging.debug('bat1Mv is: ' + str(bat1Mv) + ' mv bat2Mv is: ' + str(bat2Mv) + ' mv' )
 
     # for each battery define a state
     # above 13000 charging
@@ -1160,15 +1164,15 @@ def getBatteryText():
     # lower than 11000 low
     # 0 == missing/dead
     # below
-    # "{0:.2f}".format((_input1mv) / 1000) 
-    if _input1mv > 13000:
-       status = status + 'Bat1 Charging: ' + "{0:.2f}".format((_input1mv) / 1000) + 'V'
-    elif _input1mv > batteryOkMVolts:
-       status = status + 'Bat1 OK: ' + "{0:.2f}".format((_input1mv) / 1000) + 'V'
-    elif _input1mv == 0:
+    # "{0:.2f}".format((bat1Mv) / 1000) 
+    if bat1Mv > 13000:
+       status = status + 'Bat1 Charging: ' + "{0:.2f}".format((bat1Mv) / 1000) + 'V'
+    elif bat1Mv > batteryOkMVolts:
+       status = status + 'Bat1 OK: ' + "{0:.2f}".format((bat1Mv) / 1000) + 'V'
+    elif bat1Mv == 0:
        status = status + 'Bat1 Missing: 0V'
-    elif _input1mv < 11000:
-       status = status + 'Bat1 Low: ' + "{0:.2f}".format((_input1mv) / 1000) + 'V'
+    elif bat1Mv < 11000:
+       status = status + 'Bat1 Low: ' + "{0:.2f}".format((bat1Mv) / 1000) + 'V'
     else:
        status = status + 'Bat1 state unkown'
 
@@ -1176,12 +1180,12 @@ def getBatteryText():
     # above 9000 is Ok
     # below 5200 is low
     # 0 == mising/dead
-    if _input2mv > 7000:
-       status = status + ' Bat2 OK: ' + "{0:.2f}".format((_input2mv) / 1000) + 'V'
-    elif _input2mv == 0:
+    if bat2Mv > 7000:
+       status = status + ' Bat2 OK: ' + "{0:.2f}".format((bat2Mv) / 1000) + 'V'
+    elif bat2Mv == 0:
        status = status + ' Bat2 Missing: 0V'
-    elif _input2mv < 5200:
-       status = status + ' Bat2 Low: ' + "{0:.2f}".format((_input2mv) / 1000) + 'V'
+    elif bat2Mv < 5200:
+       status = status + ' Bat2 Low: ' + "{0:.2f}".format((bat2Mv) / 1000) + 'V'
     else:
        status = status + 'Bat2 state unkown'
 
@@ -1190,12 +1194,13 @@ def getBatteryText():
 def checkBattery():
 
     # get battery volts from mopi
-    _input1mv, _input2mv = getInputmV()
+    getInputmV()
 
-    if _input1mv > batteryOkMVolts and _input2mv > 5200:
+    if bat2Mv > batteryOkMVolts and bat2Mv > 5200:
         return True
     else:
         return False
+
 
 def checkBilgeText():
 
@@ -1593,6 +1598,8 @@ def checkBilgeSwitch():
     # return the state of the bilge switch
     # false means ON so inverse these in the if statement
 
+    global bilgeSwitchState
+
     if debug is True:
         logging.debug('Setting up RPi.GPIO pins')
 
@@ -1609,12 +1616,15 @@ def checkBilgeSwitch():
         message = 'Bilge Switch is ON !!!'
         logging.info(message)
 
-        return True
+        bilgeSwitchState = True
 
     else:
+
+        bilgeSwitchState = False
         logging.info('Bilge Swich is off')
 
-        return False
+    return bilgeSwitchState
+
 
 def dailyStatusOffSms(sms):
 
