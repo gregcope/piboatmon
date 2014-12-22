@@ -78,7 +78,7 @@ class mopiapi():
         maj = 0
         minr = 0
 
-        def __init__(self, i2cbus = -1):
+        def __init__(self, i2cbus=-1):
                 if i2cbus == -1:
                         i2cbus = self.guessI2C()
                 self.bus = smbus.SMBus(i2cbus)
@@ -98,14 +98,14 @@ class mopiapi():
                 self.writeWord(0b00000011, poweron)
 
         def setShutdownDelay(self, shutdown):
-                self.writeWord(0b00000100, shutdown)
+            self.writeWord(0b00000100, shutdown)
 
         def getPowerOnDelay(self):
-                return self.readWord(0b00000011)
+            return self.readWord(0b00000011)
 
-	def getFirmwareVersion(self):
-		word = self.readWord(0b00001001) # 9
-		return [word >> 8, word & 0xff]
+        def getFirmwareVersion(self):
+            word = self.readWord(0b00001001) # 9
+            return [word >> 8, word & 0xff]
 
         def baseReadWord(self, register):
                 tries = 0
@@ -553,13 +553,13 @@ def checkAnchorAlarm():
     global sm
 
     if debug is True:
-        logging.debug('alarmRange is: ' + str(alarmRange) + ' alarmLat: ' \
+        logging.debug('alarmRange is: ' + str(alarmRange) + ' alarmLat: '
                       + str(alarmLat) + ' alarmLon: ' + str(alarmLon))
 
     if alarmRange > 1:
 
         # check we have a lat/lon to compare to
-        if alarmLat != '' and alarmLon !='':
+        if alarmLat != '' and alarmLon != '':
 
             # if we have a lat/lon to compare to
             # get fix, wait for 15 tries
@@ -569,14 +569,14 @@ def checkAnchorAlarm():
                 # loop till we get 10 fixes... should not be long
                 time.sleep(1)
                 if debug is True:
-                    logging.debug('Not enough gps fixes - we want 10 - ' \
-                                  + 'gpsp.getCurrentNoFixes() is: ' \
-                                  + str(gpsp.getCurrentNoFixes()) \
+                    logging.debug('Not enough gps fixes - we want 10 - '
+                                  + 'gpsp.getCurrentNoFixes() is: '
+                                  + str(gpsp.getCurrentNoFixes())
                                   + ', we have looped: ' + str(_loop))
                 _loop += 1
 
                 if _loop == 15:
-                    logging.error('Not enough GPS fixes, tried: ' \
+                    logging.error('Not enough GPS fixes, tried: '
                                   + str(_loop) + ' times')
                     break
 
@@ -588,7 +588,7 @@ def checkAnchorAlarm():
                 # got an empty fix
                 _txt = 'No present position fix to compare to set anchor ' \
                        + 'alarm - alarm range is: ' + str(alarmRange) \
-                       + ' alarm Lat: ' +str(alarmLat) \
+                       + ' alarm Lat: ' + str(alarmLat) \
                        + ' alarm Lon: ' + str(alarmLon)
 
                 # log the error, send an SMS and return
@@ -597,11 +597,11 @@ def checkAnchorAlarm():
                 return
 
             if debug is True:
-                logging.debug('Present lat: ' + str(newlat) + ' lon: ' \
+                logging.debug('Present lat: ' + str(newlat) + ' lon: '
                               + str(newlon))
 
             # compare fix with saved config
-            movedDistanceKm = distance(float(alarmLat), float(alarmLon), \
+            movedDistanceKm = distance(float(alarmLat), float(alarmLon),
                                        float(newlat), float(newlon))
             # change the distance to meters rounded (not 100% accurate)
             movedDistanceM = int(movedDistanceKm * 1000)
@@ -613,8 +613,8 @@ def checkAnchorAlarm():
             if movedDistanceM > alarmRange:
 
                 if debug is True:
-                    logging.info('Moved distance: ' + str(movedDistanceM) \
-                                 + 'M is more than alarmRange: ' \
+                    logging.info('Moved distance: ' + str(movedDistanceM)
+                                 + 'M is more than alarmRange: '
                                  + str(alarmRange) + 'M')
 
                 txt = 'ANCHOR ALARM.  Distance moved: ' + str(movedDistanceM) \
@@ -632,13 +632,13 @@ def checkAnchorAlarm():
                     sendSms(phone, txt2)
 
                 else:
-                    logging.error('No SMS statemachine, or phone configured' 
+                    logging.error('No SMS statemachine, or phone configured'
                                   + ' - cannot send anchor alarm SMS')
 
             else:
                 # we have moved less than the alarm
-                logging.info('We have moved: ' + str(movedDistanceM) 
-                             + 'M, which is not enough to setoff alarm: ' 
+                logging.info('We have moved: ' + str(movedDistanceM)
+                             + 'M, which is not enough to setoff alarm: '
                              + str(alarmRange) + 'M')
 
         else:
@@ -671,10 +671,10 @@ def sendSms(_number, _txt):
 
     # Prefix with boatname and time
     _txt = datetime.datetime.now().strftime("%a %X") + ' ' + boatname \
-           + ': ' + _txt
+            + ': ' + _txt
 
     if debug is True:
-        logging.debug('Trying to send SMS message: ' + str(_txt) 
+        logging.debug('Trying to send SMS message: ' + str(_txt)
                       + ' to: ' + str(_number))
 
     # go for it
@@ -694,14 +694,15 @@ def sendSms(_number, _txt):
     except Exception, e:
 
         # Ops...
-        logging.error('Exception: ' +str(e))
+        logging.error('Exception: ' + str(e))
         return False
 
 
 def distance(lat1, lon1, lat2, lon2):
 
-    # stolen from https://github.com/sivel/speedtest-cli/blob/master/speedtest_cli.py
-    # Determine distance between 2 sets of [lat,lon] in km 
+    # stolen from;
+    # https://github.com/sivel/speedtest-cli/blob/master/speedtest_cli.py
+    # Determine distance between 2 sets of [lat,lon] in km
     # aka Great Circle distance use a spherical model and can be out up to 0.5%
     # which on 100M is 50cm... hardly significant on a boat.
     # https://en.wikipedia.org/wiki/Great-circle_distance
@@ -725,6 +726,7 @@ def distance(lat1, lon1, lat2, lon2):
 
     return d
 
+
 def getSms():
 
     global sm
@@ -736,7 +738,7 @@ def getSms():
     gotSMS = 0
 
     if debug is True:
-         logging.debug('About to get sm.GetSMSStatus()')
+        logging.debug('About to get sm.GetSMSStatus()')
 
     try:
         _status = sm.GetSMSStatus()
@@ -756,7 +758,7 @@ def getSms():
 
         if _start:
 
-            cursms = sm.GetNextSMS(Start = True, Folder = 0)
+            cursms=sm.GetNextSMS(Start=True, Folder=0)
             if debug is True:
                 logging.debug('In start processing SMS: ' + str(cursms))
 
@@ -770,7 +772,7 @@ def getSms():
             if debug is True:
                 logging.debug('In else processing SMS: ' + str(cursms))
 
-            cursms = sm.GetNextSMS(Start = True, Folder = 0)
+            cursms = sm.GetNextSMS(Start=True, Folder=0)
             processSMS(cursms)
             gotSMS += 1
 
@@ -783,6 +785,7 @@ def getSms():
 
         _remain = _remain - len(cursms)
         sms.append(cursms)
+
 
 def processSMS(sms):
 
@@ -1206,7 +1209,7 @@ def getBatteryText():
     getInputmV()
 
     if debug is True:
-        logging.debug('bat1Mv is: ' + str(bat1Mv) + ' mv bat2Mv is: ' 
+        logging.debug('bat1Mv is: ' + str(bat1Mv) + ' mv bat2Mv is: '
                       + str(bat2Mv) + ' mv')
 
     # for each battery define a state
@@ -1217,32 +1220,32 @@ def getBatteryText():
     # below
     # "{0:.2f}".format((bat1Mv) / 1000)
     if bat1Mv > 13000:
-       status = status + 'Bat1 Charging: ' \
-                + "{0:.2f}".format((bat1Mv) / 1000) + 'V'
+        status = status + 'Bat1 Charging: ' \
+               + "{0:.2f}".format((bat1Mv) / 1000) + 'V'
     elif bat1Mv > batteryOkMVolts:
-       status = status + 'Bat1 OK: ' + "{0:.2f}".format((bat1Mv) / 1000) + 'V'
+        status = status + 'Bat1 OK: ' + "{0:.2f}".format((bat1Mv) / 1000) + 'V'
     elif bat1Mv == 0:
-       status = status + 'Bat1 Missing: 0V'
+        status = status + 'Bat1 Missing: 0V'
     elif bat1Mv < 11000:
-       status = status + 'Bat1 Low: ' \
-                + "{0:.2f}".format((bat1Mv) / 1000) + 'V'
+        status = status + 'Bat1 Low: ' \
+               + "{0:.2f}".format((bat1Mv) / 1000) + 'V'
     else:
-       status = status + 'Bat1 state unkown'
+        status = status + 'Bat1 state unkown'
 
     # Battery2 is assumed to be a 9v
     # above 9000 is Ok
     # below 5200 is low
     # 0 == mising/dead
     if bat2Mv > 7000:
-       status = status + ' Bat2 OK: ' \
-                + "{0:.2f}".format((bat2Mv) / 1000) + 'V'
+        status = status + ' Bat2 OK: ' \
+               + "{0:.2f}".format((bat2Mv) / 1000) + 'V'
     elif bat2Mv == 0:
-       status = status + ' Bat2 Missing: 0V'
+        status = status + ' Bat2 Missing: 0V'
     elif bat2Mv < 5200:
-       status = status + ' Bat2 Low: ' \
-                + "{0:.2f}".format((bat2Mv) / 1000) + 'V'
+        status = status + ' Bat2 Low: ' \
+               + "{0:.2f}".format((bat2Mv) / 1000) + 'V'
     else:
-       status = status + 'Bat2 state unkown'
+        status = status + 'Bat2 state unkown'
 
     return status
 
@@ -1276,10 +1279,11 @@ def checkBilge():
 
     # checks switch and bleats if not ok
 
-    if bilgeSwitchState is True: 
+    if bilgeSwitchState is True:
 
         if debug is True:
-            logging.debug('bilgeSwitchState is true ... about to try to send SMS')
+            logging.debug('bilgeSwitchState is true ... '
+                          + 'about to try to send SMS')
 
         # oh pants!!!
         # try and send the SMS
@@ -1325,7 +1329,7 @@ def setAnchorAlarmSms(sms):
     # set anchor alarm off
 
     # deal with an off first
-    if 'set anchor alarm off' in  _lowertxt:
+    if 'set anchor alarm off' in _lowertxt:
 
         logging.info('Disabling the Anchor Alarm')
         # disabled the Alarm by Nulling the values
@@ -1338,7 +1342,7 @@ def setAnchorAlarmSms(sms):
 
         # sort a message to send back
         reply = 'Anchor alarm being diabled!'
-   
+ 
         # sent the SMS
         sendSms(number, reply)
 
@@ -1374,15 +1378,15 @@ def setAnchorAlarmSms(sms):
     else:
         # not re match set 20M as default
         alarmRange = 20
-        
+ 
     # so we should have something sensible by now ..
     _presentLat, _presentLon = gpsp.getCurretAvgLatLon()
 
     if _presentLat is '' or _presentLon is '':
 
-        reply = ('Trying to set Anchor Alarm, but Present Lat is: ' \
-                 + str(_presentLat) + ' or Lon is: ' + str(_presentLon) \
-                 + ' ie we have no fix to alarm from!!!')
+        reply = 'Trying to set Anchor Alarm, but Present Lat is: ' \
+                + str(_presentLat) + ' or Lon is: ' + str(_presentLon) \
+                + ' ie we have no fix to alarm from!!!'
 
         logging.error(reply)
 
@@ -1396,7 +1400,7 @@ def setAnchorAlarmSms(sms):
         alarmLon = _presentLon
         logging.info(reply)
         saveConfig()
-    
+
     # send replry
     sendSms(number, reply)
 
@@ -1464,7 +1468,7 @@ def updatePhoneSms(sms):
 
     else:
         logging.error('Not a phone number we could parse in: ' \
-                      + str (sms[0]['Text']))
+                      + str(sms[0]['Text']))
 
 def debugSms(sms):
 
@@ -1510,14 +1514,13 @@ def debugSms(sms):
 
     sendSms(number, reply)
 
+
 def sendInstructionsSms(sms):
 
     # get the number
     number = str(sms[0]['Number'])
 
     # Put are reply together
-    #reply = 'Commands - set followed by;\nphone NUM\ndaily status [TIME|off]\nset anchor alarm [M|off]\ndebug [on|off]\nbattery ok volts\nsleep time MINS\nsend state\nset battery ok mvolts [mvolts]\nshutdown'
-
     reply = "set then\nphone NUM\ndaily status [TIME|off]\nset anchor alarm [M|off]\ndebug [on|off]\nbattery ok volts\nsleep time MINS\nsend state\nset battery ok mvolts [mvolts]shutdown\n"
     logging.info('Sending instructions SMS')
 
@@ -1541,15 +1544,15 @@ def checkRegularStatus():
     global sendStatus
 
     if debug is True:
-        logging.debug('regularStatus is: ' + str(regularStatus) \
+        logging.debug('regularStatus is: ' + str(regularStatus)
                       + ',sendStatus is: ' + str(sendStatus))
 
     # check if we need to send regular Status
     if regularStatus is True:
 
         sendStatus = True
-        logging.info('regularStatus is: ' + str(regularStatus) \
-                     + ', therefore we are going to send status this run' \
+        logging.info('regularStatus is: ' + str(regularStatus)
+                     + ', therefore we are going to send status this run'
                      + ', by setting sendStatus to: ' + str(sendStatus))
 
 
@@ -1577,8 +1580,8 @@ def checkDailyStatus():
     # have we run today - note if this is blank it will run
 
     try:
-        _lastRun = datetime.datetime.strptime(lastDailyStatusCheck \
-                   , "%Y-%m-%d %H:%M:%S.%f")
+        _lastRun = datetime.datetime.strptime(lastDailyStatusCheck
+                     ,"%Y-%m-%d %H:%M:%S.%f")
 
         if _lastRun.date() == _now.date():
 
@@ -1589,7 +1592,7 @@ def checkDailyStatus():
 
     except ValueError:
         _lastRun = None
-        logging.error('lastDailyStatusCheck: ' + str(lastDailyStatusCheck) \
+        logging.error('lastDailyStatusCheck: ' + str(lastDailyStatusCheck)
                      + 'Could not be parsed into a date')
 
     # so ... if we got this far we need to check the time
@@ -1600,13 +1603,13 @@ def checkDailyStatus():
     try:
         _hour, _minute = p.findall(str(dailyStatus))
     except ValueError:
-        logging.error('Could not parse dailyStatus: ' + str(dailyStatus) \
+        logging.error('Could not parse dailyStatus: ' + str(dailyStatus)
                       + ' into _hour, _minute')
 
     # http://www.saltycrane.com/blog/2008/06/how-to-get-current-date-and-time-in/
-    if _hour >=0 and _minute >= 0:
-        _nextAlarm = datetime.datetime(_now.year, _now.month, _now.day, 
-                int(_hour), int(_minute), 0)
+    if _hour >= 0 and _minute >= 0:
+        _nextAlarm = datetime.datetime(_now.year, _now.month, _now.day,
+                      int(_hour), int(_minute), 0)
         logging.info('Next daily check due: ' + str(_nextAlarm))
 
     else:
@@ -1635,7 +1638,7 @@ def checkDailyStatus():
 
         else:
             # log the fact we ops'ed
-            logging.error('Failed to send daily SMS' \
+            logging.error('Failed to send daily SMS'
                           + ' - should try again next run')
 
 
@@ -1665,7 +1668,7 @@ def sendAndLogStatus():
         logStatus = False
 
         if debug is True:
-            logging.debug('About to call sendSMS as sendStatus is: ' 
+            logging.debug('About to call sendSMS as sendStatus is: '
                           + str(sendStatus))
 
         if sendSms(phone, message):
@@ -1699,7 +1702,7 @@ def setBilgeSwitchState():
 
     _input18State = RPi.GPIO.input(18)
 
-    if _input18State == False:
+    if _input18State is False:
 
         # BilgeSwitch is on ... Ops:
 
@@ -1726,7 +1729,7 @@ def sendHttpsLogging():
                          .read().split()]
 
     payload = {'wakeInNSecs': str(wakeInNSecs),
-               'runtime':str(wakeInNSecs),
+               'runtime': str(wakeInNSecs),
                'BilgeSwitchState': str(bilgeSwitchState),
                'phone': str(phone),
                'boatname': str(boatname),
@@ -1745,7 +1748,7 @@ def sendHttpsLogging():
     httpsHostname = 'www.webarmadillo.net'
     httpBasicAuthUser = 'greg'
     httpBasicAuthPassword = 'm21cat'
-   
+
     uri = 'https://' + str(httpBasicAuthUser) + '@' \
           + str(httpsHostname) + str(httpsUriPath)
 
@@ -1799,13 +1802,14 @@ def sendDebugMessage():
 def logUptime():
 
     uptime, idletime = [float(f) for f in open("/proc/uptime").read().split()]
-    logging.info('Uptime: ' + str(uptime) + ' secs, idletime: ' \
+    logging.info('Uptime: ' + str(uptime) + ' secs, idletime: '
                  + str(idletime) + ' secs')
 
 
 def waitTillUptime(requiredUptime):
 
-    _uptime, _idletime = [float(f) for f in open("/proc/uptime").read().split()]
+    _uptime, _idletime = [float(f) for f in open("/proc/uptime")
+                          .read().split()]
     _loop = 0
 
     #
@@ -1817,7 +1821,7 @@ def waitTillUptime(requiredUptime):
 
         # we have run at least once
         _loop += 1
-   
+
         # wait a bit
         time.sleep(1)
 
@@ -1838,14 +1842,14 @@ if __name__ == '__main__':
 
     # check we are running as sudo
     if os.geteuid() != 0:
-        exit("You need to have root privileges to run this script.\n" \
+        exit("You need to have root privileges to run this script.\n"
              + "Please try again, this time using 'sudo'. Exiting.")
 
     # setup logger
     try:
         logging.basicConfig(filename=logfile, level=logging.DEBUG,
                             format='%(asctime)s %(levelname)s'
-                                    + '%(funcName)s %(message)s')
+                                   + '%(funcName)s %(message)s')
     except Exception, e:
         print 'Logging problem' + str(e)
         sys.exit(1)
