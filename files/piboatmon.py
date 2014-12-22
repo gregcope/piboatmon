@@ -48,6 +48,7 @@ bat1Mv = None
 bat2Mv = None
 presentLat = None
 presentLon = None
+imei = None
 
 # some object handles
 gpsd = None
@@ -452,6 +453,7 @@ def setUpGammu():
 
     # fish out the global var
     global sm
+    global imei
 
     # setups the SMS gammu system
     # returns true if all good
@@ -520,8 +522,13 @@ def setUpGammu():
             # we are not going as we can log other stuff and then exit 1 to retry
             sm = False
             return
+    try:
+        imei = sm.GetIMEI()
+    except Exception, e:
+        logging.error('failed to sm.GetIMEI(): ', + str(e))
+        imei = 0
 
-    logging.info('Done - modem ready to read/send SMSs')
+    logging.info('Done - modem imei: ' + str(imei) + ' ready to read/send SMSs')
     # done
     return
 
@@ -1443,7 +1450,7 @@ def sendInstructionsSms(sms):
     number = str(sms[0]['Number'])
 
     # Put are reply together
-    #reply = 'Commands - set followed by;\nphone NUM\ndaily status [TIME|off]\nset anchor alarm [M|off]\ndebug [on|off]\nbatter ok volts\nsleep time MINS\nsend state\nset battery ok mvolts [mvolts]\nshutdown'
+    #reply = 'Commands - set followed by;\nphone NUM\ndaily status [TIME|off]\nset anchor alarm [M|off]\ndebug [on|off]\nbattery ok volts\nsleep time MINS\nsend state\nset battery ok mvolts [mvolts]\nshutdown'
 
     reply = "set then\nphone NUM\ndaily status [TIME|off]\nset anchor alarm [M|off]\ndebug [on|off]\nbattery ok volts\nsleep time MINS\nsend state\nset battery ok mvolts [mvolts]shutdown\n"
     logging.info('Sending instructions SMS')
@@ -1627,6 +1634,41 @@ def checkBilgeSwitch():
     return bilgeSwitchState
 
 
+def sendHttpsLogging():
+
+    # send an HTTPS get request with status messages as query string
+    # Using HTTPS as it is the lowest common denominator
+
+    # get uptime
+    runtime, idletime = [float(f) for f in open("/proc/uptime").read().split()]
+
+    queryString = '?wakeInNSecs=' + str(wakeInNSecs) \
+                  + '&runtime=' + str(uptime) \
+                  + '&BilgeSwitchState=' + str(bilgeSwitchState) \
+                  + '&bat1=' + "{0:.2f}".format((bat1Mv) \
+                  + '&bat2=' + "{0:.2f}".format((bat2Mv) \
+                  + '&batteryOkMVolts=' + str(batteryOkMVolts) \
+                  + '&phone=' + str(phone) \
+                  + '&boatname=' + str(boatname) \
+                  + '&alarmRange=' + str(alarmRange) \
+                  + '&alarmLat=' + str(alarmLat) \
+                  + '&alarmLon=' + str(alarmLon) \
+                  + '&lastDailyStatusCheck=' + str(lastDailyStatusCheck) \
+                  + '&shutdown=' + str(shutdown) \
+                  + '&regularStatus=' + str(regularStatus) \
+
+    httpsUriPath = '/pibotmon/logging' + str(imie)
+
+    httpsHostname = 'www.webarmadillo.net'
+    httpBasicAuthUser = 'greg'
+    httpBasicAuthPassword = 'foo'
+
+    uri = 'https://' + str(httpBasicAuthUser) + '@'
+           + str(httpsHostname) + str(httpsHostname)
+           + str(httpsUriPath) + str(queryString)
+
+    print uri
+
 def dailyStatusOffSms(sms):
 
     # get the number
@@ -1668,6 +1710,7 @@ def logUptime():
     uptime, idletime = [float(f) for f in open("/proc/uptime").read().split()]
     logging.info('Uptime: ' + str(uptime) + ' secs, idletime: ' + str(idletime) + ' secs')
 
+
 def waitTillUptime(requiredUptime):
 
     _uptime, _idletime = [float(f) for f in open("/proc/uptime").read().split()]
@@ -1693,6 +1736,7 @@ def waitTillUptime(requiredUptime):
             logging.debug('_uptime is: ' + str(_uptime) + ', we have looped: ' + str(_loop) + ' times')
 
     logging.info('Uptime now: ' + str(_uptime) + ', uptime required: ' + str(requiredUptime) + ', we looped: ' + str(_loop) + ' secs')
+
 
 if __name__ == '__main__':
 
@@ -1761,6 +1805,9 @@ if __name__ == '__main__':
 
     # setPowerOnDelay
     setPowerOnDelay()
+
+    # send server logging Status
+    sendHttpsLogging()
 
     # we think we are done ..
     # stop the thread and wait for it to join
