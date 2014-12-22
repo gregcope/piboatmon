@@ -43,9 +43,11 @@ sendStatus = False
 logStatus = True
 shutdown = False
 regularStatus = False
-bilgeSwitchState = False
-bat1Mv = 0
-bat2Mv = 0
+bilgeSwitchState = None
+bat1Mv = None
+bat2Mv = None
+presentLat = None
+presentLon = None
 
 # some object handles
 gpsd = None
@@ -1148,12 +1150,11 @@ def getBatteryText():
 
     status = ''
 
+    global bat1Mv
+    global bat2Mv
+
     # get battery volts from mopi
     getInputmV()
-
-    # cast them into floats
-    bat1Mv = float(bat1Mv)
-    bat2Mv = float(bat2Mv)
 
     if debug is True:
         logging.debug('bat1Mv is: ' + str(bat1Mv) + ' mv bat2Mv is: ' + str(bat2Mv) + ' mv' )
