@@ -971,7 +971,7 @@ def setupSms(sms):
                 + str(phone)
         logging.info(reply)
 
-    # we should have a reply eitherway ... 
+    # we should have a reply eitherway ...
     sendSms(number, reply)
 
 def shutdownSms(sms):
@@ -1079,6 +1079,7 @@ def setBatteryOkMVoltsSms(sms):
 
     # sent the SMS
     sendSms(number, reply)
+
 
 def setDailyStatusSms(sms):
 
@@ -1205,7 +1206,8 @@ def getBatteryText():
     getInputmV()
 
     if debug is True:
-        logging.debug('bat1Mv is: ' + str(bat1Mv) + ' mv bat2Mv is: ' + str(bat2Mv) + ' mv' )
+        logging.debug('bat1Mv is: ' + str(bat1Mv) + ' mv bat2Mv is: ' 
+                      + str(bat2Mv) + ' mv')
 
     # for each battery define a state
     # above 13000 charging
@@ -1213,15 +1215,17 @@ def getBatteryText():
     # lower than 11000 low
     # 0 == missing/dead
     # below
-    # "{0:.2f}".format((bat1Mv) / 1000) 
+    # "{0:.2f}".format((bat1Mv) / 1000)
     if bat1Mv > 13000:
-       status = status + 'Bat1 Charging: ' + "{0:.2f}".format((bat1Mv) / 1000) + 'V'
+       status = status + 'Bat1 Charging: ' \
+                + "{0:.2f}".format((bat1Mv) / 1000) + 'V'
     elif bat1Mv > batteryOkMVolts:
        status = status + 'Bat1 OK: ' + "{0:.2f}".format((bat1Mv) / 1000) + 'V'
     elif bat1Mv == 0:
        status = status + 'Bat1 Missing: 0V'
     elif bat1Mv < 11000:
-       status = status + 'Bat1 Low: ' + "{0:.2f}".format((bat1Mv) / 1000) + 'V'
+       status = status + 'Bat1 Low: ' \
+                + "{0:.2f}".format((bat1Mv) / 1000) + 'V'
     else:
        status = status + 'Bat1 state unkown'
 
@@ -1230,13 +1234,13 @@ def getBatteryText():
     # below 5200 is low
     # 0 == mising/dead
     if bat2Mv > 7000:
-       status = status + ' Bat2 OK: ' + "{0:.2f}".format((bat2Mv) / 1000) \
-                + 'V'
+       status = status + ' Bat2 OK: ' \
+                + "{0:.2f}".format((bat2Mv) / 1000) + 'V'
     elif bat2Mv == 0:
        status = status + ' Bat2 Missing: 0V'
     elif bat2Mv < 5200:
-       status = status + ' Bat2 Low: ' + "{0:.2f}".format((bat2Mv) / 1000) \
-                + 'V'
+       status = status + ' Bat2 Low: ' \
+                + "{0:.2f}".format((bat2Mv) / 1000) + 'V'
     else:
        status = status + 'Bat2 state unkown'
 
