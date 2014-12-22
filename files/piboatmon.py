@@ -665,7 +665,7 @@ def sendSms(_number, _txt):
         return False
 
     # Prefix with boatname and time
-    _txt = datetime.datetime.now().strftime("%a %X") + ' ' + boatname \ 
+    _txt = datetime.datetime.now().strftime("%a %X") + ' ' + boatname \
            + ': ' + _txt
 
     if debug is True:
