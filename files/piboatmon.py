@@ -623,7 +623,7 @@ def checkAnchorAlarm():
 
                 if sm != '' and phone != '' :
 
-                    # send both texts  
+                    # send both texts
                     sendSms(phone, txt)
                     sendSms(phone, txt2)
 
@@ -673,7 +673,7 @@ def sendSms(_number, _txt):
                       + ' to: ' + str(_number))
 
     # go for it
-    message = { 'Text': _txt, 'SMSC': {'Location': 1}, 'Number': _number }
+    message = {'Text': _txt, 'SMSC': {'Location': 1}, 'Number': _number}
 
     try:
 
@@ -688,9 +688,10 @@ def sendSms(_number, _txt):
 
     except Exception, e:
 
-        # Ops... 
+        # Ops...
         logging.error('Exception: ' +str(e))
         return False
+
 
 def distance(lat1, lon1, lat2, lon2):
 
