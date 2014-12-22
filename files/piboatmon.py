@@ -1872,7 +1872,7 @@ if __name__ == '__main__':
     try:
         logging.basicConfig(filename=logfile, level=logging.DEBUG,
                             format='%(asctime)s %(levelname)s'
-                                   + '%(funcName)s %(message)s')
+                                   + ' %(funcName)s %(message)s')
     except Exception, e:
         print 'Logging problem' + str(e)
         sys.exit(1)
