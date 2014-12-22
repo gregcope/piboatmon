@@ -625,29 +625,30 @@ def checkAnchorAlarm():
                 txt2 = 'ANCHOR ALARM: http://maps.google.com/maps' \
                        + '?z=12&t=m&q=loc:' + str(newlat) + '+' + str(newlon)
 
-                if sm != '' and phone != '' :
+                if sm != '' and phone != '':
 
                     # send both texts
                     sendSms(phone, txt)
                     sendSms(phone, txt2)
 
                 else:
-                    logging.error('No SMS statemachine, or phone configured' \
+                    logging.error('No SMS statemachine, or phone configured' 
                                   + ' - cannot send anchor alarm SMS')
 
             else:
                 # we have moved less than the alarm
-                logging.info('We have moved: ' + str(movedDistanceM) \
-                             + 'M, which is not enough to setoff alarm: ' \
+                logging.info('We have moved: ' + str(movedDistanceM) 
+                             + 'M, which is not enough to setoff alarm: ' 
                              + str(alarmRange) + 'M')
 
         else:
             # lat / lon are empty !!!!
-            logging.error('Anchor alarm set: ' + str(alarmRange) \
+            logging.error('Anchor alarm set: ' + str(alarmRange)
                           + ' , but Lat or Lon are empty')
     else:
         # No anchor alarm ... bale
         logging.info('No Anchor alarm set')
+
 
 def sendSms(_number, _txt):
 
@@ -659,7 +660,7 @@ def sendSms(_number, _txt):
         _number = phone
 
     if _number is '':
-        logging.error('Trying to send a SMS to a phone that is not set' \
+        logging.error('Trying to send a SMS to a phone that is not set'
                       + ' - phone: ' + str(_number))
         # give up
         return False
@@ -673,7 +674,7 @@ def sendSms(_number, _txt):
            + ': ' + _txt
 
     if debug is True:
-        logging.debug('Trying to send SMS message: ' + str(_txt) \
+        logging.debug('Trying to send SMS message: ' + str(_txt) 
                       + ' to: ' + str(_number))
 
     # go for it
@@ -1101,12 +1102,14 @@ def setDailyStatusSms(sms):
         saveConfig()
 
         # reply
-        reply = 'Daily status setup to be sent around: ' + str(dailyStatus) + ' UTC each day (depends on wakeUp)'
+        reply = 'Daily status setup to be sent around: ' \
+                + str(dailyStatus) + ' UTC each day (depends on wakeUp)'
         logging.info(reply)
 
     # could not parse results
     else:
-        reply = 'Could not parse new daily status update: ' + str(_txt) + 'Needs to be 4 digit 24hr clock notation'
+        reply = 'Could not parse new daily status update: ' \
+                + str(_txt) + 'Needs to be 4 digit 24hr clock notation'
         logging.error(reply)
 
     # sent the SMS
@@ -1181,6 +1184,7 @@ def setPowerOnDelay():
 
     print 'Setting wake on delay to: ' + str(wakeInNSecs)
 
+
 def getInputmV():
 
     global bat1Mv
@@ -1188,6 +1192,7 @@ def getInputmV():
 
     bat1Mv = float(mopi.getVoltage(1))
     bat2Mv = float(mopi.getVoltage(2))
+
 
 def getBatteryText():
 
@@ -1225,15 +1230,18 @@ def getBatteryText():
     # below 5200 is low
     # 0 == mising/dead
     if bat2Mv > 7000:
-       status = status + ' Bat2 OK: ' + "{0:.2f}".format((bat2Mv) / 1000) + 'V'
+       status = status + ' Bat2 OK: ' + "{0:.2f}".format((bat2Mv) / 1000) \
+                + 'V'
     elif bat2Mv == 0:
        status = status + ' Bat2 Missing: 0V'
     elif bat2Mv < 5200:
-       status = status + ' Bat2 Low: ' + "{0:.2f}".format((bat2Mv) / 1000) + 'V'
+       status = status + ' Bat2 Low: ' + "{0:.2f}".format((bat2Mv) / 1000) \
+                + 'V'
     else:
        status = status + 'Bat2 state unkown'
 
     return status
+
 
 def checkBattery():
 
