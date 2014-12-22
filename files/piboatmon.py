@@ -1653,7 +1653,7 @@ def sendHttpsLogging():
                   + '&lastDailyStatusCheck=' + str(lastDailyStatusCheck) \
                   + '&shutdown=' + str(shutdown) \
                   + '&batteryOkMVolts=' + str(batteryOkMVolts) \
-                  + '&regularStatus=' + str(regularStatus)
+                  + '&regularStatus=' + str(regularStatus) \
                   + '&bat1=' + "{0:.2f}".format((bat1Mv) / 1000) \
                   + '&bat1=' + "{0:.2f}".format((bat1Mv) / 1000)
 
