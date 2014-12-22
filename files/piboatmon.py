@@ -1643,11 +1643,11 @@ def sendHttpsLogging():
     runtime, idletime = [float(f) for f in open("/proc/uptime").read().split()]
 
     queryString = '?wakeInNSecs=' + str(wakeInNSecs) \
-                  + '&runtime=' + str(uptime) 
-    #              + '&BilgeSwitchState=' + str(bilgeSwitchState) \
-    #              + '&bat1=' + "{0:.2f}".format((bat1Mv) \
-    #              + '&bat2=' + "{0:.2f}".format((bat2Mv) \
-    #              + '&batteryOkMVolts=' + str(batteryOkMVolts) \
+                  + '&runtime=' + str(uptime) \
+                  + '&BilgeSwitchState=' + str(bilgeSwitchState) \
+                  + '&bat1=' + "{0:.2f}".format((bat1Mv) \
+                  + '&bat2=' + "{0:.2f}".format((bat2Mv) \
+                  + '&batteryOkMVolts=' + str(batteryOkMVolts)
     #              + '&phone=' + str(phone) \
     #              + '&boatname=' + str(boatname) \
     #              + '&alarmRange=' + str(alarmRange) \
@@ -1664,8 +1664,8 @@ def sendHttpsLogging():
     httpBasicAuthPassword = 'foo'
 
     uri = 'https://' + str(httpBasicAuthUser) + '@'
-           + str(httpsHostname) + str(httpsHostname)
-           + str(httpsUriPath) + str(queryString)
+          + str(httpsHostname) + str(httpsHostname)
+          + str(httpsUriPath) + str(queryString)
 
     print uri
     logging.info(uri)
