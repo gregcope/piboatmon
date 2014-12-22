@@ -27,6 +27,7 @@ import smbus
 import errno
 import RPi.GPIO
 import ctypes
+import requests
 
 # global Vars
 phone = ''
@@ -1642,32 +1643,40 @@ def sendHttpsLogging():
     # get uptime
     runtime, idletime = [float(f) for f in open("/proc/uptime").read().split()]
 
-    queryString = '?wakeInNSecs=' + str(wakeInNSecs) \
-                  + '&runtime=' + str(runtime) \
-                  + '&BilgeSwitchState=' + str(bilgeSwitchState) \
-                  + '&phone=' + str(phone) \
-                  + '&boatname=' + str(boatname) \
-                  + '&alarmRange=' + str(alarmRange) \
-                  + '&alarmLat=' + str(alarmLat) \
-                  + '&alarmLon=' + str(alarmLon) \
-                  + '&lastDailyStatusCheck=' + str(lastDailyStatusCheck) \
-                  + '&shutdown=' + str(shutdown) \
-                  + '&batteryOkMVolts=' + str(batteryOkMVolts) \
-                  + '&regularStatus=' + str(regularStatus) \
-                  + '&bat1=' + "{0:.2f}".format((bat1Mv) / 1000) \
-                  + '&bat1=' + "{0:.2f}".format((bat1Mv) / 1000)
+    pauload = { 'wakeInNSecs': str(wakeInNSecs), \
+                'runtime':str(wakeInNSecs), \
+                'BilgeSwitchState': str(bilgeSwitchState), \
+                'phone': str(phone), \
+                'boatname': str(boatname), \
+                'alarmRange': str(alarmRange), \
+                'alarmLat': str(alarmLat), \
+                'alarmLon': str(alarmLon), \
+                'lastDailyStatusCheck=': str(lastDailyStatusCheck), \
+                'shutdown=': str(shutdown), \
+                'batteryOkMVolts': str(batteryOkMVolts), \
+                'regularStatus': str(regularStatus), \
+                'bat1': "{0:.2f}".format((bat1Mv) / 1000), \
+                'bat1': "{0:.2f}".format((bat1Mv) / 1000) }
 
     httpsUriPath = '/pibotmon/logging/imei/' + str(imei)
 
     httpsHostname = 'www.webarmadillo.net'
     httpBasicAuthUser = 'greg'
     httpBasicAuthPassword = 'foo'
-
+   
     uri = 'https://' + str(httpBasicAuthUser) + '@' \
-          + str(httpsHostname) + str(httpsUriPath) + str(queryString)
+          + str(httpsHostname) + str(httpsUriPath)
 
-    print uri
-    logging.info(uri)
+    try:
+
+        r = requests.get(uri, params=payload, timeout=0.4, verify=False)
+        print r.url
+        logging.info(r.url)
+
+    except Exception, e:
+
+        logging.error('Could not send HTTPS logging: ' + str(e))
+
 
 def dailyStatusOffSms(sms):
 
