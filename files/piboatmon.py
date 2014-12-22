@@ -1655,7 +1655,7 @@ def sendHttpsLogging():
                   + '&alarmLon=' + str(alarmLon) \
                   + '&lastDailyStatusCheck=' + str(lastDailyStatusCheck) \
                   + '&shutdown=' + str(shutdown) \
-                  + '&regularStatus=' + str(regularStatus) \
+                  + '&regularStatus=' + str(regularStatus)
 
     httpsUriPath = '/pibotmon/logging' + str(imie)
 
