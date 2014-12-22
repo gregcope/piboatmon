@@ -1645,8 +1645,16 @@ def sendHttpsLogging():
     queryString = '?wakeInNSecs=' + str(wakeInNSecs) \
                   + '&runtime=' + str(runtime) \
                   + '&BilgeSwitchState=' + str(bilgeSwitchState) \
-                  + '&bat1=' + "{0:.2f}".format((bat1Mv) \
-                  + '&bat2=' + "{0:.2f}".format((bat2Mv)
+                  + '&phone=' + str(phone) \
+                  + '&boatname=' + str(boatname) \
+                  + '&alarmRange=' + str(alarmRange) \
+                  + '&alarmLat=' + str(alarmLat) \
+                  + '&alarmLon=' + str(alarmLon) \
+                  + '&lastDailyStatusCheck=' + str(lastDailyStatusCheck) \
+                  + '&shutdown=' + str(shutdown)
+
+#                  + '&bat1=' + "{0:.2f}".format((bat1Mv) \
+#                  + '&bat2=' + "{0:.2f}".format((bat2Mv)
 #                  + '&batteryOkMVolts=' + str(batteryOkMVolts) \
 #                  + '&phone=' + str(phone) \
 #                  + '&boatname=' + str(boatname) \
