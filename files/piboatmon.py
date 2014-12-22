@@ -331,6 +331,7 @@ class GpsPoller(threading.Thread):
                + str(roundedAvSpeedKn) + 'KN ' +str(roundedAvHeading) \
                + 'T EP +/-' + str(roundedEp)
 
+
 def saveConfig():
 
     #
@@ -364,6 +365,7 @@ def saveConfig():
     # http://stackoverflow.com/questions/15983272/does-python-have-sync
     libc = ctypes.CDLL("libc.so.6")
     libc.sync()
+
 
 def loadConfig():
 
@@ -455,6 +457,7 @@ def loadConfig():
         sendStatus = False
 
     logging.info(str(configP.items('main')))
+
 
 def setUpGammu():
 
@@ -1637,7 +1640,7 @@ def sendAndLogStatus():
     _sent = False
 
     if debug is True:
-        logging.debug('sendStatus is: ' + str(sendStatus) \
+        logging.debug('sendStatus is: ' + str(sendStatus)
                       + ', logStatus is: ' + str(logStatus))
 
     if sendStatus is True:
@@ -1650,14 +1653,16 @@ def sendAndLogStatus():
         logStatus = False
 
         if debug is True:
-            logging.debug('About to call sendSMS as sendStatus is: ' +str(sendStatus))
+            logging.debug('About to call sendSMS as sendStatus is: ' 
+                          + str(sendStatus))
 
         if sendSms(phone, message):
             # went ok - clear any flags
             sendStatus = False
             _sent = True
         else:
-            logging.error('Failed to send status ... will try next run as sendStatus is: ' + str(sendStatus))
+            logging.error('Failed to send status ... will try next run'
+                          + ' as sendStatus is: ' + str(sendStatus))
             sendStatus = True
 
         # either way save state
@@ -1705,7 +1710,8 @@ def sendHttpsLogging():
     # Using HTTPS as it is the lowest common denominator
 
     # get uptime
-    runtime, idletime = [float(f) for f in open("/proc/uptime").read().split()]
+    runtime, idletime = [float(f) for f in open("/proc/uptime")
+                         .read().split()]
 
     payload = {'wakeInNSecs': str(wakeInNSecs),
                'runtime':str(wakeInNSecs),
@@ -1804,15 +1810,15 @@ def waitTillUptime(requiredUptime):
         time.sleep(1)
 
         # get
-        _uptime, _idletime = [float(f) for f in open("/proc/uptime") \
+        _uptime, _idletime = [float(f) for f in open("/proc/uptime")
                               .read().split()]
 
         if debug is True:
-            logging.debug('_uptime is: ' + str(_uptime) \
+            logging.debug('_uptime is: ' + str(_uptime)
                           + ', we have looped: ' + str(_loop) + ' times')
 
-    logging.info('Uptime now: ' + str(_uptime) + ', uptime required: ' \
-                 + str(requiredUptime) + ', we looped: ' \
+    logging.info('Uptime now: ' + str(_uptime) + ', uptime required: '
+                 + str(requiredUptime) + ', we looped: '
                  + str(_loop) + ' secs')
 
 
@@ -1826,7 +1832,7 @@ if __name__ == '__main__':
     # setup logger
     try:
         logging.basicConfig(filename=logfile, level=logging.DEBUG,
-                            format='%(asctime)s %(levelname)s' \
+                            format='%(asctime)s %(levelname)s'
                                     + '%(funcName)s %(message)s')
     except Exception, e:
         print 'Logging problem' + str(e)
