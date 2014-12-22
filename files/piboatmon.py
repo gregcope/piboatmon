@@ -1643,7 +1643,7 @@ def sendHttpsLogging():
     # get uptime
     runtime, idletime = [float(f) for f in open("/proc/uptime").read().split()]
 
-    pauload = { 'wakeInNSecs': str(wakeInNSecs), \
+    payload = { 'wakeInNSecs': str(wakeInNSecs), \
                 'runtime':str(wakeInNSecs), \
                 'BilgeSwitchState': str(bilgeSwitchState), \
                 'phone': str(phone), \
