@@ -1642,12 +1642,12 @@ def sendHttpsLogging():
     # get uptime
     runtime, idletime = [float(f) for f in open("/proc/uptime").read().split()]
 
-    queryString = '?wakeInNSecs=' + str(wakeInNSecs) \
-                  + '&runtime=' + str(uptime) \
-                  + '&BilgeSwitchState=' + str(bilgeSwitchState) \
-                  + '&bat1=' + "{0:.2f}".format((bat1Mv) \
-                  + '&bat2=' + "{0:.2f}".format((bat2Mv) \
-                  + '&batteryOkMVolts=' + str(batteryOkMVolts)
+    #queryString = '?wakeInNSecs=' + str(wakeInNSecs) \
+    #              + '&runtime=' + str(uptime) \
+    #              + '&BilgeSwitchState=' + str(bilgeSwitchState) \
+    #              + '&bat1=' + "{0:.2f}".format((bat1Mv) \
+    #              + '&bat2=' + "{0:.2f}".format((bat2Mv) \
+    #              + '&batteryOkMVolts=' + str(batteryOkMVolts) \
     #              + '&phone=' + str(phone) \
     #              + '&boatname=' + str(boatname) \
     #              + '&alarmRange=' + str(alarmRange) \
@@ -1656,6 +1656,8 @@ def sendHttpsLogging():
     #              + '&lastDailyStatusCheck=' + str(lastDailyStatusCheck) \
     #              + '&shutdown=' + str(shutdown) \
     #              + '&regularStatus=' + str(regularStatus)
+
+    queryString = 'moo'
 
     httpsUriPath = '/pibotmon/logging' + str(imie)
 
