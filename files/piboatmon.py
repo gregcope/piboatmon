@@ -1668,6 +1668,7 @@ def sendHttpsLogging():
            + str(httpsUriPath) + str(queryString)
 
     print uri
+    logging.info(uri)
 
 def dailyStatusOffSms(sms):
 
