@@ -70,7 +70,8 @@ MAXTRIES = 3
 logfile = '/home/pi/piboatmon/files/piboatmon.log'
 configFile = "/home/pi/piboatmon/files/piboatmon.config"
 
-###### Code below here
+# Code below here
+
 
 class mopiapi():
         device = 0xb
@@ -1800,7 +1801,8 @@ def waitTillUptime(requiredUptime):
         time.sleep(1)
 
         # get
-        _uptime, _idletime = [float(f) for f in open("/proc/uptime").read().split()]
+        _uptime, _idletime = [float(f) for f in open("/proc/uptime") \
+                              .read().split()]
 
         if debug is True:
             logging.debug('_uptime is: ' + str(_uptime) \
@@ -1854,7 +1856,7 @@ if __name__ == '__main__':
             logging.debug('Going to try getting SMS messages getSms()')
         getSms()
 
-    # check and spin till we have been up 60 secs 
+    # check and spin till we have been up 60 secs
     # otherwise mopi will not shutdown
     waitTillUptime(50)
 
