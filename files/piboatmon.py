@@ -1752,15 +1752,15 @@ def sendHttpsLogging():
                          .read().split()]
 
     payload = {'wakeInNSecs': str(wakeInNSecs),
-               'runtime': str(wakeInNSecs),
+               'runtime': str(runtime),
                'BilgeSwitchState': str(bilgeSwitchState),
                'phone': str(phone),
                'boatname': str(boatname),
                'alarmRange': str(alarmRange),
                'alarmLat': str(alarmLat),
                'alarmLon': str(alarmLon),
-               'lastDailyStatusCheck=': str(lastDailyStatusCheck),
-               'shutdown=': str(shutdown),
+               'lastDailyStatusCheck': str(lastDailyStatusCheck),
+               'shutdown': str(shutdown),
                'batteryOkMVolts': str(batteryOkMVolts),
                'regularStatus': str(regularStatus),
                'bat1': "{0:.2f}".format((bat1Mv) / 1000),
@@ -1770,7 +1770,7 @@ def sendHttpsLogging():
 
     httpsHostname = 'www.webarmadillo.net'
     httpBasicAuthUser = 'greg'
-    httpBasicAuthPassword = 'm21cat'
+    httpBasicAuthPassword = 'ffff'
 
     uri = 'https://' + str(httpBasicAuthUser) + '@' \
           + str(httpsHostname) + str(httpsUriPath)
