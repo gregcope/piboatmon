@@ -279,7 +279,8 @@ class GpsPoller(threading.Thread):
     def getCurrentAvgData(self):
 
         # return our averaged data
-        return (self.avLat, self.avLon, self.avSpeed, self.avHeading, self.avEpx, self.avEpy, self.numFixes)
+        return (self.avLat, self.avLon, self.avSpeed, self.avHeading, \
+                self.avEpx, self.avEpy, self.numFixes)
 
     def getCurretAvgLatLon(self):
 
@@ -317,13 +318,17 @@ class GpsPoller(threading.Thread):
             prefix = prefix + 'POOR '
 
             if debug is True:
-                logging.debug('numFixes: ' + str(self.numFixes) + ' roundedEp: ' + str(roundedEp))
+                logging.debug('numFixes: ' + str(self.numFixes) \
+                              + ' roundedEp: ' + str(roundedEp))
 
         # convert km/h to knots
         roundedAvSpeedKn = int(self.avSpeed / 0.539957)
 
         # return what we have
-        return 'GPS fix: ' + prefix + 'Lat ' + "{0:.6f}".format(self.avLat) + ' Lon ' + "{0:.6f}".format(self.avLon) + ' ' + str(roundedAvSpeedKn) + 'KN ' +str(roundedAvHeading) + 'T EP +/-' + str(roundedEp)
+        return 'GPS fix: ' + prefix + 'Lat ' + "{0:.6f}".format(self.avLat) \
+               + ' Lon ' + "{0:.6f}".format(self.avLon) + ' ' \
+               + str(roundedAvSpeedKn) + 'KN ' +str(roundedAvHeading) \
+               + 'T EP +/-' + str(roundedEp)
 
 def saveConfig():
 
@@ -461,7 +466,8 @@ def setUpGammu():
     # return false if there are issues
 
     if debug is True:
-        logging.debug('About to put gammu into debug mode logging to: ' + str(logfile))
+        logging.debug('About to put gammu into debug mode logging to: ' \
+                      + str(logfile))
         gammu.SetDebugLevel('errorsdate')
         gammu.SetDebugFile(logfile)
 
@@ -518,9 +524,10 @@ def setUpGammu():
         if _tries >= _gammuInittries:
 
             # log summat
-            logging.error('Pants tried: ' + str(_tries) + 'times to init Gammu... it broke')
+            logging.error('Pants tried: ' + str(_tries) \
+                          + 'times to init Gammu... it broke')
 
-            # we are not going as we can log other stuff and then exit 1 to retry
+            # we keep going as we can log other stuff and then exit 1 to retry
             sm = False
             return
     try:
@@ -542,7 +549,8 @@ def checkAnchorAlarm():
     global sm
 
     if debug is True:
-        logging.debug('alarmRange is: ' + str(alarmRange) + ' alarmLat: ' +str(alarmLat) + ' alarmLon: ' + str(alarmLon))
+        logging.debug('alarmRange is: ' + str(alarmRange) + ' alarmLat: ' \
+                      + str(alarmLat) + ' alarmLon: ' + str(alarmLon))
 
     if alarmRange > 1:
 
@@ -557,11 +565,15 @@ def checkAnchorAlarm():
                 # loop till we get 10 fixes... should not be long
                 time.sleep(1)
                 if debug is True:
-                    logging.debug('Not enough gps fixes - we want 10 - gpsp.getCurrentNoFixes() is: ' + str(gpsp.getCurrentNoFixes()) + ', we have looped: ' + str(_loop))
+                    logging.debug('Not enough gps fixes - we want 10 - ' \
+                                  + 'gpsp.getCurrentNoFixes() is: ' \
+                                  + str(gpsp.getCurrentNoFixes()) \
+                                  + ', we have looped: ' + str(_loop))
                 _loop += 1
 
                 if _loop == 15:
-                    logging.error('Not enough GPS fixes, tried: ' + str(_loop) + ' times')
+                    logging.error('Not enough GPS fixes, tried: ' \
+                                  + str(_loop) + ' times')
                     break
 
             # fetch a fix, may / may not be good
@@ -570,7 +582,10 @@ def checkAnchorAlarm():
             if newlat is 0 or newlon is 0:
 
                 # got an empty fix
-                _txt = 'No present position fix to compare to set anchor alarm - alarm range is: ' + str(alarmRange) + ' alarm Lat: ' +str(alarmLat) + ' alarm Lon: ' + str(alarmLon)
+                _txt = 'No present position fix to compare to set anchor ' \
+                       + 'alarm - alarm range is: ' + str(alarmRange) \
+                       + ' alarm Lat: ' +str(alarmLat) \
+                       + ' alarm Lon: ' + str(alarmLon)
 
                 # log the error, send an SMS and return
                 logging.error(_txt)
@@ -578,10 +593,12 @@ def checkAnchorAlarm():
                 return
 
             if debug is True:
-                logging.debug('Present lat: ' + str(newlat) + ' lon: ' + str(newlon))
+                logging.debug('Present lat: ' + str(newlat) + ' lon: ' \
+                              + str(newlon))
 
             # compare fix with saved config
-            movedDistanceKm = distance(float(alarmLat), float(alarmLon), float(newlat), float(newlon))
+            movedDistanceKm = distance(float(alarmLat), float(alarmLon), \
+                                       float(newlat), float(newlon))
             # change the distance to meters rounded (not 100% accurate)
             movedDistanceM = int(movedDistanceKm * 1000)
 
@@ -592,11 +609,17 @@ def checkAnchorAlarm():
             if movedDistanceM > alarmRange:
 
                 if debug is True:
-                    logging.info('Moved distance: ' + str(movedDistanceM) + 'M is more than alarmRange: ' + str(alarmRange) + 'M')
+                    logging.info('Moved distance: ' + str(movedDistanceM) \
+                                 + 'M is more than alarmRange: ' \
+                                 + str(alarmRange) + 'M')
 
-                txt = 'ANCHOR ALARM.  Distance moved: ' + str(movedDistanceM) +'M, Alarm Range: ' + str(alarmRange) + 'M. New position - Lat: ' + str(newlat) + ', Lon: ' + str(newlon)
+                txt = 'ANCHOR ALARM.  Distance moved: ' + str(movedDistanceM) \
+                      + 'M, Alarm Range: ' + str(alarmRange) \
+                      + 'M. New position - Lat: ' + str(newlat) \
+                      + ', Lon: ' + str(newlon)
 
-                txt2 = 'ANCHOR ALARM: http://maps.google.com/maps?z=12&t=m&q=loc:' + str(newlat) + '+' + str(newlon)
+                txt2 = 'ANCHOR ALARM: http://maps.google.com/maps' \
+                       + '?z=12&t=m&q=loc:' + str(newlat) + '+' + str(newlon)
 
                 if sm != '' and phone != '' :
 
@@ -605,15 +628,19 @@ def checkAnchorAlarm():
                     sendSms(phone, txt2)
 
                 else:
-                    logging.error('No SMS statemachine, or phone configured - cannot send anchor alarm SMS')
+                    logging.error('No SMS statemachine, or phone configured' \
+                                  + ' - cannot send anchor alarm SMS')
 
             else:
                 # we have moved less than the alarm
-                logging.info('We have moved: ' + str(movedDistanceM) + 'M, which is not enough to setoff alarm: ' + str(alarmRange) + 'M')
+                logging.info('We have moved: ' + str(movedDistanceM) \
+                             + 'M, which is not enough to setoff alarm: ' \
+                             + str(alarmRange) + 'M')
 
         else:
             # lat / lon are empty !!!!
-            logging.error('Anchor alarm set: ' + str(alarmRange) + ' , but Lat or Lon are empty')
+            logging.error('Anchor alarm set: ' + str(alarmRange) \
+                          + ' , but Lat or Lon are empty')
     else:
         # No anchor alarm ... bale
         logging.info('No Anchor alarm set')
@@ -628,7 +655,8 @@ def sendSms(_number, _txt):
         _number = phone
 
     if _number is '':
-        logging.error('Trying to send a SMS to a phone that is not set - phone: ' + str(_number))
+        logging.error('Trying to send a SMS to a phone that is not set' \
+                      + ' - phone: ' + str(_number))
         # give up
         return False
 
@@ -637,10 +665,12 @@ def sendSms(_number, _txt):
         return False
 
     # Prefix with boatname and time
-    _txt = datetime.datetime.now().strftime("%a %X") + ' ' + boatname + ': ' + _txt
+    _txt = datetime.datetime.now().strftime("%a %X") + ' ' + boatname \ 
+           + ': ' + _txt
 
     if debug is True:
-        logging.debug('Trying to send SMS message: ' + str(_txt) + ' to: ' + str(_number))
+        logging.debug('Trying to send SMS message: ' + str(_txt) \
+                      + ' to: ' + str(_number))
 
     # go for it
     message = { 'Text': _txt, 'SMSC': {'Location': 1}, 'Number': _number }
