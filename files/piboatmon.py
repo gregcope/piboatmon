@@ -1643,11 +1643,10 @@ def sendHttpsLogging():
     runtime, idletime = [float(f) for f in open("/proc/uptime").read().split()]
 
     queryString = '?wakeInNSecs=' + str(wakeInNSecs) \
-                  + '&runtime=' + str(uptime) \
-
-#                  + '&BilgeSwitchState=' + str(bilgeSwitchState) \
-#                  + '&bat1=' + "{0:.2f}".format((bat1Mv) \
-#                  + '&bat2=' + "{0:.2f}".format((bat2Mv) \
+                  + '&runtime=' + str(runtime) \
+                  + '&BilgeSwitchState=' + str(bilgeSwitchState) \
+                  + '&bat1=' + "{0:.2f}".format((bat1Mv) \
+                  + '&bat2=' + "{0:.2f}".format((bat2Mv)
 #                  + '&batteryOkMVolts=' + str(batteryOkMVolts) \
 #                  + '&phone=' + str(phone) \
 #                  + '&boatname=' + str(boatname) \
