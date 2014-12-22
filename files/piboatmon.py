@@ -1595,7 +1595,7 @@ def checkDailyStatus():
         logging.info('Next daily check due: ' + str(_nextAlarm))
 
     else:
-        logging.error('Cannot split dailyStatus into _hour / _min: ' \
+        logging.error('Cannot split dailyStatus into _hour / _min: '
                       + str(dailyStatus))
         # as we have nothing to compare, assume we need to run
 
@@ -1615,7 +1615,7 @@ def checkDailyStatus():
             lastDailyStatusCheck = _now
             saveConfig()
 
-            logging.info('Daily SMS sent, lastDailyStatusCheck updated to: ' \
+            logging.info('Daily SMS sent, lastDailyStatusCheck updated to: '
                          + str(lastDailyStatusCheck))
 
         else:
@@ -1623,10 +1623,12 @@ def checkDailyStatus():
             logging.error('Failed to send daily SMS' \
                           + ' - should try again next run')
 
+
 def sendAndLogStatus():
 
     # sends a status message - either add hoc or daily
-    # check to see if we need to send a status message (ie failed, or each time we run)
+    # check to see if we need to send a status message
+    # ie failed, or each time we run
 
     # fish out the global
     global sendStatus
@@ -1635,8 +1637,8 @@ def sendAndLogStatus():
     _sent = False
 
     if debug is True:
-        logging.debug('sendStatus is: ' +str(sendStatus) \
-                      + ', logStatus is: ' +str(logStatus))
+        logging.debug('sendStatus is: ' + str(sendStatus) \
+                      + ', logStatus is: ' + str(logStatus))
 
     if sendStatus is True:
 
@@ -1662,6 +1664,7 @@ def sendAndLogStatus():
         saveConfig()
 
     return _sent
+
 
 def setBilgeSwitchState():
 
