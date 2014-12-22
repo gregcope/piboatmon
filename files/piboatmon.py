@@ -1213,8 +1213,10 @@ def checkBattery():
 
 def checkBilgeText():
 
-    if checkBilgeSwitch() is True:
-        status = 'BILGE ALARM'
+    if bilgeSwitchState is True:
+        status = 'BILGE ALARM !!!'
+    elif bilgeSwitchState is None:
+        status = 'BILGE Unkown'
     else:
         status = 'BILGE OK'
 
@@ -1222,31 +1224,35 @@ def checkBilgeText():
 
     return status
 
+
 def checkBilge():
 
     # checks switch and bleats if not ok
 
-    if checkBilgeSwitch() is True: 
+    if bilgeSwitchState is True: 
 
         if debug is True:
-            logging.debug('CheckBilgeSwitch returned true ... about to try to send SMS')
+            logging.debug('bilgeSwitchState is true ... about to try to send SMS')
 
         # oh pants!!!
         # try and send the SMS
-        sendSms(phone, 'BILGE ALARM, BILGE SWITCH IS ON!!!')
+        sendSms(phone, checkBilgeText())
+
 
 def getStatusText():
 
     # build a status string
-    status = getBatteryText() + ' ' + checkBilgeText() + ' ' + gpsp.getCurrentAvgDataText()
+    status = getBatteryText() + ' ' + checkBilgeText() + ' ' \
+             + gpsp.getCurrentAvgDataText()
 
-    if checkBilgeSwitch() is False and checkBattery() is True:
+    if bilgeSwitchState is False and checkBattery() is True:
         status = 'OK\n' + status
 
     else:
 
         if debug is True:
-            logging.debug('checkBilgeSwitch() is ' + str(checkBilgeSwitch()) + ' and checkBattery() is: ' + str(checkBattery()))
+            logging.debug('bilgeSwitchState is ' + str(bilgeSwitchState) \
+                          + ' and checkBattery() is: ' + str(checkBattery()))
         status = 'NOT OK\n' + status
 
     return status
@@ -1300,7 +1306,8 @@ def setAnchorAlarmSms(sms):
 
         _newRange = results.group(1)
         if debug is True:
-            logging.debug('Found the following regex results: ' + str(_newRange))
+            logging.debug('Found the following regex results: ' \
+                          + str(_newRange))
 
         if _newRange > 10:
 
@@ -1311,7 +1318,8 @@ def setAnchorAlarmSms(sms):
         else:
 
             # less than 10
-            reply = 'New Anchor Alarm appears to be less than 10M ... please try again (with a higher number)'
+            reply = 'New Anchor Alarm appears to be less than 10M ... ' \
+                    + 'please try again (with a higher number)'
             loggin.info(reply)
             sendSms(number, reply)
             return
@@ -1325,13 +1333,18 @@ def setAnchorAlarmSms(sms):
 
     if _presentLat is '' or _presentLon is '':
 
-        reply = ('Trying to set Anchor Alarm, but Present Lat is: ' + str(_presentLat) + ' or Lon is: ' + str(_presentLon) + ' ie we have no fix to alarm from!!!')
+        reply = ('Trying to set Anchor Alarm, but Present Lat is: ' \
+                 + str(_presentLat) + ' or Lon is: ' + str(_presentLon) \
+                 + ' ie we have no fix to alarm from!!!')
 
         logging.error(reply)
 
     else:
         # ok we got this far ... should be good
-        reply = 'Anchor Alarm being set for Lat: ' + str(_presentLat) + ' Lon: ' + str(_presentLon) + ' Alarm range: ' + str(alarmRange)
+        reply = 'Anchor Alarm being set for Lat: ' + str(_presentLat) \
+                + ' Lon: ' + str(_presentLon) + ' Alarm range: ' \
+                + str(alarmRange)
+
         alarmLat = _presentLat
         alarmLon = _presentLon
         logging.info(reply)
@@ -1383,13 +1396,17 @@ def updatePhoneSms(sms):
         phone = _newPhone
 
         # got this far, should have something sensible to set
-        logging.info('Changing phone from: ' + str(oldphone) + ' to: ' + str(_newPhone))
+        logging.info('Changing phone from: ' + str(oldphone) + ' to: ' \
+                     + str(_newPhone))
         # save the config for next checks
         saveConfig()
 
         if oldphone != '':
             # sort a message to reply back letting original phone know of reset
-            reply = ': New phone being set: ' + str(phone) + '.  To reset the phone back to this phone, reply to this SMS with:\n\nupdate phone ' + str(oldphone)
+            reply = ': New phone being set: ' + str(phone) \
+                    + '.  To reset the phone back to this phone, ' \
+                    +  ' reply to this SMS with:\n\nupdate phone ' \
+                    + str(oldphone)
 
             # sent the reply SMS
             sendSms(oldphone, reply)
@@ -1399,7 +1416,8 @@ def updatePhoneSms(sms):
         sendSms(phone, reply)
 
     else:
-        logging.error('Not a phone number we could parse in: ' + str (sms[0]['Text']))
+        logging.error('Not a phone number we could parse in: ' \
+                      + str (sms[0]['Text']))
 
 def debugSms(sms):
 
@@ -1466,7 +1484,8 @@ def checkLogStatus():
         # log status
         logging.info(getStatusText())
     elif debug is True:
-        logging.debug('called, but already run as logStatus is: ' + str(logStatus))
+        logging.debug('called, but already run as logStatus is: ' \
+                      + str(logStatus))
 
 
 def checkRegularStatus():
@@ -1511,7 +1530,8 @@ def checkDailyStatus():
     # have we run today - note if this is blank it will run
 
     try:
-        _lastRun = datetime.datetime.strptime(lastDailyStatusCheck, "%Y-%m-%d %H:%M:%S.%f")
+        _lastRun = datetime.datetime.strptime(lastDailyStatusCheck \
+                   , "%Y-%m-%d %H:%M:%S.%f")
 
         if _lastRun.date() == _now.date():
 
@@ -1611,9 +1631,9 @@ def sendAndLogStatus():
 
     return _sent
 
-def checkBilgeSwitch():
+def setBilgeSwitchState():
 
-    # return the state of the bilge switch
+    # set bilgeSwitchState  on the state of the bilge switch
     # false means ON so inverse these in the if statement
 
     global bilgeSwitchState
@@ -1805,6 +1825,9 @@ if __name__ == '__main__':
 
     # check anchor alarm
     checkAnchorAlarm()
+
+    # set the bilge Switch state
+    setBilgeSwitchState()
 
     # check we need to send regular status
     checkRegularStatus()
