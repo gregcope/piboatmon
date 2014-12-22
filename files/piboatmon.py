@@ -1651,23 +1651,13 @@ def sendHttpsLogging():
                   + '&alarmLat=' + str(alarmLat) \
                   + '&alarmLon=' + str(alarmLon) \
                   + '&lastDailyStatusCheck=' + str(lastDailyStatusCheck) \
-                  + '&shutdown=' + str(shutdown)
+                  + '&shutdown=' + str(shutdown) \
+                  + '&batteryOkMVolts=' + str(batteryOkMVolts) \
+                  + '&regularStatus=' + str(regularStatus)
+                  + '&bat1=' + "{0:.2f}".format((bat1Mv) / 1000) \
+                  + '&bat1=' + "{0:.2f}".format((bat1Mv) / 1000)
 
-#                  + '&bat1=' + "{0:.2f}".format((bat1Mv) \
-#                  + '&bat2=' + "{0:.2f}".format((bat2Mv)
-#                  + '&batteryOkMVolts=' + str(batteryOkMVolts) \
-#                  + '&phone=' + str(phone) \
-#                  + '&boatname=' + str(boatname) \
-#                  + '&alarmRange=' + str(alarmRange) \
-#                  + '&alarmLat=' + str(alarmLat) \
-#                  + '&alarmLon=' + str(alarmLon) \
-#                  + '&lastDailyStatusCheck=' + str(lastDailyStatusCheck) \
-#                  + '&shutdown=' + str(shutdown) \
-#                  + '&regularStatus=' + str(regularStatus)
-
-    #queryString = 'moo'
-
-    httpsUriPath = '/pibotmon/logging' + str(imei)
+    httpsUriPath = '/pibotmon/logging/imei/' + str(imei)
 
     httpsHostname = 'www.webarmadillo.net'
     httpBasicAuthUser = 'greg'
