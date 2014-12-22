@@ -1776,7 +1776,8 @@ def sendDebugMessage():
 def logUptime():
 
     uptime, idletime = [float(f) for f in open("/proc/uptime").read().split()]
-    logging.info('Uptime: ' + str(uptime) + ' secs, idletime: ' + str(idletime) + ' secs')
+    logging.info('Uptime: ' + str(uptime) + ' secs, idletime: ' \
+                 + str(idletime) + ' secs')
 
 
 def waitTillUptime(requiredUptime):
@@ -1801,21 +1802,26 @@ def waitTillUptime(requiredUptime):
         _uptime, _idletime = [float(f) for f in open("/proc/uptime").read().split()]
 
         if debug is True:
-            logging.debug('_uptime is: ' + str(_uptime) + ', we have looped: ' + str(_loop) + ' times')
+            logging.debug('_uptime is: ' + str(_uptime) \
+                          + ', we have looped: ' + str(_loop) + ' times')
 
-    logging.info('Uptime now: ' + str(_uptime) + ', uptime required: ' + str(requiredUptime) + ', we looped: ' + str(_loop) + ' secs')
+    logging.info('Uptime now: ' + str(_uptime) + ', uptime required: ' \
+                 + str(requiredUptime) + ', we looped: ' \
+                 + str(_loop) + ' secs')
 
 
 if __name__ == '__main__':
 
     # check we are running as sudo
     if os.geteuid() != 0:
-        exit("You need to have root privileges to run this script.\nPlease try again, this time using 'sudo'. Exiting.")
+        exit("You need to have root privileges to run this script.\n" \
+             + "Please try again, this time using 'sudo'. Exiting.")
 
     # setup logger
     try:
         logging.basicConfig(filename=logfile, level=logging.DEBUG,
-                            format='%(asctime)s %(levelname)s %(funcName)s %(message)s')
+                            format='%(asctime)s %(levelname)s' \
+                                    + '%(funcName)s %(message)s')
     except Exception, e:
         print 'Logging problem' + str(e)
         sys.exit(1)
@@ -1847,7 +1853,8 @@ if __name__ == '__main__':
             logging.debug('Going to try getting SMS messages getSms()')
         getSms()
 
-    # check and spin till we have been up 60 secs otherwise mopi will not shutdown
+    # check and spin till we have been up 60 secs 
+    # otherwise mopi will not shutdown
     waitTillUptime(50)
 
     # for debug...
@@ -1865,7 +1872,8 @@ if __name__ == '__main__':
     # check to see we need to send a daily status message
     checkDailyStatus()
 
-    # check to see if we still need to send a status message (daily alarm may have not fired or been set)
+    # check to see if we still need to send a status message
+    # (daily alarm may have not fired or been set)
     sendAndLogStatus()
 
     # check bilge is ok
