@@ -1642,24 +1642,24 @@ def sendHttpsLogging():
     # get uptime
     runtime, idletime = [float(f) for f in open("/proc/uptime").read().split()]
 
-    #queryString = '?wakeInNSecs=' + str(wakeInNSecs) \
-    #              + '&runtime=' + str(uptime) \
-    #              + '&BilgeSwitchState=' + str(bilgeSwitchState) \
-    #              + '&bat1=' + "{0:.2f}".format((bat1Mv) \
-    #              + '&bat2=' + "{0:.2f}".format((bat2Mv) \
-    #              + '&batteryOkMVolts=' + str(batteryOkMVolts) \
-    #              + '&phone=' + str(phone) \
-    #              + '&boatname=' + str(boatname) \
-    #              + '&alarmRange=' + str(alarmRange) \
-    #              + '&alarmLat=' + str(alarmLat) \
-    #              + '&alarmLon=' + str(alarmLon) \
-    #              + '&lastDailyStatusCheck=' + str(lastDailyStatusCheck) \
-    #              + '&shutdown=' + str(shutdown) \
-    #              + '&regularStatus=' + str(regularStatus)
+    queryString = '?wakeInNSecs=' + str(wakeInNSecs) \
+                  + '&runtime=' + str(uptime) \
+                  + '&BilgeSwitchState=' + str(bilgeSwitchState) \
+                  + '&bat1=' + "{0:.2f}".format((bat1Mv) \
+                  + '&bat2=' + "{0:.2f}".format((bat2Mv) \
+                  + '&batteryOkMVolts=' + str(batteryOkMVolts) \
+                  + '&phone=' + str(phone) \
+                  + '&boatname=' + str(boatname) \
+                  + '&alarmRange=' + str(alarmRange) \
+                  + '&alarmLat=' + str(alarmLat) \
+                  + '&alarmLon=' + str(alarmLon) \
+                  + '&lastDailyStatusCheck=' + str(lastDailyStatusCheck) \
+                  + '&shutdown=' + str(shutdown) \
+                  + '&regularStatus=' + str(regularStatus)
 
-    queryString = 'moo'
+    #queryString = 'moo'
 
-    httpsUriPath = '/pibotmon/logging' + str(imie)
+    httpsUriPath = '/pibotmon/logging' + str(imei)
 
     httpsHostname = 'www.webarmadillo.net'
     httpBasicAuthUser = 'greg'
