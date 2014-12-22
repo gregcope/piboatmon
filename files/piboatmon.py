@@ -238,18 +238,18 @@ class GpsPoller(threading.Thread):
                         #logging.debug('GPS thread report is ' + str(report))
 
                     # if has the right things in the report
-                    if ( hasattr(report, 'speed')
-                            and hasattr(report, 'lon')
-                            and hasattr(report, 'lat')
-                            and hasattr(report, 'track')
-                            and hasattr(report, 'epx')
-                            and hasattr(report, 'epy') ):
+                    if (hasattr(report, 'speed')
+                           and hasattr(report, 'lon')
+                           and hasattr(report, 'lat')
+                           and hasattr(report, 'track')
+                           and hasattr(report, 'epx')
+                           and hasattr(report, 'epy')):
 
                         # we got a good fix
                         self.numFixes += 1
 
                         # add each to summary
-                        # and update rolling average 
+                        # and update rolling average
 
                         _sumLat = _sumLat + report.lat
                         self.avLat = _sumLat / self.numFixes
