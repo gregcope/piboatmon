@@ -1665,9 +1665,8 @@ def sendHttpsLogging():
     httpBasicAuthUser = 'greg'
     httpBasicAuthPassword = 'foo'
 
-    uri = 'https://' + str(httpBasicAuthUser) + '@'
-          + str(httpsHostname) + str(httpsHostname)
-          + str(httpsUriPath) + str(queryString)
+    uri = 'https://' + str(httpBasicAuthUser) + '@' \
+          + str(httpsHostname) + str(httpsUriPath) + str(queryString)
 
     print uri
     logging.info(uri)
