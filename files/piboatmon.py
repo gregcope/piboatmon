@@ -1656,13 +1656,13 @@ def sendHttpsLogging():
                 'batteryOkMVolts': str(batteryOkMVolts), \
                 'regularStatus': str(regularStatus), \
                 'bat1': "{0:.2f}".format((bat1Mv) / 1000), \
-                'bat1': "{0:.2f}".format((bat1Mv) / 1000) }
+                'bat2': "{0:.2f}".format((bat2Mv) / 1000) }
 
-    httpsUriPath = '/pibotmon/logging/imei/' + str(imei)
+    httpsUriPath = '/mythweb/pibotmon/logging/imei/' + str(imei)
 
     httpsHostname = 'www.webarmadillo.net'
     httpBasicAuthUser = 'greg'
-    httpBasicAuthPassword = 'foo'
+    httpBasicAuthPassword = 'm21cat'
    
     uri = 'https://' + str(httpBasicAuthUser) + '@' \
           + str(httpsHostname) + str(httpsUriPath)
