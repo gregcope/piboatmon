@@ -1704,20 +1704,20 @@ def sendHttpsLogging():
     # get uptime
     runtime, idletime = [float(f) for f in open("/proc/uptime").read().split()]
 
-    payload = { 'wakeInNSecs': str(wakeInNSecs), \
-                'runtime':str(wakeInNSecs), \
-                'BilgeSwitchState': str(bilgeSwitchState), \
-                'phone': str(phone), \
-                'boatname': str(boatname), \
-                'alarmRange': str(alarmRange), \
-                'alarmLat': str(alarmLat), \
-                'alarmLon': str(alarmLon), \
-                'lastDailyStatusCheck=': str(lastDailyStatusCheck), \
-                'shutdown=': str(shutdown), \
-                'batteryOkMVolts': str(batteryOkMVolts), \
-                'regularStatus': str(regularStatus), \
-                'bat1': "{0:.2f}".format((bat1Mv) / 1000), \
-                'bat2': "{0:.2f}".format((bat2Mv) / 1000) }
+    payload = {'wakeInNSecs': str(wakeInNSecs),
+               'runtime':str(wakeInNSecs),
+               'BilgeSwitchState': str(bilgeSwitchState),
+               'phone': str(phone),
+               'boatname': str(boatname),
+               'alarmRange': str(alarmRange),
+               'alarmLat': str(alarmLat),
+               'alarmLon': str(alarmLon),
+               'lastDailyStatusCheck=': str(lastDailyStatusCheck),
+               'shutdown=': str(shutdown),
+               'batteryOkMVolts': str(batteryOkMVolts),
+               'regularStatus': str(regularStatus),
+               'bat1': "{0:.2f}".format((bat1Mv) / 1000),
+               'bat2': "{0:.2f}".format((bat2Mv) / 1000)}
 
     httpsUriPath = '/mythweb/pibotmon/logging/imei/' + str(imei)
 
