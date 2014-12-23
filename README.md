@@ -117,16 +117,15 @@ The system understands the following config SMS messages - if it does not unders
 * Assumes the GPS and 3G modem are connected/working 
 
 ```
-sudo apt-get update
-sudo apt-get upgrade
-sudo raspi-config (make the SD card bigger) # you need the space!!!
-
-reboot
-
+cd /tmp	
 git clone https://github.com/gregcope/piboatmon.git
+sudo apt-get update
 sudo apt-get install puppet
 cd piboatmon/manifests
 sudo puppet apply init.pp --modulepath=/home/pi
+
+sudo apt-get upgrade
+sudo reboot
 ```
 
 ## Running it
