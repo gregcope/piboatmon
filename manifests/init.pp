@@ -10,7 +10,6 @@ class piboatmon {
   include piboatmon::logrotate
   include piboatmon::puppet
   include piboatmon::piboatmon
-  include piboatmon::ssh
   #include piboatmon::readonlyboot
 }
 
