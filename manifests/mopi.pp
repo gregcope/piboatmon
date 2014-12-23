@@ -19,7 +19,7 @@ class piboatmon::mopi {
     owner => root,
     group => root,
     ensure => file,
-    source => '/home/pi/piboatmon/manifests/simbamond',
+    source => 'simbamond',
     notify => Service [ 'simbamond' ],
   }
    # /bin/sed -n "/^# local config - DON'T/,/^# end of local config - DON'T/p" /etc/default/simbamond  | /bin/sed -n '2,$p' | /bin/sed '$d'
