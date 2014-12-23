@@ -122,7 +122,7 @@ git clone https://github.com/gregcope/piboatmon.git
 sudo apt-get update
 sudo apt-get install puppet
 cd piboatmon/manifests
-sudo puppet apply init.pp --modulepath=/home/pi
+sudo puppet apply init.pp --modulepath=/tmp
 
 sudo apt-get upgrade
 sudo reboot
