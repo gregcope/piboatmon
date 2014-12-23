@@ -30,7 +30,7 @@ class piboatmon::piboatmon {
   exec { 'mkDataPart':
     logout => true,
     command => '/sbin/parted /dev/mmcblk0 mkpart primary 3277 630',
-    unless => '/sbin/parted /dev/mmcblk0 p | /bin/grep '^ 3'',
+    unless => '/sbin/parted /dev/mmcblk0 p | /bin/grep "^ 3"',
   }
 
   exec { 'createFsOn3Partion':
