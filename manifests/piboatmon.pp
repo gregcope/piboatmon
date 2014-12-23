@@ -24,10 +24,31 @@ class piboatmon::piboatmon {
     source => '/home/pi/piboatmon/manifests/rc.local',
   }
 
-  # add a logrotate for piboatmon
-#  file { '/etc/logrotate.d/boatmon':
-#    ensure => present,
-#    content => "/home/pi/piboatmon/files/piboatmon.log\n/home/pi/piboatmon/files/gpspipe.log {\n\tdaily\n\trotate 31\n\tmissingok\n\tnotifempty\n\tcompress\n\tnocreate\n}\n",
-#  }
+# sudo parted /dev/mmcblk0
+# mkpart primary 3277 6300
+# unless a third partion exists ...
+  exec { 'mkDataPart':
+    logout => true,
+    command => '/sbin/parted /dev/mmcblk0 mkpart primary 3277 630',
+    unless => '/sbin/parted /dev/mmcblk0 p | /bin/grep '^ 3'',
+  }
+
+  exec { 'createFsOn3Partion':
+    logout => true,
+    command => '/sbin/mkfs.ext4 /dev/mmcblk0p3',
+    unless => '/usr/bin/file -sL /dev/mmcblk0p3  | /bin/grep ext4',
+    require => Exec [ 'mkDataPart' ],
+  }
+
+  mount { '/piboatmon':
+    ensure => present,
+    device => '/dev/mmcblk0p3',
+    atboot => yes,
+    fstype => ext4,
+    dump => 0,
+    pass => 1,
+    options => 'defaults',
+    require => Exec [ 'createFsOn3Partion' ],
+  }
 
 }

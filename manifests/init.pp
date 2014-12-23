@@ -11,6 +11,7 @@ class piboatmon {
   include piboatmon::puppet
   include piboatmon::piboatmon
   include piboatmon::ssh
+  #include piboatmon::readonlyboot
 }
 
 # to run but do nothing

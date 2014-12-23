@@ -60,5 +60,6 @@ class piboatmon::removepackages {
     ensure => 'purged',
     require => Package [ 'busybox-syslogd' ],
   }
-
+  package { 'minecraft-pi': ensure => 'purged' }
+  package { 'python-minecraftpi': ensure => 'purged' }
 }
