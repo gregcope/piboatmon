@@ -28,13 +28,13 @@ class piboatmon::piboatmon {
 # mkpart primary 3277 6300
 # unless a third partion exists ...
   exec { 'mkDataPart':
-    logout => true,
+    logoutput => true,
     command => '/sbin/parted /dev/mmcblk0 mkpart primary 3277 630',
     unless => '/sbin/parted /dev/mmcblk0 p | /bin/grep "^ 3"',
   }
 
   exec { 'createFsOn3Partion':
-    logout => true,
+    logoutput => true,
     command => '/sbin/mkfs.ext4 /dev/mmcblk0p3',
     unless => '/usr/bin/file -sL /dev/mmcblk0p3  | /bin/grep ext4',
     require => Exec [ 'mkDataPart' ],
