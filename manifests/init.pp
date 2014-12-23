@@ -10,6 +10,7 @@ class piboatmon {
   include piboatmon::logrotate
   include piboatmon::puppet
   include piboatmon::piboatmon
+  include piboatmon::ssh
 }
 
 # to run but do nothing
