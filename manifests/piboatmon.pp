@@ -52,12 +52,20 @@ class piboatmon::piboatmon {
     require => Exec [ 'createFsOn3Partion' ],
   }
 
+  file { '/home/pi':
+    ensure => directory,
+    owner => 'pi',
+    group => 'pi',
+    mode => '0755',
+    require => Mount [ '/home/pi' ],
+  }
+
   file { '/home/pi/.ssh':
     ensure => directory,
     owner => 'pi',
     group => 'pi',
     mode => '0600',
-    require => Mount [ '/home/pi' ],
+    require => [ Mount [ '/home/pi' ], File [ '/home/pi' ] ],
   }
 
   file { '/home/pi/.ssh/authorized_keys':

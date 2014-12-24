@@ -117,14 +117,14 @@ The system understands the following config SMS messages - if it does not unders
 * Assumes the GPS and 3G modem are connected/working 
 
 ```
-cd /tmp	
-git clone https://github.com/gregcope/piboatmon.git
 sudo apt-get update
 sudo apt-get install puppet
+cd /tmp
+git clone https://github.com/gregcope/piboatmon.git
 cd piboatmon/manifests
 sudo puppet apply init.pp --modulepath=/tmp
-
 sudo apt-get upgrade
+sudo apt-get autoremove
 sudo reboot
 ```
 
