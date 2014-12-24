@@ -1,7 +1,5 @@
 class piboatmon::mopi {
 
-  simbamond_sha=5f6075294299c0b4e405081778f307c389c17ddd
-
   # install some sensible packages
   package { 'simbamond': ensure => installed }
 
