@@ -14,7 +14,7 @@ class piboatmon {
 }
 
 # to run but do nothing
-# sudo puppet apply init.pp --modulepath=/home/pi
+# sudo puppet apply init.pp --modulepath=/tmp
 # and to run doing stuff
 # sudo puppet apply init.pp --modulepath=/home/pi --noop
 include piboatmon

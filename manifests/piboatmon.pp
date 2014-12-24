@@ -22,7 +22,7 @@ class piboatmon::piboatmon {
     group => root,
     ensure => file,
     mode => '0755',
-    source => '/home/pi/piboatmon/manifests/rc.local',
+    source => '/tmp/piboatmon/manifests/rc.local',
   }
 
 # sudo parted /dev/mmcblk0
