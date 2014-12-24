@@ -10,7 +10,7 @@ class piboatmon::piboatmon {
     cwd => '/home/pi',
     user => 'pi',
     group => 'pi',
-    command => '/usr/bin/git https://github.com/gregcope/piboatmon.git',
+    command => '/usr/bin/git clone https://github.com/gregcope/piboatmon.git',
     unless => '/bin/ls /home/pi/piboatmon',
     require => Mount [ '/home/pi' ],
   }
