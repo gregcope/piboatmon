@@ -38,13 +38,13 @@ class piboatmon::readonlyboot {
   exec { 'removedoStartCheckFsSh':
     logoutput => true,
     command => '/usr/bin/perl -p -i -e "s/do_start/#do_start/" /etc/init.d/checkfs.sh',
-    onlyif => '/bin/grep "#do_start" /etc/init.d/checkfs.sh',
+    unless => '/bin/grep "#do_start" /etc/init.d/checkfs.sh',
   }
 
   exec { 'removecleanAllCheckRootBootCleanSh':
     logoutput => true,
     command => '/usr/bin/perl -p -i -e "s/clean_all/#clean_all/" /etc/init.d/checkroot-bootclean.sh',
-    onlyif => '/bin/grep "#clean_all" /etc/init.d/checkroot-bootclean.sh',
+    unless => '/bin/grep "#clean_all" /etc/init.d/checkroot-bootclean.sh',
   }
 
   exec { 'removeCleanCheckRootBootCleanSh':
