@@ -6,27 +6,27 @@ class piboatmon::readonlyboot {
 
   service { 'bootlogs':
     ensure => stopped,
-    enabled => false,
+    enable => false,
   }
 
   service { 'sudo':
     ensure => stopped,
-    enabled => false,
+    enable => false,
   }
 
   service { 'alsa-utils':
     ensure => stopped,
-    enabled => false,
+    enable => false,
   }
 
   service { 'console-setup':
     ensure => stopped,
-    enabled => false,
+    enable => false,
   }
 
   service { 'fake-hwclock':
     ensure => stopped,
-    enabled => false,
+    enable => false,
   }
 
   exec { 'removedoStartCheckRootSh':
