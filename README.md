@@ -159,6 +159,15 @@ sudo reboot
 
 `sudo /home/pi/files/piBoatMon.sh`
 
+## Upgrading
+
+```
+cd /tmp
+git clone https://github.com/gregcope/piboatmon.git
+cd piboatmon/manifests
+sudo puppet apply init.pp --modulepath=../..
+```
+
 ## FAQ
 
 * **Can it do WIFI?**
