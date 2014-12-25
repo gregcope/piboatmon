@@ -26,14 +26,14 @@ class piboatmon::readonlyboot {
 
   exec { 'removedoStartCheckRootSh':
     logoutput => true,
-    command => '/usr/bin/perl -p -i -e "s/do_start/#do_start/" /etc/init.d/checkroot.sh',
-    unless => '/bin/grep "#do_start" /etc/init.d/checkroot.sh',
+    command => '/usr/bin/perl -p -i -e "s/do_start$/#do_start$/" /etc/init.d/checkroot.sh',
+    unless => '/bin/grep "#do_start$" /etc/init.d/checkroot.sh',
   }
 
   exec { 'removedoStartCheckFsSh':
     logoutput => true,
-    command => '/usr/bin/perl -p -i -e "s/do_start/#do_start/" /etc/init.d/checkfs.sh',
-    unless => '/bin/grep "#do_start" /etc/init.d/checkfs.sh',
+    command => '/usr/bin/perl -p -i -e "s/do_start$/#do_start/" /etc/init.d/checkfs.sh',
+    unless => '/bin/grep "#do_start^" /etc/init.d/checkfs.sh',
   }
 
   exec { 'removecleanAllCheckRootBootCleanSh':
@@ -45,7 +45,7 @@ class piboatmon::readonlyboot {
   exec { 'removeCleanCheckRootBootCleanSh':
     logoutput => true,
     command => '/usr/bin/perl -p -i -e "s?rm -f /tmp/.clean /lib/init/rw/.clean /run/.clean /run/lock/.clean?#rm -f /tmp/.clean /lib/init/rw/.clean /run/.clean /run/lock/.clean?" /etc/init.d/checkroot-bootclean.sh',
-    onlyif => '/bin/grep "#rm -f /tmp/.clean /lib/init/rw/.clean /run/.clean /run/lock/.clean" /etc/init.d/checkroot-bootclean.sh',
+    unless => '/bin/grep "#rm -f /tmp/.clean /lib/init/rw/.clean /run/.clean /run/lock/.clean" /etc/init.d/checkroot-bootclean.sh',
   }
 
 #  mount { '/':
