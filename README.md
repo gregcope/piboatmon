@@ -3,6 +3,18 @@ PiBoatMon
 
 A system to turn a Raspberry PI into a low power boat monitoring solution.  It is configured by Puppet and then runs a Python script that checks the systems like Bilge Switch, GPS location, battery volts and sends an SMS if in alarm.
 
+Background
+===
+
+I want to know;
+
+1. My boat is where I left it (anchor/morring)
+2. It is not filling with water - aka afloat
+3. The batteries are ok, and I have not left something on!
+
+Design
+===
+
 It's design requirements are;
 
 * Low power (20ma idle)
@@ -133,11 +145,15 @@ sudo reboot
 * You must have run the install without any errors
 * This is basically what will run at boot ...
 
-`sudo /home/pi/files/piBoatMon.sh`
+`sudo sudo /home/pi/piboatmon/files/piboatmon.py`
 
 * To check the logs as it runs you need to run the following *before*
 
 `tail -f /home/pi/piboatmon/files/piboatmon.log &`
+
+* If you want to emulate what will happen at boot run (it will shutdown!!!);
+
+`sudo /home/pi/files/piBoatMon.sh`
 
 ## FAQ
 
