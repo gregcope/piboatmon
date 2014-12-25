@@ -475,9 +475,9 @@ def loadConfig():
         iteration = 0
 
     try:
-        batteryOkMVolts = configP.get('main', 'batteryOkMVolts')
+        lastruntime = configP.get('main', 'lastruntime')
     except:
-        batteryOkMVolts = 0
+        lastruntime = False
 
     logging.info(str(configP.items('main')))
 
