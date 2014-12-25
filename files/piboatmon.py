@@ -927,7 +927,7 @@ def regularStatusSms(sms):
 
             reply = 'Regular status being set to True,' \
                     + ' you will get SMS status' \
-                    + ' messages approx. every' + str(_mins) + ' minutes.'
+                    + ' messages approx. every ' + str(_mins) + ' minutes'
 
             regularStatus = True
             saveConfig()
