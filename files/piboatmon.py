@@ -1909,7 +1909,7 @@ def giveGpsChance():
                       + str(waitedForGpsFixIterations) + ' times')
 
 
-def uptimeSecs()
+def uptimeSecs():
 
     uptime, idletime = [float(f) for f in open("/proc/uptime")
                         .read().split()]
