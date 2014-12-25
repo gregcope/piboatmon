@@ -667,7 +667,7 @@ def checkAnchorAlarm():
             else:
                 # we have moved less than the alarm
                 logging.info('We have moved: ' + str(movedDistanceM)
-                             + 'M, which is not enough to setoff alarm: ':
+                             + 'M, which is not enough to setoff alarm: '
                              + str(alarmRange) + 'M')
 
         else:
