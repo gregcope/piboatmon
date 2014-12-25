@@ -52,6 +52,7 @@ presentLon = None
 imei = None
 iteration = None
 LastRunTime = None
+waitedForGpsFixIterations = 0
 
 # some object handles
 gpsd = None
@@ -1749,8 +1750,7 @@ def sendHttpsLogging():
     # Using HTTPS as it is the lowest common denominator
 
     # get uptime
-    runtime, idletime = [float(f) for f in open("/proc/uptime")
-                         .read().split()]
+    runtime = uptimeSecs()
 
     payload = {'wakeInNSecs': str(wakeInNSecs),
                'runtime': str(runtime),
@@ -1767,7 +1767,8 @@ def sendHttpsLogging():
                'bat1': "{0:.2f}".format((bat1Mv) / 1000),
                'bat2': "{0:.2f}".format((bat2Mv) / 1000),
                'LastRunTime': str(LastRunTime),
-               'iteration': str(iteration)}
+               'iteration': str(iteration),
+               'waitedForGpsFixIterations': str(waitedForGpsFixIterations)}
 
     httpsUriPath = '/mythweb/pibotmon/logging/imei/' + str(imei)
 
@@ -1824,15 +1825,12 @@ def sendDebugMessage():
 
 def logUptime():
 
-    uptime, idletime = [float(f) for f in open("/proc/uptime").read().split()]
-    logging.info('Uptime: ' + str(uptime) + ' secs, idletime: '
-                 + str(idletime) + ' secs')
+    logging.info('Uptime: ' + str(uptimeSec()) + ' secs')
 
 
 def waitTillUptime(requiredUptime):
 
-    _uptime, _idletime = [float(f) for f in open("/proc/uptime")
-                          .read().split()]
+    _uptime = uptimeSecs()
     _loop = 0
 
     #
@@ -1848,9 +1846,8 @@ def waitTillUptime(requiredUptime):
         # wait a bit
         time.sleep(1)
 
-        # get
-        _uptime, _idletime = [float(f) for f in open("/proc/uptime")
-                              .read().split()]
+        # get uptime
+        _uptime = uptimeSecs()
 
         if debug is True:
             logging.debug('_uptime is: ' + str(_uptime)
@@ -1871,6 +1868,52 @@ def saveIterationAndLastRunTime():
 
     # and save the time
     LastRunTime = datetime.datetime.now()
+
+
+def giveGpsChance()
+
+    global waitedForGpsFixIterations
+
+    waitedForGpsFixIterations = 0
+
+    if gpsp.getCurrentNoFixes() > 0:
+
+        logging.debug('Alreadt have a GPS fix')
+        return
+
+    # No GPS fix
+
+    while gpsp.getCurrentNoFixes() < 1:
+                # loop till we get 10 fixes... should not be long
+                time.sleep(1)
+                if debug is True:
+                    logging.debug('No gps fixs!!! We have looped: '
+                                  + str(waitedForGpsFixIterations))
+                waitedForGpsFixIterations += 1
+
+                if _loop == 60:
+
+                    logging.debug('Reach 60 tries, breaking')
+                    break
+
+    if gpsp.getCurrentNoFixes > 1:
+
+        # GPS Fix ...
+        logging.info('Got a GPS fix.  We looped: ' 
+                     + str(waitedForGpsFixIterations) + ' times, uptime now: '
+                     + str(uptimeSecs()))
+
+    else:
+        logging.error('No GPS FIX!!!,tried: '
+                      + str(waitedForGpsFixIterations) + ' times')
+
+
+def uptimeSecs()
+
+    uptime, idletime = [float(f) for f in open("/proc/uptime")
+                        .read().split()]
+
+    return uptime
 
 
 if __name__ == '__main__':
@@ -1953,6 +1996,10 @@ if __name__ == '__main__':
 
     # save the config at the end, once ...
     saveConfig()
+
+    # Check we got a GPS fix, otherwise wait another 60 secs
+    # to give GPS a chance to fix and save almernac
+    giveGpsChance()
 
     # send server logging Status
     sendHttpsLogging()
