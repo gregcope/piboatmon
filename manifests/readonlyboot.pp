@@ -58,25 +58,25 @@ class piboatmon::readonlyboot {
 #    options => 'defaults,ro'
 #  }
 
-#  mount { '/boot':
-#    ensure => present,
-#    device => '/dev/mmcblk0p1',
-#    atboot => yes,
-#    fstype => ext4,
-#    dump => 0,
-#    pass => 2,
-#    options => 'defaults,ro'
-#  }
+  mount { '/boot':
+    ensure => present,
+    device => '/dev/mmcblk0p1',
+    atboot => yes,
+    fstype => ext4,
+    dump => 0,
+    pass => 2,
+    options => 'defaults,ro'
+  }
 
   file { '/var/lib/dhcp':
     ensure => 'link',
     target => '/tmp/dhcp',
   }
 
-#  exec { 'addRoToBootCmdline':
-#    logoutput => true,
-#    command => '/usr/bin/perl -p -i -e "s/elevator=deadline rootwait$/elevator=deadline rootwait ro$/" /boot/cmdline.txt',
-#    onlyif => '/bin/grep "elevator=deadline rootwait ro" /boot/cmdline.txt',
-#  }
+  exec { 'addRoToBootCmdline':
+    logoutput => true,
+    command => '/usr/bin/perl -p -i -e "s/elevator=deadline rootwait$/elevator=deadline rootwait ro$/" /boot/cmdline.txt',
+    onlyif => '/bin/grep "elevator=deadline rootwait ro" /boot/cmdline.txt',
+  }
 
 }
