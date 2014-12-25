@@ -1826,7 +1826,7 @@ def sendDebugMessage():
 
 def logUptime():
 
-    logging.info('Uptime: ' + str(uptimeSec()) + ' secs')
+    logging.info('Uptime: ' + str(uptimeSecs()) + ' secs')
 
 
 def waitTillUptime(requiredUptime):
