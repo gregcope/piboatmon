@@ -80,24 +80,26 @@ The Python script is configured in two ways;
 1. By a confuration file `boatmon.config`
 2. By sending the SMS number configuration messages
 
-By far the easiest is config by SMS
+By far the easiest is config by SMS.
 
 ### Config Script
 
 The python script uses a config file called `boatmon.config` which looks like:
 ```
 debug = False
-phone = +44123456789
-boatname = Regina
 wakeinnsecs = 900
-batteryokmvolts = 1100
 sendstatus = False
 dailystatus = 0800
-lastdailystatuscheck = 2014-12-20 09:25:49.846478
-alarmlat = 0
-alarmlon = 0
-alarmrange = 0
+lastdailystatuscheck = 2014-12-25 09:42:51.093899
+alarmlat = 51.0138383332
+alarmlon = -0.449643888667
+alarmrange = 25
 regularstatus = True
+iteration = 34
+lastruntime = 2014-12-25 18:59:32.612709
+batteryokmvolts = 1100
+phone = +44123456789
+boatname = Regina
 ```
 
 Note this config file also has state info in it.  Naughty I know.
@@ -163,17 +165,17 @@ sudo reboot
 No It is designed to be mostly off.  Might do another version with that.
 * **Can it alarm when the bilge switch goes off immediately?**
 No as it might be alseep.  There is lots of logic complexity there (ie if on, what do you do when you've run and the switch is still high?
-* **Can I run a bilge pump off the switch**
+* **Can I run a bilge pump off the switch?**
 No as this is connected directly to the PI 3.3V rail.  12V would really upset it.
 * **Can it run a relay, to say run a bilge pump?**
 Not in this version, but this should be easy to parse an SMS and put a relay on for X amount of time.
-* **Not getting any SMS messages**
+* **Not getting any SMS messages?**
 Do you have SMS credit?  Is the modem unlocked to your network, is it is working?
-* **Not getting SMS messages, but had some before** SMS Credit?  Battery power?  try sending `set debug on` or `set regular status on` to get SMS messages when ever it runs.  If you watch it run (ie you see the flashing LEDS), but no SMS, this is either an SMS/Modem fault or a code issue.
-* **GPS criteria** We need a GPS with an RTC Battery to enable fast fixes, otherwise it take most GPS units over a minute to fix... which is too long, as the code is running 25 secs afterboot.
-* **GPS Accuracy** Do you have an external SMA antenna fitted, does it have a good view of the sky?  Otherwise GPS accuracy is likely to be poor.
-* **The SMS messages have the wrong time** The timezone is based on UTC, but if this is not a timezone issue, it is likely that the unit is not getting a GPS fix in time as it depends on this to set the time, as the RPI has no RTC.  Try texting `setup` to the unit to get GPS feedback.
-* **What does BatX Missing mean**  One of the batteries is either very dead, or disconnected.  If Bat2 then please replace the 9v reserve battery.
+* **Not getting SMS messages, but had some before?** SMS Credit?  Battery power?  try sending `set debug on` or `set regular status on` to get SMS messages when ever it runs.  If you watch it run (ie you see the flashing LEDS), but no SMS, this is either an SMS/Modem fault or a code issue.
+* **GPS criteria?** We need a GPS with an RTC Battery to enable fast fixes, otherwise it take most GPS units over a minute to fix... which is too long, as the code is running 25 secs afterboot, and then the logic takes only a few seconds, most of which is waiting on the modem.
+* **GPS Accuracy?** Do you have an external SMA antenna fitted, does it have a good view of the sky?  Otherwise GPS accuracy is likely to be poor.
+* **The SMS messages have the wrong time?** The timezone is based on UTC, but if this is not a timezone issue, it is likely that the unit is not getting a GPS fix in time as it depends on this to set the time, as the RPI has no RTC.  Try texting `setup` to the unit to get GPS feedback.
+* **What does BatX Missing mean?**  One of the batteries is either very dead, or disconnected.  If Bat2 then please replace the 9v reserve battery.
 
 
 ## Referances / Notes
