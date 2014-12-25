@@ -62,7 +62,7 @@ class piboatmon::readonlyboot {
     ensure => present,
     device => '/dev/mmcblk0p1',
     atboot => yes,
-    fstype => ext4,
+    fstype => vfat,
     dump => 0,
     pass => 2,
     options => 'defaults,ro'
