@@ -135,6 +135,10 @@ sudo reboot
 
 `sudo /home/pi/files/piBoatMon.sh`
 
+* To check the logs as it runs you need to run the following *before*
+
+`tail -f /home/pi/piboatmon/files/piboatmon.log &`
+
 ## FAQ
 
 * **Can it do WIFI?**
