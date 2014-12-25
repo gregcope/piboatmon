@@ -1871,7 +1871,7 @@ def saveIterationAndLastRunTime():
     LastRunTime = datetime.datetime.now()
 
 
-def giveGpsChance()
+def giveGpsChance():
 
     global waitedForGpsFixIterations
 
