@@ -14,11 +14,6 @@ class piboatmon::readonlyboot {
     enable => false,
   }
 
-  service { 'alsa-utils':
-    ensure => stopped,
-    enable => false,
-  }
-
   service { 'console-setup':
     ensure => stopped,
     enable => false,
