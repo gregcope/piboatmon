@@ -11,6 +11,7 @@ I want to know;
 1. My boat is where I left it (anchor/morring)
 2. It is not filling with water - aka afloat
 3. The batteries are ok, and I have not left something on!
+4. Not consume loads of power doing so
 
 Design
 ===
