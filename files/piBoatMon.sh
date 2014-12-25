@@ -28,7 +28,7 @@
 
 /usr/bin/logger -t piBoatMon "Starting /home/pi/piboatmon/files/piboatmon.py"
 # unleash the python
-/usr/bin/timeout 90s /usr/bin/sudo /home/pi/piboatmon/files/piboatmon.py
+/usr/bin/timeout 180s /usr/bin/sudo /home/pi/piboatmon/files/piboatmon.py
 /usr/bin/logger -t piBoatMon "Finished /home/pi/piboatmon/files/piboatmon.py"
 
 /usr/bin/logger -t piBoatMon "Calling sync 3 times"
