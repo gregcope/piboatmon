@@ -33,16 +33,17 @@ Basically it works thus;
 
 0. Runs logrotate, gpsDate
 1. Reads config
-2. Wait till uptime is 55 secs as mopi will not shutdown 
-3. Starts a GPS thread logging GPS positions
+2. Starts a GPS thread logging GPS positions
+3. Wait till uptime is 55 secs as mopi will not shutdown
 4. Checks for inbound SMS messages from a 3G USB modem
 5. Checks the anchor Alarm
 6. Checks battery state
 7. Checks a bilge switch
 8. Checks to see if it needs to send a status SMS
-9. Logs present status
-10. Waits till uptime is 60 secs (otherwise mopi will not shutdown)
-11. Goes to sleep for a configurable time (rinse/repeate)
+9. Logs present status and pings and https server the same info
+10. Checks for a GPS fix, and stays awake for upto another 60 secs to get one
+11. Waits till uptime is 60 secs (otherwise mopi will not shutdown)
+12. Goes to sleep for a configurable time (rinse/repeate)
 
 How it works
 ------------
