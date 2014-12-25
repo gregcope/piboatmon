@@ -50,6 +50,8 @@ bat2Mv = None
 presentLat = None
 presentLon = None
 imei = None
+iteration = None
+LastRunTime = None
 
 # some object handles
 gpsd = None
@@ -360,6 +362,8 @@ def saveConfig():
     configP.set('main', 'batteryOkMVolts', str(batteryOkMVolts))
     configP.set('main', 'sendStatus', str(sendStatus))
     configP.set('main', 'regularStatus', str(regularStatus))
+    configP.set('main', 'iteration', str(iteration))
+    configP.set('main', 'LastRunTime', str(LastRunTime))
 
     logging.info(str(configP.items('main')))
 
@@ -389,6 +393,8 @@ def loadConfig():
     global batteryOkMVolts
     global sendStatus
     global regularStatus
+    global iteration
+    global LastRunTime
 
     # starting to read config
     if debug is True:
@@ -461,6 +467,16 @@ def loadConfig():
         sendStatus = configP.getboolean('main', 'sendStatus')
     except:
         sendStatus = False
+
+    try:
+        iteration = configP.getint('main', 'iteration')
+    except:
+        iteration = 0
+
+    try:
+        batteryOkMVolts = configP.get('main', 'LastRunTime')
+    except:
+        batteryOkMVolts = 0
 
     logging.info(str(configP.items('main')))
 
@@ -1158,9 +1174,6 @@ def setBoatnameSms(sms):
             # and if it is not null change config and send sms
             if boatname:
 
-                # save the config for next checks
-                saveConfig()
-
                 reply = 'Setting boatname to: ' + str(boatname)
                 logging.info(reply)
 
@@ -1355,9 +1368,6 @@ def setAnchorAlarmSms(sms):
         alarmLon = ''
         alarmRange = ''
 
-        # save the config for next checks
-        saveConfig()
-
         # sort a message to send back
         reply = 'Anchor alarm being diabled!'
 
@@ -1417,7 +1427,6 @@ def setAnchorAlarmSms(sms):
         alarmLat = _presentLat
         alarmLon = _presentLon
         logging.info(reply)
-        saveConfig()
 
     # send replry
     sendSms(number, reply)
@@ -1467,8 +1476,6 @@ def updatePhoneSms(sms):
         # got this far, should have something sensible to set
         logging.info('Changing phone from: ' + str(oldphone) + ' to: '
                      + str(_newPhone))
-        # save the config for next checks
-        saveConfig()
 
         if oldphone != '':
             # sort a message to reply back letting original phone know of reset
@@ -1513,7 +1520,6 @@ def debugSms(sms):
 
         debug = True
         logging.info(reply)
-        saveConfig()
 
     elif 'set debug off' in _lowertxt:
 
@@ -1525,7 +1531,6 @@ def debugSms(sms):
 
         logging.info(reply)
         debug = False
-        saveConfig()
 
     else:
         logging.info('No idea what that txt was...')
@@ -1654,7 +1659,6 @@ def checkDailyStatus():
             # save config to preserve fact we ran in lastDailyStatusCheck
             sendStatus = False
             lastDailyStatusCheck = _now
-            saveConfig()
 
             logging.info('Daily SMS sent, lastDailyStatusCheck updated to: '
                          + str(lastDailyStatusCheck))
@@ -1702,9 +1706,6 @@ def sendAndLogStatus():
             logging.error('Failed to send status ... will try next run'
                           + ' as sendStatus is: ' + str(sendStatus))
             sendStatus = True
-
-        # either way save state
-        saveConfig()
 
     return _sent
 
@@ -1764,7 +1765,9 @@ def sendHttpsLogging():
                'batteryOkMVolts': str(batteryOkMVolts),
                'regularStatus': str(regularStatus),
                'bat1': "{0:.2f}".format((bat1Mv) / 1000),
-               'bat2': "{0:.2f}".format((bat2Mv) / 1000)}
+               'bat2': "{0:.2f}".format((bat2Mv) / 1000),
+               'LastRunTime': str(LastRunTime),
+               'iteration': str(iteration)}
 
     httpsUriPath = '/mythweb/pibotmon/logging/imei/' + str(imei)
 
@@ -1799,9 +1802,6 @@ def dailyStatusOffSms(sms):
 
     # disabled the Alarm by Nulling the values
     dailyStatus = ''
-
-    # save the config for next checks
-    saveConfig()
 
     # sort a message to send back
     reply = 'Daily status SMS being disabled!'
@@ -1859,6 +1859,18 @@ def waitTillUptime(requiredUptime):
     logging.info('Uptime now: ' + str(_uptime) + ', uptime required: '
                  + str(requiredUptime) + ', we looped: '
                  + str(_loop) + ' secs')
+
+
+def saveIterationAndLastRunTime():
+
+    global iteration
+    global LastRunTime
+
+    # increase the iteration by one
+    iteration += 1
+
+    # and save the time
+    LastRunTime = datetime.datetime.now()
 
 
 if __name__ == '__main__':
@@ -1936,17 +1948,23 @@ if __name__ == '__main__':
     # setPowerOnDelay
     setPowerOnDelay()
 
+    # set iteration and LastRunTime
+    saveIterationAndLastRunTime()
+
+    # save the config at the end, once ...
+    saveConfig()
+
     # send server logging Status
     sendHttpsLogging()
+
+    # Wait till we get to 60 secs uptime
+    waitTillUptime(60)
 
     # we think we are done ..
     # stop the thread and wait for it to join
     logging.info('Killing gps Thread...')
     gpsp.running = False
     gpsp.join()  # wait for the thread to finish what it's doing
-
-    # Wait till we get to 60 secs uptime
-    waitTillUptime(60)
 
     # log we are stopping ...
     logging.info('Done. Exiting.')
