@@ -53,6 +53,7 @@ imei = None
 iteration = None
 LastRunTime = None
 waitedForGpsFixIterations = 0
+movedDistanceM = 0
 
 # some object handles
 gpsd = None
@@ -574,6 +575,9 @@ def checkAnchorAlarm():
     global alarmRange
     global alarmLat
     global alarmLon
+    global presentLat
+    global presentLon
+    global movedDistanceM
     global gpsp
     global sm
 
@@ -606,9 +610,9 @@ def checkAnchorAlarm():
                     break
 
             # fetch a fix, may / may not be good
-            newlat, newlon = gpsp.getCurretAvgLatLon()
+            presentLat, presentLon = gpsp.getCurretAvgLatLon()
 
-            if newlat is 0 or newlon is 0:
+            if presentLat is 0 or presentLon is 0:
 
                 # got an empty fix
                 _txt = 'No present position fix to compare to set anchor ' \
@@ -622,12 +626,12 @@ def checkAnchorAlarm():
                 return
 
             if debug is True:
-                logging.debug('Present lat: ' + str(newlat) + ' lon: '
-                              + str(newlon))
+                logging.debug('Present lat: ' + str(presentLat) + ' lon: '
+                              + str(presentLon))
 
             # compare fix with saved config
             movedDistanceKm = distance(float(alarmLat), float(alarmLon),
-                                       float(newlat), float(newlon))
+                                       float(presentLat), float(presentLon))
             # change the distance to meters rounded (not 100% accurate)
             movedDistanceM = int(movedDistanceKm * 1000)
 
@@ -644,11 +648,11 @@ def checkAnchorAlarm():
 
                 txt = 'ANCHOR ALARM.  Distance moved: ' + str(movedDistanceM) \
                       + 'M, Alarm Range: ' + str(alarmRange) \
-                      + 'M. New position - Lat: ' + str(newlat) \
-                      + ', Lon: ' + str(newlon)
+                      + 'M. New position - Lat: ' + str(presentLat) \
+                      + ', Lon: ' + str(presentLon)
 
                 txt2 = 'ANCHOR ALARM: http://maps.google.com/maps' \
-                       + '?z=12&t=m&q=loc:' + str(newlat) + '+' + str(newlon)
+                       + '?z=12&t=m&q=loc:' + str(presentLat) + '+' + str(presentLon)
 
                 if sm != '' and phone != '':
 
@@ -663,7 +667,7 @@ def checkAnchorAlarm():
             else:
                 # we have moved less than the alarm
                 logging.info('We have moved: ' + str(movedDistanceM)
-                             + 'M, which is not enough to setoff alarm: '
+                             + 'M, which is not enough to setoff alarm: ':
                              + str(alarmRange) + 'M')
 
         else:
@@ -1769,7 +1773,10 @@ def sendHttpsLogging():
                'bat2': "{0:.2f}".format((bat2Mv) / 1000),
                'LastRunTime': str(LastRunTime),
                'iteration': str(iteration),
-               'waitedForGpsFixIterations': str(waitedForGpsFixIterations)}
+               'waitedForGpsFixIterations': str(waitedForGpsFixIterations),
+               'presentLat': str(presentLat),
+               'presentLon': str(presentLon),
+               'movedDistanceM': str(movedDistanceM)}
 
     httpsUriPath = '/mythweb/pibotmon/logging/imei/' + str(imei)
 
