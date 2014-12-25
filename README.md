@@ -122,7 +122,7 @@ sudo apt-get install puppet
 cd /tmp
 git clone https://github.com/gregcope/piboatmon.git
 cd piboatmon/manifests
-sudo puppet apply init.pp --modulepath=/tmp
+sudo puppet apply init.pp --modulepath=../..
 sudo apt-get upgrade
 sudo apt-get autoremove
 sudo reboot

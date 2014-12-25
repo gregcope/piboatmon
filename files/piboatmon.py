@@ -695,8 +695,9 @@ def sendSms(_number, _txt):
         return False
 
     # Prefix with boatname and time
+    # and add iteration to the end
     _txt = datetime.datetime.now().strftime("%a %X") + ' ' + boatname \
-        + ': ' + _txt
+        + ': ' + _txt + ', ' + str(iteration)
 
     if debug is True:
         logging.debug('Trying to send SMS message: ' + str(_txt)
@@ -1941,6 +1942,9 @@ if __name__ == '__main__':
     # load config
     loadConfig()
 
+    # set iteration and LastRunTime
+    saveIterationAndLastRunTime()
+
     # create a gpsPollerthread and asks it to start
     gpsp = GpsPoller()
     gpsp.start()
@@ -1990,9 +1994,6 @@ if __name__ == '__main__':
 
     # setPowerOnDelay
     setPowerOnDelay()
-
-    # set iteration and LastRunTime
-    saveIterationAndLastRunTime()
 
     # save the config at the end, once ...
     saveConfig()

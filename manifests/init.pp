@@ -10,7 +10,7 @@ class piboatmon {
   include piboatmon::logrotate
   include piboatmon::puppet
   include piboatmon::piboatmon
-  #include piboatmon::readonlyboot
+  include piboatmon::readonlyboot
 }
 
 # to run but do nothing
