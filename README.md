@@ -185,6 +185,7 @@ Do you have SMS credit?  Is the modem unlocked to your network, is it is working
 * **GPS Accuracy?** Do you have an external SMA antenna fitted, does it have a good view of the sky?  Otherwise GPS accuracy is likely to be poor.
 * **The SMS messages have the wrong time?** The timezone is based on UTC, but if this is not a timezone issue, it is likely that the unit is not getting a GPS fix in time as it depends on this to set the time, as the RPI has no RTC.  Try texting `setup` to the unit to get GPS feedback.
 * **What does BatX Missing mean?**  One of the batteries is either very dead, or disconnected.  If Bat2 then please replace the 9v reserve battery.
+* **What is the number on the end of the each SMS?**  Each SMS ends with a number which is the number of runs that the system has done.  Hopefully this will get quite big!
 
 
 ## Referances / Notes

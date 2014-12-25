@@ -54,6 +54,7 @@ iteration = None
 LastRunTime = None
 waitedForGpsFixIterations = 0
 movedDistanceM = 0
+ep = 0
 
 # some object handles
 gpsd = None
