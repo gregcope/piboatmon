@@ -1891,15 +1891,17 @@ def giveGpsChance():
 
     # No GPS fix
 
+    logging.info('Going to loop 60 times to get an GPS fix')
+
     while gpsp.getCurrentNoFixes() < 1:
-                # loop till we get 10 fixes... should not be long
+
                 time.sleep(1)
                 if debug is True:
                     logging.debug('No gps fixs!!! We have looped: '
                                   + str(waitedForGpsFixIterations))
                 waitedForGpsFixIterations += 1
 
-                if _loop == 60:
+                if waitedForGpsFixIterations == 60:
 
                     logging.debug('Reach 60 tries, breaking')
                     break
