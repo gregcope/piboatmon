@@ -48,7 +48,7 @@ class piboatmon::piboatmon {
     fstype => ext4,
     dump => 0,
     pass => 1,
-    options => 'defaults',
+    options => 'defaults,noatime,nodiratime',
     require => Exec [ 'createFsOn3Partion' ],
   }
 
