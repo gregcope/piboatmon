@@ -1206,6 +1206,10 @@ def setPowerOnDelay():
     global wakeInNSecs
     global shutdown
 
+    if mopi is None:
+        logging.error('mopi not initialised.  Cannot set power on delay to: ' + str(wakeInNSecs))
+        return
+
     # set the PowerOnDelay to wak
     if wakeInNSecs < 60:
         logging.error(str(wakeInNSecs) + ' below 60 secs, '
@@ -1231,6 +1235,10 @@ def getInputmV():
     global bat1Mv
     global bat2Mv
 
+    if mopi is None:
+        logging.error('mopi not initialised.  Cannot get bat volts')
+        return
+
     bat1Mv = float(mopi.getVoltage(1))
     bat2Mv = float(mopi.getVoltage(2))
 
@@ -1243,7 +1251,9 @@ def getBatteryText():
     global bat2Mv
 
     # get battery volts from mopi
-    getInputmV()
+    if getInputmV() is False:
+        logging.error('mopi not initialised.  Cannot give battery volts text')
+        return 'mopi issue. Batt state unknown'
 
     if debug is True:
         logging.debug('bat1Mv is: ' + str(bat1Mv) + ' mv bat2Mv is: '
@@ -1290,7 +1300,9 @@ def getBatteryText():
 def checkBattery():
 
     # get battery volts from mopi
-    getInputmV()
+    if getInputmV() is False:
+        logging.error('mopi not initialised.  Cannot check battery state')
+        return False
 
     if bat2Mv > batteryOkMVolts and bat2Mv > 5200:
         return True
@@ -1960,7 +1972,13 @@ if __name__ == '__main__':
     gpsp.start()
 
     # create a mopi object to query
-    mopi = mopiapi()
+    try:
+        mopi = mopiapi()
+        logging.info('mopi initialised')
+
+    except Exception, e:
+        logging.error('mopi not initialised: ' + str(e)
+        mopi = None
 
     # setup the modem - takes a few secs ...
     # so the GPS thread can be on its way :w
