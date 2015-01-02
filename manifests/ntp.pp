@@ -10,12 +10,16 @@ class piboatmon::ntp {
 # notify service
 # edits from ideas here;
 # http://www.catb.org/gpsd/gpsd-time-service-howto.html
-  exec { 'configNtp':
+  exec { 'configNtpGpsServer':
     logoutput => true,
-    command => '/bin/echo -e "server 127.127.28.0 minpoll 4 maxpoll 4 iburst prefer\nfudge 127.127.28.0 time1 +0.340 refid GPS" >> /etc/ntp.conf',
-    unless => '/bin/egrep "server 127.127.28.0 minpoll 4 maxpoll 4 iburst prefer|fudge 127.127.28.0 time1 \+0.340 refid GPS" /etc/ntp.conf',
-    require => Package [ 'ntp' ],
-    notify => Service [ 'ntp' ],
+    command => '/usr/bin/perl -p -i -e "s#server 127.127.28.0.*#server 127.127.28.0 minpoll 4 maxpoll 4 iburst prefer#" /etc/ntp.conf', 
+    unless => '/bin/grep "server 127.127.28.0 minpoll 4 maxpoll 4 iburst prefer" /etc/ntp.conf',
+  }
+
+  exec { configNtpGpsFudge':
+    logoutput => true,
+    command => '/usr/bin/perl -p -i -e "s#fudge 127.127.28.0.*#fudge 127.127.28.0 time1 +0.340 refid GPS#" /etc/ntp.conf'
+    unless => '/bin/grep "fudge 127.127.28.0 time1 \+0.340 refid GPS" /etc/ntp.conf',
   }
 
 # ntp service
