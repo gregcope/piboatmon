@@ -57,6 +57,12 @@ How it works
 * Uses GPIO pin 18 connected to a [bilge switch](http://www.ebay.co.uk/sch/i.html?_odkw=bilge+switch+seaflo&_from=R40%7CR40%7CR40&_osacat=0&_from=R40&_trksid=p2045573.m570.l1313.TR0.TRC0.H0.Xbilge+switch+seaflo+float&_nkw=bilge+switch+seaflo+float&_sacat=0) and can alarm on that
 * Uses Puppet to configure the host, install all the needed packages and configure the services
 
+Bill Of Mattieals
+
+* [Mopi from Pimoroni](http://shop.pimoroni.com/products/mopi-mobile-pi-power) £25
+* Adafruit Ultimate GPS [Pimoroni £34](http://shop.pimoroni.com/products/adafruit-ultimate-gps-breakout), [Amazon £33.99](http://www.amazon.co.uk/Adafruit-Ultimate-GPS-Breakout/dp/B00K9M6T8G/ref=sr_1_2?ie=UTF8&qid=1420205104&sr=8-2&keywords=adafr), [Pi Hut - Ebay £26.90]9http://www.ebay.co.uk/itm/Adafruit-Ultimate-GPS-Breakout-/331200495869?pt=UK_Computing_Other_Computing_Networking&hash=item4d1d1680fd)
+
+
 Picture
 -------
 This is the developement board in the best tupperware I could find.  This is not supposed to be used on a boat for a few reasons.  Gives you an idea of parts etc...

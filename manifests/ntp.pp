@@ -16,7 +16,7 @@ class piboatmon::ntp {
     unless => '/bin/grep "server 127.127.28.0 minpoll 4 maxpoll 4 iburst prefer" /etc/ntp.conf',
   }
 
-  exec { configNtpGpsFudge':
+  exec { 'configNtpGpsFudge':
     logoutput => true,
     command => '/usr/bin/perl -p -i -e "s#fudge 127.127.28.0.*#fudge 127.127.28.0 time1 +0.340 refid GPS#" /etc/ntp.conf'
     unless => '/bin/grep "fudge 127.127.28.0 time1 \+0.340 refid GPS" /etc/ntp.conf',
