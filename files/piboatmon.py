@@ -1977,7 +1977,7 @@ if __name__ == '__main__':
         logging.info('mopi initialised')
 
     except Exception, e:
-        logging.error('mopi not initialised: ' + str(e)
+        logging.error('mopi not initialised: ' + str(e))
         mopi = False
 
     # setup the modem - takes a few secs ...
