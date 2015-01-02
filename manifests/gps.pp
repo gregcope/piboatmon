@@ -51,7 +51,7 @@ class piboatmon::gps {
   exec { 'addPpsGPIOToBootCmdline':
     logoutput => true,
     command => '/usr/bin/perl -p -i -e "s/rootwait/bcm2708\.pps_gpio_pin=23 rootwait/" /boot/cmdline.txt',
-#    unless => '/bin/grep "bcm2708.pps_gpio_pin=23 rootwait" /boot/cmdline.txt',
+    unless => '/bin/grep "bcm2708.pps_gpio_pin=23 rootwait" /boot/cmdline.txt',
   }
 
 }
