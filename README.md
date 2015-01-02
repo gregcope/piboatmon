@@ -64,12 +64,19 @@ Bill Of Mattieals
 * [Mopi from Pimoroni](http://shop.pimoroni.com/products/mopi-mobile-pi-power) £25
 * Adafruit Ultimate GPS [Pimoroni £34](http://shop.pimoroni.com/products/adafruit-ultimate-gps-breakout), [Amazon £33.99](http://www.amazon.co.uk/Adafruit-Ultimate-GPS-Breakout/dp/B00K9M6T8G/ref=sr_1_2?ie=UTF8&qid=1420205104&sr=8-2&keywords=adafr), [Pi Hut - Ebay £26.90](http://www.ebay.co.uk/itm/Adafruit-Ultimate-GPS-Breakout-/331200495869?pt=UK_Computing_Other_Computing_Networking&hash=item4d1d1680fd)
 * Raspberry PI Model A+ [RS £18.61](http://uk.rs-online.com/web/p/processor-microcontroller-development-kits/8332699/), [Amazon £19.50](http://www.amazon.co.uk/Raspberry-Pi-Model-Plus-Motherboard/dp/B00Q8MM4PI/ref=sr_1_1?ie=UTF8&qid=1420206654&sr=8-1&keywords=raspberry+pi+a%2B), [Maplin £17.99] (http://www.maplin.co.uk/p/raspberry-pi-model-a-256-mb-mainboard-n03ea?gclid=COS-1fa59cICFWXHtAodwlYA1g), [Farnel £18.62](http://www.element14.com/community/docs/DOC-70725?CMP=KNC-PS-G-EU-SKU)
+* 8GB Mini SD card [Various £4](https://www.google.co.uk/webhp?sourceid=chrome-instant&ion=1&espv=2&ie=UTF-8#q=8gb+micro+sd+card&tbm=shop) 
 * GPS Attenna [Ebay £3.26](http://www.ebay.co.uk/itm/201082151408?_trksid=p2059210.m2749.l2649&ssPageName=STRK%3AMEBIDX%3AIT)
 * HQRP UFL to SMA Connectors (need 2) [Ebay £8.63] (http://www.ebay.co.uk/itm/390918412574?_trksid=p2059210.m2749.l2649&ssPageName=STRK%3AMEBIDX%3AIT)
-* Female to Female Breadboard Jumper Cables - need 7 [Amazon £1.25](http://www.amazon.co.uk/gp/product/B00D7SCMZ8?psc=1&redirect=true&ref_=oh_aui_detailpage_o01_s00)
+* Female to Female Breadboard Jumper Cables - need 7 [Pack Amazon £1.25](http://www.amazon.co.uk/gp/product/B00D7SCMZ8?psc=1&redirect=true&ref_=oh_aui_detailpage_o01_s00)
 * Secure Fix Direct Auto Float Switch (identical to Rule) [Amazon £8.95](http://www.amazon.co.uk/gp/product/B00KWW3490?psc=1&redirect=true&ref_=oh_aui_detailpage_o04_s00)
 * Energizer 633287 9V Lithium Battery [Amazon £6.00](http://www.amazon.co.uk/gp/product/B003XM9YUO?psc=1&redirect=true&ref_=oh_aui_detailpage_o05_s00)
-* CR1220 3V Lithium GPS Battery [Amazon £1.65](http://www.amazon.co.uk/gp/product/B003XM9YUO?psc=1&redirect=true&ref_=oh_aui_detailpage_o05_s00)
+* One CR1220 3V Lithium GPS Battery [Pack Amazon £1.65](http://www.amazon.co.uk/gp/product/B003XM9YUO?psc=1&redirect=true&ref_=oh_aui_detailpage_o05_s00)
+* USB to UART module [Ebay £1.19](http://www.ebay.co.uk/itm/271424127737?_trksid=p2059210.m2749.l2649&ssPageName=STRK%3AMEBIDX%3AIT)
+* Two Waterproof Cable Glands 3-6.5mm [Pack Ebay £2.20](http://www.ebay.co.uk/itm/290996797625?_trksid=p2059210.m2749.l2649&ssPageName=STRK%3AMEBIDX%3AIT)
+* Tinned Two Core 1.5mm2 Cable (5.7mm dia) for power supply [30M Ebay](http://www.ebay.co.uk/itm/ROUND-TWIN-CABLE-1-5mm-21-AMP-2-x-21-0-30-TINNED-COPPER-2-CORE-MARINE-BOAT-WIRE-/360755968845?pt=UK_CarsParts_Vehicles_CarParts_SM&hash=item53febb3b4d) 
+* Solder assume you have
+
+* Box - steal one from the kitchen - might use a Pelican later
 
 Picture
 -------
