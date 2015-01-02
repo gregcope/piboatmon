@@ -75,7 +75,7 @@ class piboatmon::readonlyboot {
 
 #  exec { 'addRoToBootCmdline':
 #    logoutput => true,
-#    command => '/usr/bin/perl -p -i -e "s/elevator=deadline$/elevator=deadline ro/" /boot/cmdline.txt',
+#    command => '/usr/bin/perl -p -i -e "s/elevator=deadline/elevator=deadline ro/" /boot/cmdline.txt',
 #    unless => '/bin/grep "elevator=deadline ro" /boot/cmdline.txt',
 #  }
 
