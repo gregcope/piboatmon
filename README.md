@@ -198,3 +198,8 @@ https://garretlabs.wordpress.com/2014/06/05/raspberry-and-the-remote-controlled-
 
 AT commands in detail
 http://www.developershome.com/sms/cmgdCommand.asp
+
+PiMemspit
+gpu_mem_256=112
+in /boot/config.txt
+http://www.raspberrypi.org/forums/viewtopic.php?p=223549#p223549

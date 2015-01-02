@@ -5,6 +5,7 @@ class piboatmon::gps {
 # install some sensible packages
   package { 'gpsd': ensure => installed }
   package { 'gpsd-clients': ensure => installed }
+  package { 'pps-tools': ensure => installed }
 
 # fire up gpsd
 # if we have the package and the config and the UART is no longer a serial console
@@ -19,6 +20,15 @@ class piboatmon::gps {
   file { '/etc/default/gpsd':
     ensure => present,
     content => "START_DAEMON=\"true\"\nGPSD_OPTIONS=\"-n -D 2\"\nDEVICES=\"/dev/ttyAMA0\"\nUSBAUTO=\"true\"\nGPSD_SOCKET=\"/var/run/gpsd.sock\"\n",
+  }
+
+# add the pps-gpio module to the end of /etc/modules
+# if not present
+
+  exec { 'addPpsGpioEtcModules':
+    logoutput => true,
+    command => '/bin/echo "pps-gpio" >> /etc/modules',
+    unless => '/bin/grep "pps-gpio" /etc/modules',
   }
 
 # remove the UART console

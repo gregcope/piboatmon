@@ -13,7 +13,7 @@ class piboatmon::3g {
 # config gammu
 # only if installed
 # to test
-# echo "fooo" | gammu sendsms TEXT +447769907533
+# echo "fooo" | gammu sendsms TEXT +441234567890
 # should see
 # If you want break, press Ctrl+C...
 # Sending SMS 1/1....waiting for network answer..OK, message reference=4
