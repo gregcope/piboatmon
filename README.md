@@ -157,13 +157,13 @@ The system understands the following config SMS messages - if it does not unders
 
 ```
 sudo apt-get update
-sudo apt-get install puppet
+sudo apt-get -y install puppet
 cd /tmp
 git clone https://github.com/gregcope/piboatmon.git
 cd piboatmon/manifests
 sudo puppet apply init.pp --modulepath=../..
-sudo apt-get upgrade
-sudo apt-get autoremove
+sudo apt-get -y upgrade
+sudo apt-get -y autoremove
 sudo reboot
 ```
 
