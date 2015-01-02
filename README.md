@@ -73,7 +73,7 @@ Bill Of Mattieals
 * One CR1220 3V Lithium GPS Battery [Pack Amazon £1.65](http://www.amazon.co.uk/gp/product/B003XM9YUO?psc=1&redirect=true&ref_=oh_aui_detailpage_o05_s00)
 * USB to UART module [Ebay £1.19](http://www.ebay.co.uk/itm/271424127737?_trksid=p2059210.m2749.l2649&ssPageName=STRK%3AMEBIDX%3AIT)
 * Two Waterproof Cable Glands 3-6.5mm [Pack Ebay £2.20](http://www.ebay.co.uk/itm/290996797625?_trksid=p2059210.m2749.l2649&ssPageName=STRK%3AMEBIDX%3AIT)
-* Tinned Two Core 1.5mm2 Cable (5.7mm dia) for power supply [30M Ebay](http://www.ebay.co.uk/itm/ROUND-TWIN-CABLE-1-5mm-21-AMP-2-x-21-0-30-TINNED-COPPER-2-CORE-MARINE-BOAT-WIRE-/360755968845?pt=UK_CarsParts_Vehicles_CarParts_SM&hash=item53febb3b4d) 
+* Tinned Two Core 1.5mm2 Cable (5.7mm dia) for power supply / bilge extenion [30M Ebay](http://www.ebay.co.uk/itm/ROUND-TWIN-CABLE-1-5mm-21-AMP-2-x-21-0-30-TINNED-COPPER-2-CORE-MARINE-BOAT-WIRE-/360755968845?pt=UK_CarsParts_Vehicles_CarParts_SM&hash=item53febb3b4d) 
 * Solder assume you have
 
 * Box - steal one from the kitchen - might use a Pelican later
