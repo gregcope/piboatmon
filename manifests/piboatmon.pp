@@ -30,7 +30,7 @@ class piboatmon::piboatmon {
 # unless a third partion exists ...
   exec { 'mkDataPart':
     logoutput => true,
-    command => '/sbin/parted /dev/mmcblk0 mkpart primary 3277 630',
+    command => '/sbin/parted /dev/mmcblk0 mkpart primary 3277 6300',
     unless => '/sbin/parted /dev/mmcblk0 p | /bin/grep "^ 3"',
   }
 
