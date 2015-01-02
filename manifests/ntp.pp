@@ -14,17 +14,19 @@ class piboatmon::ntp {
     logoutput => true,
     command => '/usr/bin/perl -p -i -e "s#server 127.127.28.0.*#server 127.127.28.0 minpoll 4 maxpoll 4 iburst prefer#" /etc/ntp.conf', 
     unless => '/bin/grep "server 127.127.28.0 minpoll 4 maxpoll 4 iburst prefer" /etc/ntp.conf',
+    notify => Service [ 'ntp' ],
   }
 
   exec { 'configNtpGpsFudge':
     logoutput => true,
     command => '/usr/bin/perl -p -i -e "s#fudge 127.127.28.0.*#fudge 127.127.28.0 time1 +0.340 refid GPS#" /etc/ntp.conf',
     unless => '/bin/grep "fudge 127.127.28.0 time1 \+0.340 refid GPS" /etc/ntp.conf',
+    notify => Service [ 'ntp' ],
   }
 
 # ntp service
   service { 'ntp':
-    require => [ Package [ 'ntp' ], Exec [ 'configNtp' ] ],
+    require => [ Package [ 'ntp' ], Exec [ 'configNtpGpsServer' ], Exec [ 'configNtpGpsFudge' ] ],
     ensure => running,
     enable => true,
   }
