@@ -1791,7 +1791,7 @@ def sendHttpsLogging():
                'presentLon': str(presentLon),
                'movedDistanceM': str(movedDistanceM)}
 
-    httpsUriPath = '/mythweb/pibotmon/logging/imei/' + str(imei)
+    httpsUriPath = '/mythweb/piboatmon/logging/imei/' + str(imei)
 
     httpsHostname = 'www.webarmadillo.net'
     httpBasicAuthUser = 'greg'
