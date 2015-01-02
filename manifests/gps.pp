@@ -46,4 +46,12 @@ class piboatmon::gps {
     command => '/usr/bin/perl -p -i -e "s/console=ttyAMA0,115200//" /boot/cmdline.txt',
     onlyif => '/bin/grep "console=ttyAMA0,115200" /boot/cmdline.txt',
   }
+
+# Add PPS to GPIO 23
+  exec { 'addPpsGPIOToBootCmdline':
+    logoutput => true,
+    command => '/usr/bin/perl -p -i -e "s/.*rootwait$/bcm2708.pps_gpio_pin=23 rootwait$/" /boot/cmdline.txt',
+#    unless => '/bin/grep "bcm2708.pps_gpio_pin=23 rootwait" /boot/cmdline.txt',
+  }
+
 }
