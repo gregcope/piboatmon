@@ -1206,7 +1206,7 @@ def setPowerOnDelay():
     global wakeInNSecs
     global shutdown
 
-    if mopi is None:
+    if mopi is False:
         logging.error('mopi not initialised.  Cannot set power on delay to: ' + str(wakeInNSecs))
         return
 
@@ -1235,7 +1235,7 @@ def getInputmV():
     global bat1Mv
     global bat2Mv
 
-    if mopi is None:
+    if mopi is False:
         logging.error('mopi not initialised.  Cannot get bat volts')
         return
 
@@ -1978,7 +1978,7 @@ if __name__ == '__main__':
 
     except Exception, e:
         logging.error('mopi not initialised: ' + str(e)
-        mopi = None
+        mopi = False
 
     # setup the modem - takes a few secs ...
     # so the GPS thread can be on its way :w
