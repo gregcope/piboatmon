@@ -28,7 +28,7 @@ class piboatmon::gps {
   exec { 'addPpsGpioEtcModules':
     logoutput => true,
     command => '/bin/echo "pps-gpio" >> /etc/modules',
-    unless => '/bin/grep "pps-gpio" /etc/modules',
+    unless => '/bin/grep "^pps-gpio" /etc/modules',
   }
 
 # remove the UART console
