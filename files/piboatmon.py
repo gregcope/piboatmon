@@ -910,7 +910,7 @@ def sendConfigSms(sms):
 
     reply = ''
 
-    if phone = '':
+    if phone is '':
 
         # Ops no registered phone
         logging.info('No phone set ... cannot send config')
