@@ -323,8 +323,8 @@ class GpsPoller(threading.Thread):
         # find the biggest EP error and report on that
         roundedEp = max(roundedAvEpx, roundedAvEpy)
 
-        # if the number of fixes is low, or EP low
-        if self.numFixes < 10 or roundedEp > 15:
+        # if EP is low
+        if roundedEp > 15:
 
             # prefix poor fix
             prefix = prefix + 'POOR '
