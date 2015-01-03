@@ -1,5 +1,9 @@
 #!/bin/sh
 
+
+timeOutSecs=90s
+defaultSleepSecs=3600
+
 # start gps logging
 /usr/bin/logger -t piBoatMon "Starting gpspipe to /home/pi/piboatmon/files/gpspipe.log"
 /usr/bin/gpspipe -d -w -l -t -o /home/pi/piboatmon/files/gpspipe.log
@@ -24,11 +28,11 @@
 /usr/bin/logger -t piBoatMon `/usr/bin/sudo /usr/sbin/mopicli -v2` &
 
 /usr/bin/logger -t piBoatMon "Setting the mopi power on timer to default of 3600 secs - piboatmon.py should overwrite it"
-/usr/bin/sudo /usr/sbin/mopicli -won 3600 &
+/usr/bin/sudo /usr/sbin/mopicli -won $defaultSleepSecs &
 
 /usr/bin/logger -t piBoatMon "Starting /home/pi/piboatmon/files/piboatmon.py"
 # unleash the python
-/usr/bin/timeout 180s /usr/bin/sudo /home/pi/piboatmon/files/piboatmon.py
+/usr/bin/timeout $timeOutSecs /usr/bin/sudo /home/pi/piboatmon/files/piboatmon.py
 /usr/bin/logger -t piBoatMon "Finished /home/pi/piboatmon/files/piboatmon.py"
 
 /usr/bin/logger -t piBoatMon "Calling sync 3 times"

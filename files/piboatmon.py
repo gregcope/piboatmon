@@ -1975,6 +1975,24 @@ def uptimeSecs():
     return uptime
 
 
+def setUpMopi()
+
+    # fish out the global
+    global mopi
+
+    if debug is True:
+        logging.debug('About to initialise the mopi'
+
+    # create a mopi object to query
+    try:
+        mopi = mopiapi()
+        logging.info('mopi initialised')
+
+    except Exception, e:
+        logging.error('mopi not initialised: ' + str(e))
+        mopi = False
+
+
 if __name__ == '__main__':
 
     # check we are running as sudo
@@ -2007,14 +2025,8 @@ if __name__ == '__main__':
     gpsp = GpsPoller()
     gpsp.start()
 
-    # create a mopi object to query
-    try:
-        mopi = mopiapi()
-        logging.info('mopi initialised')
-
-    except Exception, e:
-        logging.error('mopi not initialised: ' + str(e))
-        mopi = False
+    # setup the mopi
+    setUpMopi()
 
     # setup the modem - takes a few secs ...
     # so the GPS thread can be on its way :w
