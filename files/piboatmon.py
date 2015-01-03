@@ -919,19 +919,32 @@ def sendConfigSms(sms):
         # Ops no registered phone
         logging.info('No phone set ... cannot send config')
 
-    # fish out the config
-    reply = "Config is:\n"
-    reply = reply + 'Boatname: ' + str(boatname)  + "\n"
-    reply = reply + 'phone: ' + str(phone) + "\n"
-    reply = reply + 'dailyStatus: ' + str(dailyStatus) + "\n"
-    reply = reply + 'debug: ' + str(debug) + "\n"
-    reply = reply + 'alarmRange: ' + str(alarmRange) + "\n"
-    reply = reply + 'alarmLat: ' + str(alarmLat) + "\n"
-    reply = reply + 'alarmLon: ' + str(alarmLon) + "\n" 
+    # fish out the config that will be set
+    # boatname will be prefixed to SMS message anyway
+    # phone has to be set anyway to get a reply
+    # so do not add either to save space
+
+    reply = "Config:\n"
     reply = reply + 'wakeInNSecs: ' + str(wakeInNSecs) + "\n"
-    reply = reply + 'dailyStatus: ' + str(dailyStatus) + "\n"
-    reply = reply + 'regularStatus: ' + str(regularStatus) + "\n"
-    reply = reply + 'batteryOkMVolts: ' + str(batteryOkMVolts) + "\n"
+
+    # these are optional - so to save space ...
+    if dailyStatus != '':
+        reply = reply + 'dailyStatus: ' + str(dailyStatus) + "\n"
+    
+    if debug is True:
+        reply = reply + 'debug: ' + str(debug) + "\n"
+
+    if alarmRange !='':
+        reply = reply + 'alarmRange: ' + str(alarmRange) + "\n"
+
+    if dailyStatus != '': 
+        reply = reply + 'dailyStatus: ' + str(dailyStatus) + "\n"
+
+    if regularStatus != '':
+        reply = reply + 'regularStatus: ' + str(regularStatus) + "\n"
+
+    if batteryOkMVolts != '':
+        reply = reply + 'batteryOkMVolts: ' + str(batteryOkMVolts) + "\n"
 
     # got this far ... log reply, send SMS reponse
     logging.info(reply)
