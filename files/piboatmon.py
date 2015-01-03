@@ -590,6 +590,11 @@ def checkAnchorAlarm():
         logging.debug('alarmRange is: ' + str(alarmRange) + ' alarmLat: '
                       + str(alarmLat) + ' alarmLon: ' + str(alarmLon))
 
+    if alarmRange is '':
+
+        logging.info('No Anchor alarm set - skipping')
+        return
+
     if alarmRange > 1:
 
         # check we have a lat/lon to compare to
