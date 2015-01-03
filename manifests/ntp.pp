@@ -20,8 +20,8 @@ class piboatmon::ntp {
 
   exec { 'configNtpGpsFudge':
     logoutput => true,
-    command => '/usr/bin/perl -p -i -e "s#fudge 127\.127\.28\.0.*#fudge 127\.127\.28\.0 time1 \+0\.340 refid GPS#" /etc/ntp.conf',
-    unless => '/bin/grep "fudge 127.127.28.0 time1 +0.340 refid GPS" /etc/ntp.conf',
+    command => '/usr/bin/perl -p -i -e "s#fudge 127\.127\.28\.0.*#fudge 127\.127\.28\.0 time1 \+0\.540 refid GPS#" /etc/ntp.conf',
+    unless => '/bin/grep "fudge 127.127.28.0 time1 +0.540 refid GPS" /etc/ntp.conf',
     notify => Service [ 'ntp' ],
     require => Exec [ 'addGpsFudge' ],
   }
