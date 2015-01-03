@@ -327,11 +327,15 @@ class GpsPoller(threading.Thread):
         if roundedEp > 15:
 
             # prefix poor fix
-            prefix = prefix + 'POOR '
+            prefix = prefix + 'POOR EP '
 
-            if debug is True:
-                logging.debug('numFixes: ' + str(self.numFixes)
-                              + ' roundedEp: ' + str(roundedEp))
+        if if self.numFixes < 10:
+
+            prefix = prefix + 'LOW no. fixes '
+
+        if debug is True:
+            logging.debug('numFixes: ' + str(self.numFixes)
+                          + ' roundedEp: ' + str(roundedEp))
 
         # convert km/h to knots
         roundedAvSpeedKn = int(self.avSpeed / 0.539957)
