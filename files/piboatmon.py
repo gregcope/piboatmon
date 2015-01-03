@@ -711,7 +711,7 @@ def sendSms(_number, _txt):
     # Prefix with boatname and time
     # and add iteration to the end
     _txt = datetime.datetime.now().strftime("%a %X") + ' ' + boatname \
-        + ': ' + _txt + ', ' + str(iteration)
+        + ': ' + _txt + ',' + str(iteration)
 
     if debug is True:
         logging.debug('Trying to send SMS message: ' + str(_txt)
@@ -929,7 +929,7 @@ def sendConfigSms(sms):
     # phone has to be set anyway to get a reply
     # so do not add either to save space
 
-    reply = "Config:\n"
+    reply = "Config;"
     reply = reply + 'wakeInNSecs: ' + str(wakeInNSecs) + "\n"
 
     # these are optional - so to save space ...
