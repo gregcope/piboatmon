@@ -58,6 +58,7 @@ How it works
 * Uses Puppet to configure the host, install all the needed packages and configure the services
 
 Bill Of Mattieals
+"""
 
 (Prices include UK VAT but not Shipping - YMMV)
 
@@ -143,6 +144,7 @@ The system understands the following config SMS messages - if it does not unders
 * `set battery ok volts Mvolts` - Will set the milivolts at which the PI will report main battery OK or not
 * `shutdown` - Will shutdown and never wake up.  Only from the registered phone.  Replies with an SMS.  Will need to be manually restarted.
 * `send instructions` - Sends a short instructions SMS (edited version of this)
+* `send config` - Sends the present config to registered phone
 
 ## Logging
 

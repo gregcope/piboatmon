@@ -842,6 +842,10 @@ def processSMS(sms):
         regularStatusSms(sms)
         _understoodSms = True
 
+    if 'send config' in _lowertxt:
+        sendConfigSms(sms)
+        _understoodSms = True
+
     if 'setup' in _lowertxt:
         setupSms(sms)
         _understoodSms = True
@@ -902,12 +906,40 @@ def processSMS(sms):
     # finished
 
 
+def sendConfigSms(sms):
+
+    reply = ''
+
+    if phone = '':
+
+        # Ops no registered phone
+        logging.info('No phone set ... cannot send config')
+
+    # fish out the config
+    reply = "Config is:\n"
+    reply = reply + 'Boatname: ' + str(boatname)  + "\n"
+    reply = reply + 'phone: ' + str(phone) + "\n"
+    reply = reply + 'dailyStatus: ' + str(dailyStatus) + "\n"
+    reply = reply + 'debug: ' + str(debug) + "\n"
+    reply = reply + 'alarmRange: ' + str(alarmRange) + "\n"
+    reply = reply + 'alarmLat: ' + str(alarmLat) + "\n"
+    reply = reply + 'alarmLon: ' + str(alarmLon) + "\n" 
+    reply = reply + 'wakeInNSecs: ' + str(wakeInNSecs) + "\n"
+    reply = reply + 'dailyStatus: ' + str(dailyStatus) + "\n"
+    reply = reply + 'regularStatus: ' + str(regularStatus) + "\n"
+    reply = reply + 'batteryOkMVolts: ' + str(batteryOkMVolts) + "\n"
+
+    # got this far ... log reply, send SMS reponse
+    logging.info(reply)
+    sendSms(phone, reply)
+
+
 def regularStatusSms(sms):
 
     # either put regularStatus on/off
     _lowertxt = sms[0]['Text'].lower()
 
-    reply = None
+    reply = ''
 
     # set global var
     global regularStatus
@@ -931,7 +963,6 @@ def regularStatusSms(sms):
                     + ' messages approx. every ' + str(_mins) + ' minutes'
 
             regularStatus = True
-            saveConfig()
 
     elif 'set regular status off' in _lowertxt:
 
@@ -939,7 +970,6 @@ def regularStatusSms(sms):
 
             reply = 'regularStatus being turned off'
             regularStatus = False
-            saveConfig()
 
         else:
 
@@ -998,12 +1028,8 @@ def setupSms(sms):
     if gpsp.getCurrentNoFixes() > 1:
 
         # we got one fix... yay!
-        phone = number
-        saveConfig()
-
         reply = 'Setup: GPS got: ' + str(gpsp.getCurrentNoFixes()) \
-                + ' fix(s).  Also setting the phone number to this number: ' \
-                + str(phone)
+                + ' fix(s)'
         logging.info(reply)
 
     # we should have a reply eitherway ...
@@ -1043,8 +1069,6 @@ def shutdownSms(sms):
 
 def setWakeInNSecsSms(sms):
 
-    # get the number
-    number = str(sms[0]['Number'])
     _txt = sms[0]['Text']
     _lowertxt = _txt.lower()
     reply = None
@@ -1083,13 +1107,11 @@ def setWakeInNSecsSms(sms):
         logging.error(reply)
 
     # sent the SMS
-    sendSms(number, reply)
+    sendSms(phone, reply)
 
 
 def setBatteryOkMVoltsSms(sms):
 
-    # get the number
-    number = str(sms[0]['Number'])
     _txt = sms[0]['Text']
     _lowertxt = _txt.lower()
     reply = None
@@ -1117,13 +1139,11 @@ def setBatteryOkMVoltsSms(sms):
         logging.error(reply)
 
     # sent the SMS
-    sendSms(number, reply)
+    sendSms(phone, reply)
 
 
 def setDailyStatusSms(sms):
 
-    # get the number
-    number = str(sms[0]['Number'])
     _txt = sms[0]['Text']
     _lowertxt = _txt.lower()
     reply = None
@@ -1153,13 +1173,11 @@ def setDailyStatusSms(sms):
         logging.error(reply)
 
     # sent the SMS
-    sendSms(number, reply)
+    sendSms(phone, reply)
 
 
 def setBoatnameSms(sms):
 
-    # get the number
-    number = str(sms[0]['Number'])
     _txt = sms[0]['Text']
     _lowertxt = _txt.lower()
     reply = None
@@ -1192,12 +1210,13 @@ def setBoatnameSms(sms):
             # got confused
             reply = 'Could not parse: ' + str(_txt) + ' to set boatname'
             logging.error(reply)
-            sendSms(number, reply)
 
-        # sent the SMS
-        sendSms(number, reply)
-        return
+    else:
+        reply = 'Confused about message: ' + str(_txt)
+        logging.error(repy)
 
+    # sent the SMS
+    sendSms(phone, reply)
 
 def setPowerOnDelay():
 
@@ -1245,7 +1264,7 @@ def getInputmV():
 
 def getBatteryText():
 
-    status = ''
+    text = ''
 
     global bat1Mv
     global bat2Mv
@@ -1267,34 +1286,34 @@ def getBatteryText():
     # below
     # "{0:.2f}".format((bat1Mv) / 1000)
     if bat1Mv > 13000:
-        status = status + 'Bat1 Charging: ' \
+        text = text + 'Bat1 Charging: ' \
             + "{0:.2f}".format((bat1Mv) / 1000) + 'V'
     elif bat1Mv > batteryOkMVolts:
-        status = status + 'Bat1 OK: ' + "{0:.2f}".format((bat1Mv) / 1000) + 'V'
+        text = text + 'Bat1 OK: ' + "{0:.2f}".format((bat1Mv) / 1000) + 'V'
     elif bat1Mv == 0:
-        status = status + 'Bat1 Missing: 0V'
+        text = text + 'Bat1 Missing: 0V'
     elif bat1Mv < 11000:
-        status = status + 'Bat1 Low: ' \
+        text = text + 'Bat1 Low: ' \
             + "{0:.2f}".format((bat1Mv) / 1000) + 'V'
     else:
-        status = status + 'Bat1 state unkown'
+        text = text + 'Bat1 state unkown'
 
     # Battery2 is assumed to be a 9v
     # above 9000 is Ok
     # below 5200 is low
     # 0 == mising/dead
     if bat2Mv > 7000:
-        status = status + ' Bat2 OK: ' \
+        text = text + ' Bat2 OK: ' \
             + "{0:.2f}".format((bat2Mv) / 1000) + 'V'
     elif bat2Mv == 0:
-        status = status + ' Bat2 Missing: 0V'
+        text = text + ' Bat2 Missing: 0V'
     elif bat2Mv < 5200:
-        status = status + ' Bat2 Low: ' \
+        text = text + ' Bat2 Low: ' \
             + "{0:.2f}".format((bat2Mv) / 1000) + 'V'
     else:
-        status = status + 'Bat2 state unkown'
+        text = text + 'Bat2 state unkown'
 
-    return status
+    return text
 
 
 def checkBattery():
@@ -1312,16 +1331,18 @@ def checkBattery():
 
 def checkBilgeText():
 
+    text = ''
+
     if bilgeSwitchState is True:
-        status = 'BILGE ALARM !!!'
+        text = 'BILGE ALARM !!!'
     elif bilgeSwitchState is None:
-        status = 'BILGE Unkown'
+        text = 'BILGE Unkown'
     else:
-        status = 'BILGE OK'
+        text = 'BILGE OK'
 
-    logging.info(status)
+    logging.info(text)
 
-    return status
+    return text
 
 
 def checkBilge():
@@ -1362,9 +1383,6 @@ def setAnchorAlarmSms(sms):
 
     # lower case the message
     _lowertxt = sms[0]['Text'].lower()
-
-    # get the number
-    number = str(sms[0]['Number'])
     reply = None
     _newRange = None
 
@@ -1391,7 +1409,7 @@ def setAnchorAlarmSms(sms):
         reply = 'Anchor alarm being diabled!'
 
         # sent the SMS
-        sendSms(number, reply)
+        sendSms(phone, reply)
 
         # done - return
         return
@@ -1419,7 +1437,7 @@ def setAnchorAlarmSms(sms):
             reply = 'New Anchor Alarm appears to be less than 10M ... ' \
                     + 'please try again (with a higher number)'
             loggin.info(reply)
-            sendSms(number, reply)
+            sendSms(phone, reply)
             return
 
     else:
@@ -1448,7 +1466,7 @@ def setAnchorAlarmSms(sms):
         logging.info(reply)
 
     # send replry
-    sendSms(number, reply)
+    sendSms(phone, reply)
 
 
 def updatePhoneSms(sms):
@@ -1519,7 +1537,6 @@ def debugSms(sms):
 
     # either put debug on/off
     _lowertxt = sms[0]['Text'].lower()
-    number = str(sms[0]['Number'])
 
     reply = None
 
@@ -1555,7 +1572,7 @@ def debugSms(sms):
         logging.info('No idea what that txt was...')
         reply = 'Could not parse debug message : ' + _lowertxt
 
-    sendSms(number, reply)
+    sendSms(phone, reply)
 
 
 def sendInstructionsSms(sms):
@@ -1813,9 +1830,7 @@ def sendHttpsLogging():
 
 def dailyStatusOffSms(sms):
 
-    # get the number
-    number = str(sms[0]['Number'])
-    reply = None
+    reply = ''
 
     # fish out the global
     global dailyStatus
@@ -1829,7 +1844,7 @@ def dailyStatusOffSms(sms):
     reply = 'Daily status SMS being disabled!'
 
     # sent the SMS
-    sendSms(number, reply)
+    sendSms(phone, reply)
 
 
 def sendDebugMessage():
@@ -1879,7 +1894,7 @@ def waitTillUptime(requiredUptime):
                  + str(_loop) + ' secs')
 
 
-def saveIterationAndLastRunTime():
+def updateIterationAndLastRunTime():
 
     global iteration
     global LastRunTime
@@ -1965,7 +1980,7 @@ if __name__ == '__main__':
     loadConfig()
 
     # set iteration and LastRunTime
-    saveIterationAndLastRunTime()
+    updateIterationAndLastRunTime()
 
     # create a gpsPollerthread and asks it to start
     gpsp = GpsPoller()
