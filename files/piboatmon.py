@@ -329,7 +329,7 @@ class GpsPoller(threading.Thread):
             # prefix poor fix
             prefix = prefix + 'POOR EP '
 
-        if if self.numFixes < 10:
+        if self.numFixes < 10:
 
             prefix = prefix + 'LOW no. fixes '
 
