@@ -942,9 +942,6 @@ def sendConfigSms(sms):
     if alarmRange !='':
         reply = reply + 'alarmRange: ' + str(alarmRange) + "\n"
 
-    if dailyStatus != '': 
-        reply = reply + 'dailyStatus: ' + str(dailyStatus) + "\n"
-
     if regularStatus != '':
         reply = reply + 'regularStatus: ' + str(regularStatus) + "\n"
 
