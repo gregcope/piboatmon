@@ -1933,7 +1933,9 @@ def giveGpsChance():
 
     if gpsp.getCurrentNoFixes() > 0:
 
-        logging.debug('Already have a GPS fix - nothing to do')
+        if debug is True:
+            logging.debug('Already have a GPS fix - nothing to do')
+
         return
 
     # No GPS fix
