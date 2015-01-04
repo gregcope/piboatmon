@@ -22,6 +22,7 @@ import ConfigParser
 import math
 import sys
 import logging
+import logging.handlers
 import datetime
 import smbus
 import errno
