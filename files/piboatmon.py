@@ -282,8 +282,8 @@ class GpsPoller(threading.Thread):
                         _sumEpx = _sumEpx + report.epx
                         self.avEpx = _sumEpx / self.numFixes
 
-                       if debug is True:
-                           logger.debug('GPS thread stats: LAT ' + str(self.avLat) + ' LON ' +str(self.avLon) + ' VEL ' + str(self.avSpeed) + ' HEAD ' + str(self.avHeading) + 'T LAT +/- ' + str(self.avEpx) + ' LON +/- ' + str(self.avEpy) + ' No. fixes ' + str(self.numFixes))
+                        if debug is True:
+                            logger.debug('GPS thread stats: LAT ' + str(self.avLat) + ' LON ' +str(self.avLon) + ' VEL ' + str(self.avSpeed) + ' HEAD ' + str(self.avHeading) + 'T LAT +/- ' + str(self.avEpx) + ' LON +/- ' + str(self.avEpy) + ' No. fixes ' + str(self.numFixes))
 
             # oh it went a bit pete tong
             except StopIteration:
