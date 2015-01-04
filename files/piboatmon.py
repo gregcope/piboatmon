@@ -1405,7 +1405,7 @@ def getStatusText():
     # _prefix should be now set
 
     # overload or add to prefix if required
-    if checkBattery() is not True
+    if checkBattery() is not True:
 
         if _prefix is 'OK':
             # overload OK prefix
