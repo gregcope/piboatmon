@@ -2014,30 +2014,31 @@ def setUpMopi():
 def createLogging():
 
     global logger
-    # create a Log hander
-    logger = logging.getLogger(__name__)
 
     # git it a go setting it up
     try:
+        # create a Log hander
+        logger = logging.getLogger(__name__)
+
         # create a file handler
-        fh = logging.RotatingFileHandler(logfile, maxBytes=360000, backupCount=5)
-        fh.setLevel(logging.DEBUG)
+        fileHandle = logging.RotatingFileHandler(logfile, maxBytes=360000, backupCount=5)
+        fileHandle.setLevel(logging.DEBUG)
 
         # create console stream handler
-        sh = logging.handlers.StreamHandler()
-        sh.setLevel(logging.ERROR)
+        console = logging.handlers.StreamHandler()
+        console.setLevel(logging.ERROR)
 
         # create a logging format
         formatter = logging.Formatter('%(asctime)s %(levelname)s'
                                       + ' %(funcName)s %(message)s')
 
         # add format to handlers
-        fh.setFormatter(formatter)
-        sh.setFormatter(formatter)
+        fileHandle.setFormatter(formatter)
+        console.setFormatter(formatter)
 
         # add the handlers to the logger
-        logger.addHandler(fh)
-        logger.addHandler(sh)
+        logger.addHandler(fileHandle)
+        logger.addHandler(console)
 
     except Exception, e:
         print 'Logging problem' + str(e)
