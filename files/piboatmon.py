@@ -2022,20 +2022,20 @@ def createLogging():
         logger.setLevel(logging.DEBUG)
 
         # create a file handler
-        fileHandle = logging.handlers.RotatingFileHandler(logfile,
-                                                          maxBytes=1048576*5,
-                                                          backupCount=5)
-        fileHandle.setLevel(logging.DEBUG)
+        handler = logging.handlers.RotatingFileHandler(logfile,
+                                                       maxBytes=1048576*5,
+                                                       backupCount=5)
+        handler.setLevel(logging.DEBUG)
 
         # create a logging format
-        fileFormatter = logging.Formatter('%(asctime)s %(levelname)-8s'
-                                         + ' %(funcName)s %(message)s')
+        formatter = logging.Formatter('%(asctime)s %(levelname)-8s'
+                                      + ' %(funcName)s %(message)s')
 
         # add format to handlers
-        fileHandle.setFormatter(fileFormatter)
+        handler.setFormatter(formatter)
 
         # add the handlers to the logger
-        logger.addHandler(fileHandle)
+        logger.addHandler(handler)
 
     except Exception, e:
         print 'Logging problem' + str(e)
