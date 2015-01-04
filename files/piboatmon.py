@@ -1993,7 +1993,7 @@ def uptimeSecs():
     return uptime
 
 
-def setUpMopi()
+def setUpMopi():
 
     # fish out the global
     global mopi
