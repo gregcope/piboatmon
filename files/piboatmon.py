@@ -1999,7 +1999,7 @@ def setUpMopi():
     global mopi
 
     if debug is True:
-        logger.debug('About to initialise the mopi'
+        logger.debug('About to initialise the mopi')
 
     # create a mopi object to query
     try:
