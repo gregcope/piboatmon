@@ -2027,23 +2027,15 @@ def createLogging():
                                                           backupCount=5)
         fileHandle.setLevel(logging.DEBUG)
 
-        # create console stream handler
-        console = logging.StreamHandler()
-        console.setLevel(logging.ERROR)
-
         # create a logging format
         fileFormatter = logging.Formatter('%(asctime)s %(levelname)-8s'
                                          + ' %(funcName)s %(message)s')
-        consoleFormatter = logging.Formatter('%(levelname)-8s'
-                                            + ' %(funcName)s %(message)s')
 
         # add format to handlers
         fileHandle.setFormatter(fileFormatter)
-        console.setFormatter(consoleFormatter)
 
         # add the handlers to the logger
         logger.addHandler(fileHandle)
-        logger.addHandler(console)
 
     except Exception, e:
         print 'Logging problem' + str(e)
