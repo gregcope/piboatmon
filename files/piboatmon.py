@@ -22,7 +22,6 @@ import ConfigParser
 import math
 import sys
 import logging
-from logging.handlers import RotatingFileHandler
 import datetime
 import smbus
 import errno
@@ -1274,7 +1273,7 @@ def setPowerOnDelay():
 
     mopi.setPowerOnDelay(wakeInNSecs)
 
-    print 'Setting wake on delay to: ' + str(wakeInNSecs)
+    logging.critical('Setting wake on delay to: ' + str(wakeInNSecs))
 
 
 def getInputmV():
@@ -1857,8 +1856,8 @@ def sendHttpsLogging():
     try:
 
         r = requests.get(uri, params=payload, timeout=0.4, verify=False)
-        print r.url
-        logger.info(r.url)
+
+        logger.critical(r.url)
 
     except Exception, e:
 
@@ -2016,18 +2015,25 @@ def createLogging():
     global logger
     # create a Log hander
     logger = logging.getLogger(__name__)
-    logger.setLevel(logging.ERROR)
+    logger.setLevel(logging.DEBUG)
 
     # git it a go setting it up
     try:
         # create a file handler
-        handler = RotatingFileHandler(logfile, maxBytes=360000, backupCount=5)
-        handler.setLevel(logging.DEBUG)
+        fileHandler = logging.RotatingFileHandler(logfile, maxBytes=360000, backupCount=5)
+        fileHandler.setLevel(logging.DEBUG)
+
+        # create console stream handler
+        streamHandler = logging..StreamHandler()
+        streamHandler.setLevel(logging.ERROR)
 
         # create a logging format
         formatter = logging.Formatter('%(asctime)s %(levelname)s'
                                       + ' %(funcName)s %(message)s')
-        handler.setFormatter(formatter)
+
+        # add format to handlers
+        fileHandler.setFormatter(formatter)
+        streamHandler.setFormatter(formatter)
 
         # add the handlers to the logger
         logger.addHandler(handler)
