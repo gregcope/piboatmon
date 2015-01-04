@@ -2020,11 +2020,11 @@ def createLogging():
     # git it a go setting it up
     try:
         # create a file handler
-        fileHandler = logging.RotatingFileHandler(logfile, maxBytes=360000, backupCount=5)
+        fileHandler = logging.handlers.RotatingFileHandler(logfile, maxBytes=360000, backupCount=5)
         fileHandler.setLevel(logging.DEBUG)
 
         # create console stream handler
-        streamHandler = logging.StreamHandler()
+        streamHandler = logging.handlers.StreamHandler()
         streamHandler.setLevel(logging.ERROR)
 
         # create a logging format
