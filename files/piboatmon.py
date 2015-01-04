@@ -2027,7 +2027,7 @@ def createLogging():
         fileHandle.setLevel(logging.DEBUG)
 
         # create console stream handler
-        console = logging.handlers.StreamHandler()
+        console = logging.StreamHandler()
         console.setLevel(logging.ERROR)
 
         # create a logging format
