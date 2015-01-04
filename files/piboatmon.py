@@ -2016,12 +2016,12 @@ def createLogging():
     global logger
     # create a Log hander
     logger = logging.getLogger(__name__)
-    logger.setLevel(logging.DEBUG)
+    logger.setLevel(logging.ERROR)
 
     # git it a go setting it up
     try:
         # create a file handler
-        handler = RotatingFileHandler(logfile, maxBytes=7000, backupCount=5)
+        handler = RotatingFileHandler(logfile, maxBytes=360000, backupCount=5)
         handler.setLevel(logging.DEBUG)
 
         # create a logging format
