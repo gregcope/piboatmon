@@ -2019,7 +2019,7 @@ def createLogging():
     try:
         # create a Log hander
         logger = logging.getLogger(__name__)
-        logger.setLeve(logging.DEBUG)
+        logger.setLevel(logging.DEBUG)
 
         # create a file handler
         fileHandle = logging.handlers.RotatingFileHandler(logfile,
