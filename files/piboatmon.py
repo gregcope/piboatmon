@@ -2021,7 +2021,9 @@ def createLogging():
         logger = logging.getLogger(__name__)
 
         # create a file handler
-        fileHandle = logging.RotatingFileHandler(logfile, maxBytes=360000, backupCount=5)
+        fileHandle = logging.handlers.RotatingFileHandler(logfile,
+                                                          maxBytes=360000,
+                                                          backupCount=5)
         fileHandle.setLevel(logging.DEBUG)
 
         # create console stream handler
