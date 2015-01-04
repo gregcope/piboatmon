@@ -2020,24 +2020,24 @@ def createLogging():
     # git it a go setting it up
     try:
         # create a file handler
-        fileHandler = logging.handlers.RotatingFileHandler(logfile, maxBytes=360000, backupCount=5)
-        fileHandler.setLevel(logging.DEBUG)
+        fh = logging.RotatingFileHandler(logfile, maxBytes=360000, backupCount=5)
+        fh.setLevel(logging.DEBUG)
 
         # create console stream handler
-        streamHandler = logging.handlers.StreamHandler()
-        streamHandler.setLevel(logging.ERROR)
+        sh = logging.StreamHandler()
+        sh.setLevel(logging.ERROR)
 
         # create a logging format
         formatter = logging.Formatter('%(asctime)s %(levelname)s'
                                       + ' %(funcName)s %(message)s')
 
         # add format to handlers
-        fileHandler.setFormatter(formatter)
-        streamHandler.setFormatter(formatter)
+        fh.setFormatter(formatter)
+        sh.setFormatter(formatter)
 
         # add the handlers to the logger
-        logger.addHandler(fileHandler)
-        logger.addHandler(streamHandler)
+        logger.addHandler(fh)
+        logger.addHandler(sh)
 
     except Exception, e:
         print 'Logging problem' + str(e)
