@@ -2016,7 +2016,6 @@ def createLogging():
     global logger
     # create a Log hander
     logger = logging.getLogger(__name__)
-    logger.setLevel(logging.DEBUG)
 
     # git it a go setting it up
     try:
@@ -2037,7 +2036,8 @@ def createLogging():
         streamHandler.setFormatter(formatter)
 
         # add the handlers to the logger
-        logger.addHandler(handler)
+        logger.addHandler(fileHandler)
+        logger.addHandler(streamHandler)
 
     except Exception, e:
         print 'Logging problem' + str(e)
