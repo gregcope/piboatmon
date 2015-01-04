@@ -42,6 +42,13 @@ class piboatmon::readonlyboot {
     unless => '/bin/grep "#clean_all" /etc/init.d/checkroot-bootclean.sh',
   }
 
+#http://thebeezspeaks.blogspot.co.uk/2013/10/hardening-your-raspberry-pi.html
+  exec { 'makeTmpTmpfs':
+    logoutput => true,
+    command => '/usr/bin/perl -p -i -e "s/^.*RAMTMP=no$/RAMTMP=no/" /etc/default/tmpfs',
+    unless => '/bin/grep "^RAMTMP=no" /etc/default/tmpfs',
+  }
+
   exec { 'removeCleanCheckRootBootCleanSh':
     logoutput => true,
     command => '/usr/bin/perl -p -i -e "s?rm -f /tmp/.clean /lib/init/rw/.clean /run/.clean /run/lock/.clean?#rm -f /tmp/.clean /lib/init/rw/.clean /run/.clean /run/lock/.clean?" /etc/init.d/checkroot-bootclean.sh',
