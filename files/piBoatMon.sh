@@ -4,19 +4,10 @@
 timeOutSecs=90s
 defaultSleepSecs=3600
 
-# start gps logging
-/usr/bin/logger -t piBoatMon "Starting gpspipe to /home/pi/piboatmon/files/gpspipe.log"
-/usr/bin/gpspipe -d -w -l -t -o /home/pi/piboatmon/files/gpspipe.log
-
 # try and set the date from GPS to kickoff ntpd
 /usr/bin/logger -t piBoatMon "Starting gpsDate in the background"
 /home/pi/piboatmon/files/gpsDate &
 
-#/usr/bin/logger -t piBoatMon "About to run logrotate in the background"
-# fire off logrotate manually
-#/usr/sbin/logrotate -f /etc/logrotate.conf &
-
-/usr/bin/logger -t piBoatMon "Calling sync 3 times"
 # start off old skhooollllll
 /bin/sync; /bin/sync; /bin/sync
 
