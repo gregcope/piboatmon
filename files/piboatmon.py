@@ -2019,10 +2019,11 @@ def createLogging():
     try:
         # create a Log hander
         logger = logging.getLogger(__name__)
+        logger.setLevel(logging.DEBUG)
 
         # create a file handler
         fileHandle = logging.handlers.RotatingFileHandler(logfile,
-                                                          maxBytes=360000,
+                                                          maxBytes=1048576*5,
                                                           backupCount=5)
         fileHandle.setLevel(logging.DEBUG)
 
@@ -2031,12 +2032,14 @@ def createLogging():
         console.setLevel(logging.ERROR)
 
         # create a logging format
-        formatter = logging.Formatter('%(asctime)s %(levelname)s'
-                                      + ' %(funcName)s %(message)s')
+        fileFormatter = logging.Formatter('%(asctime)s %(levelname)-8s'
+                                         + ' %(funcName)s %(message)s')
+        consoleFormatter = logging.Formatter('%(levelname)-8s'
+                                            + ' %(funcName)s %(message)s')
 
         # add format to handlers
-        fileHandle.setFormatter(formatter)
-        console.setFormatter(formatter)
+        fileHandle.setFormatter(fileFormatter)
+        console.setFormatter(consoleFormatter)
 
         # add the handlers to the logger
         logger.addHandler(fileHandle)
