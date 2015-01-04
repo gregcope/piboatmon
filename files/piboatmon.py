@@ -55,6 +55,7 @@ LastRunTime = None
 waitedForGpsFixIterations = 0
 movedDistanceM = 0
 ep = 0
+NoGpsLoopsToTry = 60
 
 # some object handles
 gpsd = None
@@ -575,6 +576,35 @@ def setUpGammu():
     return
 
 
+def setPosition():
+
+    # fish out the globals to populate
+    # should be called before checkAnchorAlarm
+    global presentLat
+    global presentLon
+
+    # get fix, wait for NoGpsLoopsToTry tries
+    _loop = 0
+    while gpsp.getCurrentNoFixes() < 10:
+        # loop till we get 10 fixes... should not be long
+        # or break if we get to NoGpsLoopsToTry
+        time.sleep(1)
+        if debug is True:
+            logging.debug('Not enough gps fixes - we want 10 - '
+                          + 'gpsp.getCurrentNoFixes() is: '
+                          + str(gpsp.getCurrentNoFixes())
+                          + ', we have looped: ' + str(_loop))
+            _loop += 1
+
+            if _loop == NoGpsLoopsToTry:
+                logging.error('Not enough GPS fixes, tried: '
+                              + str(_loop) + ' times')
+                break
+
+            # fetch a fix, may / may not be good
+            presentLat, presentLon = gpsp.getCurretAvgLatLon()
+
+
 def checkAnchorAlarm():
 
     global alarmRange
@@ -600,32 +630,10 @@ def checkAnchorAlarm():
         # check we have a lat/lon to compare to
         if alarmLat != '' and alarmLon != '':
 
-            # if we have a lat/lon to compare to
-            # get fix, wait for 15 tries
-
-            _loop = 0
-            while gpsp.getCurrentNoFixes() < 10:
-                # loop till we get 10 fixes... should not be long
-                time.sleep(1)
-                if debug is True:
-                    logging.debug('Not enough gps fixes - we want 10 - '
-                                  + 'gpsp.getCurrentNoFixes() is: '
-                                  + str(gpsp.getCurrentNoFixes())
-                                  + ', we have looped: ' + str(_loop))
-                _loop += 1
-
-                if _loop == 15:
-                    logging.error('Not enough GPS fixes, tried: '
-                                  + str(_loop) + ' times')
-                    break
-
-            # fetch a fix, may / may not be good
-            presentLat, presentLon = gpsp.getCurretAvgLatLon()
-
             if presentLat is 0 or presentLon is 0:
 
                 # got an empty fix
-                _txt = 'No present position fix to compare to set anchor ' \
+                _txt = 'No present position fix to compare to anchor alarm' \
                        + 'alarm - alarm range is: ' + str(alarmRange) \
                        + ' alarm Lat: ' + str(alarmLat) \
                        + ' alarm Lon: ' + str(alarmLon)
@@ -1381,21 +1389,33 @@ def checkBilge():
 
 def getStatusText():
 
+    _prefix = ''
+
     # build a status string
-    status = getBatteryText() + ' ' + checkBilgeText() + ' ' \
+    _status = getBatteryText() + ' ' + checkBilgeText() + ' ' \
         + gpsp.getCurrentAvgDataText()
 
-    if bilgeSwitchState is False and checkBattery() is True:
-        status = 'OK\n' + status
+    if bilgeSwitchState is False:
+        _prefix = 'OK'
 
     else:
+        _prefix = 'BILGE'
 
-        if debug is True:
-            logging.debug('bilgeSwitchState is ' + str(bilgeSwitchState)
-                          + ' and checkBattery() is: ' + str(checkBattery()))
-        status = 'NOT OK\n' + status
+    # _prefix should be now set
 
-    return status
+    # overload or add to prefix if required
+    if checkBattery() is not True
+
+        if _prefix is 'OK':
+            # overload OK prefix
+            _prefix = 'BAT ALARM\n'
+
+        else:
+            # add BAT isseue
+            _prefix = _prefix + ', BAT ALARM\n'
+
+    # got this far, should have a rich prefix
+    return _prefix + _status
 
 
 def setAnchorAlarmSms(sms):
@@ -1463,25 +1483,22 @@ def setAnchorAlarmSms(sms):
         # not re match set 20M as default
         alarmRange = 20
 
-    # so we should have something sensible by now ..
-    _presentLat, _presentLon = gpsp.getCurretAvgLatLon()
-
-    if _presentLat is '' or _presentLon is '':
+    if presentLat is '' or presentLon is '':
 
         reply = 'Trying to set Anchor Alarm, but Present Lat is: ' \
-                + str(_presentLat) + ' or Lon is: ' + str(_presentLon) \
+                + str(presentLat) + ' or Lon is: ' + str(presentLon) \
                 + ' ie we have no fix to alarm from!!!'
 
         logging.error(reply)
 
     else:
         # ok we got this far ... should be good
-        reply = 'Anchor Alarm being set for Lat: ' + str(_presentLat) \
-                + ' Lon: ' + str(_presentLon) + ' Alarm range: ' \
+        reply = 'Anchor Alarm being set for Lat: ' + str(presentLat) \
+                + ' Lon: ' + str(presentLon) + ' Alarm range: ' \
                 + str(alarmRange)
 
-        alarmLat = _presentLat
-        alarmLon = _presentLon
+        alarmLat = presentLat
+        alarmLon = presentLon
         logging.info(reply)
 
     # send replry
@@ -2032,6 +2049,9 @@ if __name__ == '__main__':
     # so the GPS thread can be on its way :w
     setUpGammu()
 
+    # get a Position fix - will need it either way
+    setPosition()
+
     # if we have a modem configured
     # check SMS, check the anchor watch and check the daily status
     if sm:
@@ -2046,7 +2066,7 @@ if __name__ == '__main__':
     # for debug...
     sendDebugMessage()
 
-    # check anchor alarm
+    # check anchor alarm against Position
     checkAnchorAlarm()
 
     # set the bilge Switch state
