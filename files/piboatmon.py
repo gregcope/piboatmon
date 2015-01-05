@@ -2037,7 +2037,7 @@ def createLogging():
     try:
         # create a Log hander
         logger = logging.getLogger(__name__)
-        logging.setLevel(logging.DEBUG)
+        logger.setLevel(logging.DEBUG)
 
         # create a file handler
         handler = logging.handlers.RotatingFileHandler(logfile,
@@ -2053,7 +2053,7 @@ def createLogging():
         handler.setFormatter(formatter)
 
         # add the handlers to the logging
-        logging.addHandler(handler)
+        logger.addHandler(handler)
 
     except Exception, e:
         print 'Logging problem' + str(e)
