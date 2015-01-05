@@ -57,6 +57,7 @@ waitedForGpsFixIterations = 0
 movedDistanceM = 0
 ep = 0
 NoGpsLoopsToTry = 60
+dailyStatusFired = False
 
 # some object handles
 gpsd = None
@@ -1725,6 +1726,7 @@ def checkDailyStatus():
 
         # alarm fired, so therefore send status
         sendStatus = True
+        dailyStatusFired = True
 
         if sendAndLogStatus() is True:
 
@@ -1753,6 +1755,7 @@ def sendAndLogStatus():
     global logStatus
 
     _sent = False
+    _prefix = ''
 
     if debug is True:
         logger.debug('sendStatus is: ' + str(sendStatus)
@@ -1762,14 +1765,30 @@ def sendAndLogStatus():
 
         # get some text
         message = getStatusText()
-        logger.info(str(message))
 
         # clear the flag
         logStatus = False
 
+        # work out the prefix to add depending on type of message
+        # Debug, Regular, then Daily
+
         if debug is True:
             logger.debug('About to call sendSMS as sendStatus is: '
                          + str(sendStatus))
+            _prefix = 'Debug status'
+
+        if regularStatus is True:
+            _prefix = 'Regular status '
+
+        if dailyStatusFired is True:
+            _prefix = 'Daily status '
+
+        # add the prefix
+        message = _prefix + message
+
+        # log it and send it...
+
+        logger.info(str(message))
 
         if sendSms(phone, message):
             # went ok - clear any flags
