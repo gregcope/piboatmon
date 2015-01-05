@@ -1821,7 +1821,7 @@ def setBilgeSwitchState():
 
         # BilgeSwitch is on ... Ops:
 
-        logging.into('Bilge Switch is ON !!!')
+        logging.info('Bilge Switch is ON !!!')
 
         bilgeSwitchState = True
 
