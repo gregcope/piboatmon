@@ -1270,8 +1270,6 @@ def setPowerOnDelay():
             logging.debug('shutdown is true, so setting'
                           + ' wakeInNSecs to 0 to never wake up')
 
-    logging.info('Setting mopi mopi.setPowerOnDelay to: ' + str(wakeInNSecs))
-
     mopi.setPowerOnDelay(wakeInNSecs)
 
     logging.info('Setting wake on delay to: ' + str(wakeInNSecs))
@@ -1400,7 +1398,7 @@ def getStatusText():
         _prefix = 'OK: '
 
     else:
-        _prefix = 'BILGE'
+        _prefix = 'BILGE ALARM: '
 
     # _prefix should be now set
 
@@ -1409,11 +1407,11 @@ def getStatusText():
 
         if _prefix is 'OK: ':
             # overload OK prefix
-            _prefix = 'BAT ALARM\n'
+            _prefix = 'BAT ALARM: '
 
         else:
             # add BAT isseue
-            _prefix = _prefix + '&BAT ALARM:'
+            _prefix = 'BAT&' + _prefix
 
     # got this far, should have a rich prefix
     return _prefix + _status
