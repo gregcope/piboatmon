@@ -22,7 +22,6 @@ import ConfigParser
 import math
 import sys
 import logging
-import logging.handlers
 import datetime
 import smbus
 import errno
@@ -2029,37 +2028,6 @@ def setUpMopi():
         mopi = False
 
 
-def createLogging():
-
-    global logger
-
-    # git it a go setting it up
-    try:
-        # create a Log hander
-        logger = logging.getLogger(__name__)
-        logger.setLevel(logging.DEBUG)
-
-        # create a file handler
-        handler = logging.handlers.RotatingFileHandler(logfile,
-                                                       maxBytes=1048576*5,
-                                                       backupCount=5)
-        handler.setLevel(logging.DEBUG)
-
-        # create a logging format
-        formatter = logging.Formatter('%(asctime)s %(levelname)-8s'
-                                      + ' %(funcName)s %(message)s')
-
-        # add format to handlers
-        handler.setFormatter(formatter)
-
-        # add the handlers to the logging
-        logger.addHandler(handler)
-
-    except Exception, e:
-        print 'Logging problem' + str(e)
-        sys.exit(1)
-
-
 if __name__ == '__main__':
 
     # check we are running as sudo
@@ -2067,8 +2035,14 @@ if __name__ == '__main__':
         exit("You need to have root privileges to run this script.\n"
              + "Please try again, this time using 'sudo'. Exiting.")
 
-    # setup logging
-    createLogging()
+    # setup logger
+    try:
+        logging.basicConfig(filename=logfile, level=logging.DEBUG,
+                            format='%(asctime)s %(levelname)s'
+                                   + ' %(funcName)s %(message)s')
+    except Exception, e:
+        print 'Logging problem' + str(e)
+        sys.exit(1)
 
     # log we have started
     logging.info('Started ...')
