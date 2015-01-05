@@ -2031,7 +2031,7 @@ def setUpMopi():
 
 def createLogging():
 
-    #global logger
+    global logger
 
     # git it a go setting it up
     try:
