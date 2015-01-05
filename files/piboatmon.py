@@ -1822,8 +1822,7 @@ def setBilgeSwitchState():
 
         # BilgeSwitch is on ... Ops:
 
-        message = 'Bilge Switch is ON !!!'
-        logging.info(message)
+        logging.into('Bilge Switch is ON !!!')
 
         bilgeSwitchState = True
 
@@ -2032,12 +2031,12 @@ def setUpMopi():
 
 def createLogging():
 
-    global logging
+    #global logger
 
     # git it a go setting it up
     try:
         # create a Log hander
-        logging = logging.getLogger(__name__)
+        logger = logging.getLogger(__name__)
         logging.setLevel(logging.DEBUG)
 
         # create a file handler
