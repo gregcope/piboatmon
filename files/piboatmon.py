@@ -283,7 +283,14 @@ class GpsPoller(threading.Thread):
                         self.avEpx = _sumEpx / self.numFixes
 
                         if debug is True:
-                            logging.debug('GPS thread stats: LAT ' + str(self.avLat) + ' LON ' +str(self.avLon) + ' VEL ' + str(self.avSpeed) + ' HEAD ' + str(self.avHeading) + 'T LAT +/- ' + str(self.avEpx) + ' LON +/- ' + str(self.avEpy) + ' No. fixes ' + str(self.numFixes))
+                            logging.debug('GPS thread stats: LAT '
+                                          + str(self.avLat) + ' LON '
+                                          + str(self.avLon) + ' VEL '
+                                          + str(self.avSpeed) + ' HEAD '
+                                          + str(self.avHeading) + 'T LAT +/- '
+                                          + str(self.avEpx) + ' LON +/- '
+                                          + str(self.avEpy) + ' No. fixes '
+                                          + str(self.numFixes))
 
             # oh it went a bit pete tong
             except StopIteration:
@@ -592,14 +599,14 @@ def setPosition():
         time.sleep(1)
         if debug is True:
             logging.debug('Not enough gps fixes - we want 10 - '
-                         + 'gpsp.getCurrentNoFixes() is: '
-                         + str(gpsp.getCurrentNoFixes())
-                         + ', we have looped: ' + str(_loop))
+                          + 'gpsp.getCurrentNoFixes() is: '
+                          + str(gpsp.getCurrentNoFixes())
+                          + ', we have looped: ' + str(_loop))
             _loop += 1
 
             if _loop == NoGpsLoopsToTry:
                 logging.error('Not enough GPS fixes, tried: '
-                             + str(_loop) + ' times')
+                              + str(_loop) + ' times')
                 break
 
             # fetch a fix, may / may not be good
@@ -662,8 +669,8 @@ def checkAnchorAlarm():
 
                 if debug is True:
                     logging.info('Moved distance: ' + str(movedDistanceM)
-                                + 'M is more than alarmRange: '
-                                + str(alarmRange) + 'M')
+                                 + 'M is more than alarmRange: '
+                                 + str(alarmRange) + 'M')
 
                 txt = 'ANCHOR ALARM.  Distance moved: ' + str(movedDistanceM) \
                       + 'M, Alarm Range: ' + str(alarmRange) \
@@ -671,7 +678,8 @@ def checkAnchorAlarm():
                       + ', Lon: ' + str(presentLon)
 
                 txt2 = 'ANCHOR ALARM: http://maps.google.com/maps' \
-                       + '?z=12&t=m&q=loc:' + str(presentLat) + '+' + str(presentLon)
+                       + '?z=12&t=m&q=loc:' + str(presentLat) + '+' \
+                       + str(presentLon)
 
                 if sm != '' and phone != '':
 
@@ -681,18 +689,18 @@ def checkAnchorAlarm():
 
                 else:
                     logging.error('No SMS statemachine, or phone configured'
-                                 + ' - cannot send anchor alarm SMS')
+                                  + ' - cannot send anchor alarm SMS')
 
             else:
                 # we have moved less than the alarm
                 logging.info('We have moved: ' + str(movedDistanceM)
-                            + 'M, which is not enough to setoff alarm: '
-                            + str(alarmRange) + 'M')
+                             + 'M, which is not enough to setoff alarm: '
+                             + str(alarmRange) + 'M')
 
         else:
             # lat / lon are empty !!!!
             logging.error('Anchor alarm set: ' + str(alarmRange)
-                         + ' , but Lat or Lon are empty')
+                          + ' , but Lat or Lon are empty')
     else:
         # No anchor alarm ... bale
         logging.info('No Anchor alarm set')
@@ -944,11 +952,11 @@ def sendConfigSms(sms):
     # these are optional - so to save space ...
     if dailyStatus != '':
         reply = reply + 'dailyStatus: ' + str(dailyStatus) + "\n"
-    
+
     if debug is True:
         reply = reply + 'debug: ' + str(debug) + "\n"
 
-    if alarmRange !='':
+    if alarmRange != '':
         reply = reply + 'alarmRange: ' + str(alarmRange) + "\n"
 
     if regularStatus != '':
@@ -1246,6 +1254,7 @@ def setBoatnameSms(sms):
     # sent the SMS
     sendSms(phone, reply)
 
+
 def setPowerOnDelay():
 
     # fish out the global object
@@ -1254,7 +1263,8 @@ def setPowerOnDelay():
     global shutdown
 
     if mopi is False:
-        logging.error('mopi not initialised.  Cannot set power on delay to: ' + str(wakeInNSecs))
+        logging.error('mopi not initialised.  Cannot set power on delay to: '
+                      + str(wakeInNSecs))
         return
 
     # set the PowerOnDelay to wak
@@ -1274,6 +1284,7 @@ def setPowerOnDelay():
 
     logging.info('Setting wake on delay to: ' + str(wakeInNSecs))
     print 'Setting wake on delay to: ' + str(wakeInNSecs)
+
 
 def getInputmV():
 
@@ -1366,7 +1377,8 @@ def checkBilgeText():
     else:
         text = 'BILGE OK'
 
-    logging.info(text)
+    if debug is True:
+        logging.debug(text)
 
     return text
 
@@ -1565,7 +1577,7 @@ def updatePhoneSms(sms):
 
     else:
         logging.error('Not a phone number we could parse in: '
-                     + str(sms[0]['Text']))
+                      + str(sms[0]['Text']))
 
 
 def debugSms(sms):
@@ -1634,7 +1646,7 @@ def checkLogStatus():
         logging.info(getStatusText())
     elif debug is True:
         logging.debug('called, but already run as logStatus is: '
-                     + str(logStatus))
+                      + str(logStatus))
 
 
 def checkRegularStatus():
@@ -1644,15 +1656,15 @@ def checkRegularStatus():
 
     if debug is True:
         logging.debug('regularStatus is: ' + str(regularStatus)
-                     + ',sendStatus is: ' + str(sendStatus))
+                      + ',sendStatus is: ' + str(sendStatus))
 
     # check if we need to send regular Status
     if regularStatus is True:
 
         sendStatus = True
         logging.info('regularStatus is: ' + str(regularStatus)
-                    + ', therefore we are going to send status this run'
-                    + ', by setting sendStatus to: ' + str(sendStatus))
+                     + ', therefore we are going to send status this run'
+                     + ', by setting sendStatus to: ' + str(sendStatus))
 
 
 def checkDailyStatus():
@@ -1692,7 +1704,7 @@ def checkDailyStatus():
     except ValueError:
         _lastRun = None
         logging.error('lastDailyStatusCheck: ' + str(lastDailyStatusCheck)
-                     + 'Could not be parsed into a date')
+                      + 'Could not be parsed into a date')
 
     # so ... if we got this far we need to check the time
 
@@ -1703,7 +1715,7 @@ def checkDailyStatus():
         _hour, _minute = p.findall(str(dailyStatus))
     except ValueError:
         logging.error('Could not parse dailyStatus: ' + str(dailyStatus)
-                     + ' into _hour, _minute')
+                      + ' into _hour, _minute')
 
     # http://www.saltycrane.com/blog/2008/06/how-to-get-current-date-and-time-in/
     if _hour >= 0 and _minute >= 0:
@@ -1713,7 +1725,7 @@ def checkDailyStatus():
 
     else:
         logging.error('Cannot split dailyStatus into _hour / _min: '
-                     + str(dailyStatus))
+                      + str(dailyStatus))
         # as we have nothing to compare, assume we need to run
 
     if _now > _nextAlarm:
@@ -1733,12 +1745,12 @@ def checkDailyStatus():
             lastDailyStatusCheck = _now
 
             logging.info('Daily SMS sent, lastDailyStatusCheck updated to: '
-                        + str(lastDailyStatusCheck))
+                         + str(lastDailyStatusCheck))
 
         else:
             # log the fact we ops'ed
             logging.error('Failed to send daily SMS'
-                         + ' - should try again next run')
+                          + ' - should try again next run')
 
 
 def sendAndLogStatus():
@@ -1756,7 +1768,7 @@ def sendAndLogStatus():
 
     if debug is True:
         logging.debug('sendStatus is: ' + str(sendStatus)
-                     + ', logStatus is: ' + str(logStatus))
+                      + ', logStatus is: ' + str(logStatus))
 
     if sendStatus is True:
 
@@ -1771,7 +1783,7 @@ def sendAndLogStatus():
 
         if debug is True:
             logging.debug('About to call sendSMS as sendStatus is: '
-                         + str(sendStatus))
+                          + str(sendStatus))
             _prefix = 'Debug status'
 
         if regularStatus is True:
@@ -1793,7 +1805,7 @@ def sendAndLogStatus():
             _sent = True
         else:
             logging.error('Failed to send status ... will try next run'
-                         + ' as sendStatus is: ' + str(sendStatus))
+                          + ' as sendStatus is: ' + str(sendStatus))
             sendStatus = True
 
     return _sent
@@ -1939,11 +1951,11 @@ def waitTillUptime(requiredUptime):
 
         if debug is True:
             logging.debug('_uptime is: ' + str(_uptime)
-                         + ', we have looped: ' + str(_loop) + ' times')
+                          + ', we have looped: ' + str(_loop) + ' times')
 
     logging.info('Uptime now: ' + str(_uptime) + ', uptime required: '
-                + str(requiredUptime) + ', we looped: '
-                + str(_loop) + ' secs')
+                 + str(requiredUptime) + ', we looped: '
+                 + str(_loop) + ' secs')
 
 
 def updateIterationAndLastRunTime():
@@ -1980,7 +1992,7 @@ def giveGpsChance():
                 time.sleep(1)
                 if debug is True:
                     logging.debug('No gps fixs!!! We have looped: '
-                                 + str(waitedForGpsFixIterations))
+                                  + str(waitedForGpsFixIterations))
                 waitedForGpsFixIterations += 1
 
                 if waitedForGpsFixIterations == 60:
@@ -1991,13 +2003,13 @@ def giveGpsChance():
     if gpsp.getCurrentNoFixes > 1:
 
         # GPS Fix ...
-        logging.info('Got a GPS fix.  We looped: ' 
-                    + str(waitedForGpsFixIterations) + ' times, uptime now: '
-                    + str(uptimeSecs()))
+        logging.info('Got a GPS fix.  We looped: '
+                     + str(waitedForGpsFixIterations) + ' times, uptime now: '
+                     + str(uptimeSecs()))
 
     else:
         logging.error('No GPS FIX!!!,tried: '
-                     + str(waitedForGpsFixIterations) + ' times')
+                      + str(waitedForGpsFixIterations) + ' times')
 
 
 def uptimeSecs():
