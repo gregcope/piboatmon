@@ -201,13 +201,13 @@ class GpsPoller(threading.Thread):
         global gpsd
 
         if debug is True:
-            logger.debug('Setting up GpsPoller __init__ class')
+            logging.debug('Setting up GpsPoller __init__ class')
 
         # fire up the gpsd conncection
         try:
             gpsd = gps.gps("localhost", "2947")
         except:
-            logger.error('GPS thread Ops... gpsd not running right?'
+            logging.error('GPS thread Ops... gpsd not running right?'
                           + 'Hint: sudo /etc/init.d/gpsd start')
 
         # right - set it up
@@ -231,7 +231,7 @@ class GpsPoller(threading.Thread):
         _sumEpx = 0
         _sumEpy = 0
 
-        logger.info('Started gpsp thread')
+        logging.info('Started gpsp thread')
 
         # while the thread is running
         while gpsp.running:
@@ -241,14 +241,14 @@ class GpsPoller(threading.Thread):
                 report = gpsd.next()
 
                 # if debug is True:
-                # logger.debug('Got a gpsd report' + str(report))
+                # logging.debug('Got a gpsd report' + str(report))
 
                 # if it looks like a fix
                 if report['class'] == 'TPV':
 
                     # off we go
                     if debug is True:
-                        logger.debug('GPS thread report is ' + str(report))
+                        logging.debug('GPS thread report is ' + str(report))
 
                     # if has the right things in the report
                     if (hasattr(report, 'speed')
@@ -284,12 +284,12 @@ class GpsPoller(threading.Thread):
                         self.avEpx = _sumEpx / self.numFixes
 
                         if debug is True:
-                            logger.debug('GPS thread stats: LAT ' + str(self.avLat) + ' LON ' +str(self.avLon) + ' VEL ' + str(self.avSpeed) + ' HEAD ' + str(self.avHeading) + 'T LAT +/- ' + str(self.avEpx) + ' LON +/- ' + str(self.avEpy) + ' No. fixes ' + str(self.numFixes))
+                            logging.debug('GPS thread stats: LAT ' + str(self.avLat) + ' LON ' +str(self.avLon) + ' VEL ' + str(self.avSpeed) + ' HEAD ' + str(self.avHeading) + 'T LAT +/- ' + str(self.avEpx) + ' LON +/- ' + str(self.avEpy) + ' No. fixes ' + str(self.numFixes))
 
             # oh it went a bit pete tong
             except StopIteration:
                 gpsd = None
-                logger.error('GPS thread GPSD has terminated')
+                logging.error('GPS thread GPSD has terminated')
 
     def getCurrentAvgData(self):
 
@@ -337,7 +337,7 @@ class GpsPoller(threading.Thread):
             prefix = prefix + 'LOW no. fixes '
 
         if debug is True:
-            logger.debug('numFixes: ' + str(self.numFixes)
+            logging.debug('numFixes: ' + str(self.numFixes)
                           + ' roundedEp: ' + str(roundedEp))
 
         # convert km/h to knots
@@ -375,7 +375,7 @@ def saveConfig():
     configP.set('main', 'iteration', str(iteration))
     configP.set('main', 'LastRunTime', str(LastRunTime))
 
-    logger.info(str(configP.items('main')))
+    logging.info(str(configP.items('main')))
 
     # get a filehandle and write it out
     with open(configFile, 'w') as configFilehandle:
@@ -408,7 +408,7 @@ def loadConfig():
 
     # starting to read config
     if debug is True:
-        logger.debug('about to read config')
+        logging.debug('about to read config')
 
     # setup the config system
     configP = ConfigParser.SafeConfigParser()
@@ -488,7 +488,7 @@ def loadConfig():
     except:
         lastruntime = False
 
-    logger.info(str(configP.items('main')))
+    logging.info(str(configP.items('main')))
 
 
 def setUpGammu():
@@ -502,7 +502,7 @@ def setUpGammu():
     # return false if there are issues
 
     if debug is True:
-        logger.debug('About to put gammu into debug mode logging to: '
+        logging.debug('About to put gammu into debug mode logging to: '
                       + str(logfile))
         gammu.SetDebugLevel('errorsdate')
         gammu.SetDebugFile(logfile)
@@ -515,7 +515,7 @@ def setUpGammu():
         sm.ReadConfig(Filename='/home/pi/.gammurc')
 
     except Exception, e:
-        logger.error('gammu Readconfig failed' + str(e))
+        logging.error('gammu Readconfig failed' + str(e))
         sm = None
         return
 
@@ -523,7 +523,7 @@ def setUpGammu():
         return False
 
     if debug is True:
-        logger.debug('Read /home/pi/.gammurc config')
+        logging.debug('Read /home/pi/.gammurc config')
 
     # Now call gammu init
     # this takes about 1 sec per go, and we are going to
@@ -535,20 +535,20 @@ def setUpGammu():
 
         # do some debug logging
         if debug is True:
-            logger.debug("Trying gammu Init() %d times" % (_tries))
+            logging.debug("Trying gammu Init() %d times" % (_tries))
 
         try:
             if debug is True:
-                logger.debug('Going to call gammu Init()')
+                logging.debug('Going to call gammu Init()')
             sm.Init()
             if debug is True:
-                logger.debug('gammu Init() done')
+                logging.debug('gammu Init() done')
 
             # we are done, so break
             break
 
         except Exception, e:
-            logger.error('setUpGammu - sm.Init failed' + str(e))
+            logging.error('setUpGammu - sm.Init failed' + str(e))
             sm = None
             return
 
@@ -560,7 +560,7 @@ def setUpGammu():
         if _tries >= _gammuInittries:
 
             # log summat
-            logger.error('Pants tried: ' + str(_tries)
+            logging.error('Pants tried: ' + str(_tries)
                           + 'times to init Gammu... it broke')
 
             # we keep going as we can log other stuff and then exit 1 to retry
@@ -569,10 +569,10 @@ def setUpGammu():
     try:
         imei = sm.GetIMEI()
     except Exception, e:
-        logger.error('failed to sm.GetIMEI(): ' + str(e))
+        logging.error('failed to sm.GetIMEI(): ' + str(e))
         imei = 0
 
-    logger.info('Done - modem imei: ' + str(imei)
+    logging.info('Done - modem imei: ' + str(imei)
                  + ' ready to read/send SMSs')
     # done
     return
@@ -592,14 +592,14 @@ def setPosition():
         # or break if we get to NoGpsLoopsToTry
         time.sleep(1)
         if debug is True:
-            logger.debug('Not enough gps fixes - we want 10 - '
+            logging.debug('Not enough gps fixes - we want 10 - '
                          + 'gpsp.getCurrentNoFixes() is: '
                          + str(gpsp.getCurrentNoFixes())
                          + ', we have looped: ' + str(_loop))
             _loop += 1
 
             if _loop == NoGpsLoopsToTry:
-                logger.error('Not enough GPS fixes, tried: '
+                logging.error('Not enough GPS fixes, tried: '
                              + str(_loop) + ' times')
                 break
 
@@ -619,12 +619,12 @@ def checkAnchorAlarm():
     global sm
 
     if debug is True:
-        logger.debug('alarmRange is: ' + str(alarmRange) + ' alarmLat: '
+        logging.debug('alarmRange is: ' + str(alarmRange) + ' alarmLat: '
                       + str(alarmLat) + ' alarmLon: ' + str(alarmLon))
 
     if alarmRange is '':
 
-        logger.info('No Anchor alarm set - skipping')
+        logging.info('No Anchor alarm set - skipping')
         return
 
     if alarmRange > 1:
@@ -641,12 +641,12 @@ def checkAnchorAlarm():
                        + ' alarm Lon: ' + str(alarmLon)
 
                 # log the error, send an SMS and return
-                logger.error(_txt)
+                logging.error(_txt)
                 sendSms(phone, _txt)
                 return
 
             if debug is True:
-                logger.debug('Present lat: ' + str(presentLat) + ' lon: '
+                logging.debug('Present lat: ' + str(presentLat) + ' lon: '
                               + str(presentLon))
 
             # compare fix with saved config
@@ -656,13 +656,13 @@ def checkAnchorAlarm():
             movedDistanceM = int(movedDistanceKm * 1000)
 
             if debug is True:
-                logger.debug('Distance moved is: ' + str(movedDistanceM))
+                logging.debug('Distance moved is: ' + str(movedDistanceM))
 
             # work out if less than alarmRange
             if movedDistanceM > alarmRange:
 
                 if debug is True:
-                    logger.info('Moved distance: ' + str(movedDistanceM)
+                    logging.info('Moved distance: ' + str(movedDistanceM)
                                 + 'M is more than alarmRange: '
                                 + str(alarmRange) + 'M')
 
@@ -681,22 +681,22 @@ def checkAnchorAlarm():
                     sendSms(phone, txt2)
 
                 else:
-                    logger.error('No SMS statemachine, or phone configured'
+                    logging.error('No SMS statemachine, or phone configured'
                                  + ' - cannot send anchor alarm SMS')
 
             else:
                 # we have moved less than the alarm
-                logger.info('We have moved: ' + str(movedDistanceM)
+                logging.info('We have moved: ' + str(movedDistanceM)
                             + 'M, which is not enough to setoff alarm: '
                             + str(alarmRange) + 'M')
 
         else:
             # lat / lon are empty !!!!
-            logger.error('Anchor alarm set: ' + str(alarmRange)
+            logging.error('Anchor alarm set: ' + str(alarmRange)
                          + ' , but Lat or Lon are empty')
     else:
         # No anchor alarm ... bale
-        logger.info('No Anchor alarm set')
+        logging.info('No Anchor alarm set')
 
 
 def sendSms(_number, _txt):
@@ -709,13 +709,13 @@ def sendSms(_number, _txt):
         _number = phone
 
     if _number is '':
-        logger.error('Trying to send a SMS to a phone that is not set'
+        logging.error('Trying to send a SMS to a phone that is not set'
                       + ' - phone: ' + str(_number))
         # give up
         return False
 
     if _txt is '':
-        logger.error('trying to send an empty SMS?')
+        logging.error('trying to send an empty SMS?')
         return False
 
     # Prefix with boatname and time
@@ -724,7 +724,7 @@ def sendSms(_number, _txt):
         + ': ' + _txt + ',' + str(iteration)
 
     if debug is True:
-        logger.debug('Trying to send SMS message: ' + str(_txt)
+        logging.debug('Trying to send SMS message: ' + str(_txt)
                       + ' to: ' + str(_number))
 
     # go for it
@@ -733,10 +733,10 @@ def sendSms(_number, _txt):
     try:
 
         if debug is True:
-            logger.debug('About to try sm.SendSMS(message)')
+            logging.debug('About to try sm.SendSMS(message)')
 
         sm.SendSMS(message)
-        logger.info('Message sent to: ' + str(_number))
+        logging.info('Message sent to: ' + str(_number))
 
         # yay it worked!!!!
         return True
@@ -744,7 +744,7 @@ def sendSms(_number, _txt):
     except Exception, e:
 
         # Ops...
-        logger.error('Exception: ' + str(e))
+        logging.error('Exception: ' + str(e))
         return False
 
 
@@ -788,18 +788,18 @@ def getSms():
     gotSMS = 0
 
     if debug is True:
-        logger.debug('About to get sm.GetSMSStatus()')
+        logging.debug('About to get sm.GetSMSStatus()')
 
     try:
         _status = sm.GetSMSStatus()
 
     except Exception, e:
-        logger.error('Failed sm.GetSMSStatus() ' + str(e))
+        logging.error('Failed sm.GetSMSStatus() ' + str(e))
 
     _remain = _status['SIMUsed'] + _status['PhoneUsed']
     + _status['TemplatesUsed']
 
-    logger.info(str(_remain) + ' SMS(s) to deal with')
+    logging.info(str(_remain) + ' SMS(s) to deal with')
 
     if _remain == 0:
         return
@@ -810,7 +810,7 @@ def getSms():
 
             cursms = sm.GetNextSMS(Start=True, Folder=0)
             if debug is True:
-                logger.debug('In start processing SMS: ' + str(cursms))
+                logging.debug('In start processing SMS: ' + str(cursms))
 
             # we got some to deal with
             _start = False
@@ -820,7 +820,7 @@ def getSms():
         else:
 
             if debug is True:
-                logger.debug('In else processing SMS: ' + str(cursms))
+                logging.debug('In else processing SMS: ' + str(cursms))
 
             cursms = sm.GetNextSMS(Start=True, Folder=0)
             processSMS(cursms)
@@ -828,9 +828,9 @@ def getSms():
 
         # delete the SMS
         for x in range(len(cursms)):
-            logger.info('Deleting SMS no: ' + str(x))
+            logging.info('Deleting SMS no: ' + str(x))
             if debug is True:
-                logger.debug('About to delete SMS in location: '
+                logging.debug('About to delete SMS in location: '
                               + str(cursms[x]['Location']))
             sm.DeleteSMS(cursms[x]['Folder'], cursms[x]['Location'])
 
@@ -920,7 +920,7 @@ def processSMS(sms):
     # no idea what the SMS is...
     if _understoodSms is False:
 
-        logger.info('Could not parse SMS message: ' + str(_txt))
+        logging.info('Could not parse SMS message: ' + str(_txt))
 
     # finished
 
@@ -932,7 +932,7 @@ def sendConfigSms(sms):
     if phone is '':
 
         # Ops no registered phone
-        logger.info('No phone set ... cannot send config')
+        logging.info('No phone set ... cannot send config')
 
     # fish out the config that will be set
     # boatname will be prefixed to SMS message anyway
@@ -959,7 +959,7 @@ def sendConfigSms(sms):
         reply = reply + 'batteryOkMVolts: ' + str(batteryOkMVolts) + "\n"
 
     # got this far ... log reply, send SMS reponse
-    logger.info(reply)
+    logging.info(reply)
     sendSms(phone, reply)
 
 
@@ -974,7 +974,7 @@ def regularStatusSms(sms):
     global regularStatus
 
     if debug is True:
-        logger.debug('Message to parse is: ' + str(sms[0]['Text']))
+        logging.debug('Message to parse is: ' + str(sms[0]['Text']))
 
     if 'set regular status on' in _lowertxt:
 
@@ -1009,7 +1009,7 @@ def regularStatusSms(sms):
         reply = 'Could not parse: ' + str(sms[0]['Text'])
 
     # got this far ... log reply, send SMS reponse
-    logger.info(reply)
+    logging.info(reply)
     sendSms(phone, reply)
 
 
@@ -1027,14 +1027,14 @@ def setupSms(sms):
     reply = None
 
     if debug is True:
-        logger.debug('Running setup ...')
+        logging.debug('Running setup ...')
 
     _loop = 0
     while gpsp.getCurrentNoFixes() < 1:
         # loop till we get a fixes... or exit should not be long
 
         if debug is True:
-            logger.debug('Not gps fixs, we have looped: ' + str(_loop))
+            logging.debug('Not gps fixs, we have looped: ' + str(_loop))
 
         # up loop counter
         _loop += 1
@@ -1047,7 +1047,7 @@ def setupSms(sms):
             reply = 'Timed out getting GPS Fix whilst running setup.' \
                     + '  We tried: ' + str(_loop) \
                     + ' times.  Please check GPS anntena/connections'
-            logger.error(reply)
+            logging.error(reply)
 
             break
 
@@ -1059,7 +1059,7 @@ def setupSms(sms):
         # we got one fix... yay!
         reply = 'Setup: GPS got: ' + str(gpsp.getCurrentNoFixes()) \
                 + ' fix(s)'
-        logger.info(reply)
+        logging.info(reply)
 
     # we should have a reply eitherway ...
     sendSms(number, reply)
@@ -1081,7 +1081,7 @@ def shutdownSms(sms):
                 + ', will shutdown and not wake up!!! Will need to be' \
                 + '  manually restarted'
 
-        logger.info(reply)
+        logging.info(reply)
         shutdown = True
 
     else:
@@ -1090,7 +1090,7 @@ def shutdownSms(sms):
                 + ', which is not registered phone: ' + str(phone) \
                 + ', ignoring'
 
-        logger.info(reply)
+        logging.info(reply)
 
     # sent the SMS
     sendSms(phone, reply)
@@ -1109,7 +1109,7 @@ def setWakeInNSecsSms(sms):
     results = re.search("set sleep time (\d+)", _lowertxt)
 
     if debug is True:
-        logger.debug('text is: ' + str(_txt))
+        logging.debug('text is: ' + str(_txt))
 
     # if we have a match
     if results:
@@ -1117,7 +1117,7 @@ def setWakeInNSecsSms(sms):
         _mins = results.group(1)
 
         if debug is True:
-            logger.debug('Mins is : ' + str(_mins))
+            logging.debug('Mins is : ' + str(_mins))
 
         wakeInNSecs = int(_mins) * 60
 
@@ -1128,12 +1128,12 @@ def setWakeInNSecsSms(sms):
         saveConfig()
         # reply
         reply = 'Sleep time set to: ' + str(_mins) + ' minutes'
-        logger.info(reply)
+        logging.info(reply)
 
     # could not parse results
     else:
         reply = 'Could not set sleep time: ' + str(_txt)
-        logger.error(reply)
+        logging.error(reply)
 
     # sent the SMS
     sendSms(phone, reply)
@@ -1159,13 +1159,13 @@ def setBatteryOkMVoltsSms(sms):
         saveConfig()
         # reply
         reply = 'Battery OK mvolts set to: ' + str(batteryOkMVolts) + ' mV'
-        logger.info(reply)
+        logging.info(reply)
 
     # could not parse results
     else:
         reply = 'Could not set battery ok mvolts: ' + str(_txt) \
                 + '. Must be in 5 digits long e.g. 13000'
-        logger.error(reply)
+        logging.error(reply)
 
     # sent the SMS
     sendSms(phone, reply)
@@ -1193,13 +1193,13 @@ def setDailyStatusSms(sms):
         # reply
         reply = 'Daily status setup to be sent around: ' \
                 + str(dailyStatus) + ' UTC each day (depends on wakeUp)'
-        logger.info(reply)
+        logging.info(reply)
 
     # could not parse results
     else:
         reply = 'Could not parse new daily status update: ' \
                 + str(_txt) + 'Needs to be 4 digit 24hr clock notation'
-        logger.error(reply)
+        logging.error(reply)
 
     # sent the SMS
     sendSms(phone, reply)
@@ -1229,20 +1229,20 @@ def setBoatnameSms(sms):
             if boatname:
 
                 reply = 'Setting boatname to: ' + str(boatname)
-                logger.info(reply)
+                logging.info(reply)
 
             else:
                 reply = 'Could not parse: ' + str(_txt) + ' to set boatname'
-                logger.error(reply)
+                logging.error(reply)
 
         else:
             # got confused
             reply = 'Could not parse: ' + str(_txt) + ' to set boatname'
-            logger.error(reply)
+            logging.error(reply)
 
     else:
         reply = 'Confused about message: ' + str(_txt)
-        logger.error(repy)
+        logging.error(repy)
 
     # sent the SMS
     sendSms(phone, reply)
@@ -1255,12 +1255,12 @@ def setPowerOnDelay():
     global shutdown
 
     if mopi is False:
-        logger.error('mopi not initialised.  Cannot set power on delay to: ' + str(wakeInNSecs))
+        logging.error('mopi not initialised.  Cannot set power on delay to: ' + str(wakeInNSecs))
         return
 
     # set the PowerOnDelay to wak
     if wakeInNSecs < 60:
-        logger.error(str(wakeInNSecs) + ' below 60 secs, '
+        logging.error(str(wakeInNSecs) + ' below 60 secs, '
                       + 'setting to 60 min...')
         wakeInNSecs = 60
 
@@ -1268,10 +1268,10 @@ def setPowerOnDelay():
         wakeInNSecs = 0
 
         if debug is True:
-            logger.debug('shutdown is true, so setting'
+            logging.debug('shutdown is true, so setting'
                           + ' wakeInNSecs to 0 to never wake up')
 
-    logger.info('Setting mopi mopi.setPowerOnDelay to: ' + str(wakeInNSecs))
+    logging.info('Setting mopi mopi.setPowerOnDelay to: ' + str(wakeInNSecs))
 
     mopi.setPowerOnDelay(wakeInNSecs)
 
@@ -1284,7 +1284,7 @@ def getInputmV():
     global bat2Mv
 
     if mopi is False:
-        logger.error('mopi not initialised.  Cannot get bat volts')
+        logging.error('mopi not initialised.  Cannot get bat volts')
         return
 
     bat1Mv = float(mopi.getVoltage(1))
@@ -1300,11 +1300,11 @@ def getBatteryText():
 
     # get battery volts from mopi
     if getInputmV() is False:
-        logger.error('mopi not initialised.  Cannot give battery volts text')
+        logging.error('mopi not initialised.  Cannot give battery volts text')
         return 'mopi issue. Batt state unknown'
 
     if debug is True:
-        logger.debug('bat1Mv is: ' + str(bat1Mv) + ' mv bat2Mv is: '
+        logging.debug('bat1Mv is: ' + str(bat1Mv) + ' mv bat2Mv is: '
                       + str(bat2Mv) + ' mv')
 
     # for each battery define a state
@@ -1349,7 +1349,7 @@ def checkBattery():
 
     # get battery volts from mopi
     if getInputmV() is False:
-        logger.error('mopi not initialised.  Cannot check battery state')
+        logging.error('mopi not initialised.  Cannot check battery state')
         return False
 
     if bat2Mv > batteryOkMVolts and bat2Mv > 5200:
@@ -1369,7 +1369,7 @@ def checkBilgeText():
     else:
         text = 'BILGE OK'
 
-    logger.info(text)
+    logging.info(text)
 
     return text
 
@@ -1381,7 +1381,7 @@ def checkBilge():
     if bilgeSwitchState is True:
 
         if debug is True:
-            logger.debug('bilgeSwitchState is true ... '
+            logging.debug('bilgeSwitchState is true ... '
                           + 'about to try to send SMS')
 
         # oh pants!!!
@@ -1440,7 +1440,7 @@ def setAnchorAlarmSms(sms):
     # deal with an off first
     if 'set anchor alarm off' in _lowertxt:
 
-        logger.info('Disabling the Anchor Alarm')
+        logging.info('Disabling the Anchor Alarm')
         # disabled the Alarm by Nulling the values
         alarmLat = ''
         alarmLon = ''
@@ -1463,7 +1463,7 @@ def setAnchorAlarmSms(sms):
 
         _newRange = results.group(1)
         if debug is True:
-            logger.debug('Found the following regex results: '
+            logging.debug('Found the following regex results: '
                           + str(_newRange))
 
         if _newRange > 10:
@@ -1491,7 +1491,7 @@ def setAnchorAlarmSms(sms):
                 + str(presentLat) + ' or Lon is: ' + str(presentLon) \
                 + ' ie we have no fix to alarm from!!!'
 
-        logger.error(reply)
+        logging.error(reply)
 
     else:
         # ok we got this far ... should be good
@@ -1501,7 +1501,7 @@ def setAnchorAlarmSms(sms):
 
         alarmLat = presentLat
         alarmLon = presentLon
-        logger.info(reply)
+        logging.info(reply)
 
     # send replry
     sendSms(phone, reply)
@@ -1526,14 +1526,14 @@ def updatePhoneSms(sms):
     # +0452345234
 
     if debug is True:
-        logger.debug('update phone message is: ' + str(sms[0]['Text']))
+        logging.debug('update phone message is: ' + str(sms[0]['Text']))
 
     _newPhoneRegEx = re.search("set phone (\+*\d+)", _lowertxt)
 
     if _newPhoneRegEx is None:
 
         reply = 'Could not parse: ' + str(str(sms[0]['Text']))
-        logger.info(reply)
+        logging.info(reply)
         sendSms(number, reply)
         return
 
@@ -1542,14 +1542,14 @@ def updatePhoneSms(sms):
     if _newPhone is not '':
 
         if debug is True:
-            logger.debug('Found new phone number: ' + str(_newPhone))
+            logging.debug('Found new phone number: ' + str(_newPhone))
 
         # keep the old phone
         oldphone = phone
         phone = _newPhone
 
         # got this far, should have something sensible to set
-        logger.info('Changing phone from: ' + str(oldphone) + ' to: '
+        logging.info('Changing phone from: ' + str(oldphone) + ' to: '
                      + str(_newPhone))
 
         if oldphone != '':
@@ -1567,7 +1567,7 @@ def updatePhoneSms(sms):
         sendSms(phone, reply)
 
     else:
-        logger.error('Not a phone number we could parse in: '
+        logging.error('Not a phone number we could parse in: '
                      + str(sms[0]['Text']))
 
 
@@ -1582,7 +1582,7 @@ def debugSms(sms):
     global debug
 
     if debug is True:
-        logger.debug('Message to parse is: ' + str(sms[0]['Text']))
+        logging.debug('Message to parse is: ' + str(sms[0]['Text']))
 
     if 'set debug on' in _lowertxt:
 
@@ -1593,7 +1593,7 @@ def debugSms(sms):
             reply = 'debug was off - being set to true'
 
         debug = True
-        logger.info(reply)
+        logging.info(reply)
 
     elif 'set debug off' in _lowertxt:
 
@@ -1603,11 +1603,11 @@ def debugSms(sms):
         else:
             reply = ' debug already off - keeping it off'
 
-        logger.info(reply)
+        logging.info(reply)
         debug = False
 
     else:
-        logger.info('No idea what that txt was...')
+        logging.info('No idea what that txt was...')
         reply = 'Could not parse debug message : ' + _lowertxt
 
     sendSms(phone, reply)
@@ -1624,7 +1624,7 @@ def sendInstructionsSms(sms):
             + "battery ok volts\nsleep time MINS\nsend state\n" \
             + "set battery ok mvolts [mvolts]shutdown\n"
 
-    logger.info('Sending instructions SMS')
+    logging.info('Sending instructions SMS')
 
     # sent the SMS
     sendSms(number, reply)
@@ -1634,9 +1634,9 @@ def checkLogStatus():
 
     if logStatus is True:
         # log status
-        logger.info(getStatusText())
+        logging.info(getStatusText())
     elif debug is True:
-        logger.debug('called, but already run as logStatus is: '
+        logging.debug('called, but already run as logStatus is: '
                      + str(logStatus))
 
 
@@ -1646,14 +1646,14 @@ def checkRegularStatus():
     global sendStatus
 
     if debug is True:
-        logger.debug('regularStatus is: ' + str(regularStatus)
+        logging.debug('regularStatus is: ' + str(regularStatus)
                      + ',sendStatus is: ' + str(sendStatus))
 
     # check if we need to send regular Status
     if regularStatus is True:
 
         sendStatus = True
-        logger.info('regularStatus is: ' + str(regularStatus)
+        logging.info('regularStatus is: ' + str(regularStatus)
                     + ', therefore we are going to send status this run'
                     + ', by setting sendStatus to: ' + str(sendStatus))
 
@@ -1662,7 +1662,7 @@ def checkDailyStatus():
 
     # if dailyStatus is not set bale
     if dailyStatus == '':
-        logger.info('No dailyStatus check set')
+        logging.info('No dailyStatus check set')
         return
 
     # we might set this if we run
@@ -1688,13 +1688,13 @@ def checkDailyStatus():
         if _lastRun.date() == _now.date():
 
             # we ran today ... exit
-            logger.info('Ran today already: ' + str(_lastRun))
+            logging.info('Ran today already: ' + str(_lastRun))
 
             return
 
     except ValueError:
         _lastRun = None
-        logger.error('lastDailyStatusCheck: ' + str(lastDailyStatusCheck)
+        logging.error('lastDailyStatusCheck: ' + str(lastDailyStatusCheck)
                      + 'Could not be parsed into a date')
 
     # so ... if we got this far we need to check the time
@@ -1705,24 +1705,24 @@ def checkDailyStatus():
     try:
         _hour, _minute = p.findall(str(dailyStatus))
     except ValueError:
-        logger.error('Could not parse dailyStatus: ' + str(dailyStatus)
+        logging.error('Could not parse dailyStatus: ' + str(dailyStatus)
                      + ' into _hour, _minute')
 
     # http://www.saltycrane.com/blog/2008/06/how-to-get-current-date-and-time-in/
     if _hour >= 0 and _minute >= 0:
         _nextAlarm = datetime.datetime(_now.year, _now.month, _now.day,
                                        int(_hour), int(_minute), 0)
-        logger.info('Next daily check due: ' + str(_nextAlarm))
+        logging.info('Next daily check due: ' + str(_nextAlarm))
 
     else:
-        logger.error('Cannot split dailyStatus into _hour / _min: '
+        logging.error('Cannot split dailyStatus into _hour / _min: '
                      + str(dailyStatus))
         # as we have nothing to compare, assume we need to run
 
     if _now > _nextAlarm:
 
         if debug is True:
-            logger.debug('alarm fired')
+            logging.debug('alarm fired')
 
         # alarm fired, so therefore send status
         sendStatus = True
@@ -1735,12 +1735,12 @@ def checkDailyStatus():
             sendStatus = False
             lastDailyStatusCheck = _now
 
-            logger.info('Daily SMS sent, lastDailyStatusCheck updated to: '
+            logging.info('Daily SMS sent, lastDailyStatusCheck updated to: '
                         + str(lastDailyStatusCheck))
 
         else:
             # log the fact we ops'ed
-            logger.error('Failed to send daily SMS'
+            logging.error('Failed to send daily SMS'
                          + ' - should try again next run')
 
 
@@ -1758,7 +1758,7 @@ def sendAndLogStatus():
     _prefix = ''
 
     if debug is True:
-        logger.debug('sendStatus is: ' + str(sendStatus)
+        logging.debug('sendStatus is: ' + str(sendStatus)
                      + ', logStatus is: ' + str(logStatus))
 
     if sendStatus is True:
@@ -1773,7 +1773,7 @@ def sendAndLogStatus():
         # Debug, Regular, then Daily
 
         if debug is True:
-            logger.debug('About to call sendSMS as sendStatus is: '
+            logging.debug('About to call sendSMS as sendStatus is: '
                          + str(sendStatus))
             _prefix = 'Debug status'
 
@@ -1788,14 +1788,14 @@ def sendAndLogStatus():
 
         # log it and send it...
 
-        logger.info(str(message))
+        logging.info(str(message))
 
         if sendSms(phone, message):
             # went ok - clear any flags
             sendStatus = False
             _sent = True
         else:
-            logger.error('Failed to send status ... will try next run'
+            logging.error('Failed to send status ... will try next run'
                          + ' as sendStatus is: ' + str(sendStatus))
             sendStatus = True
 
@@ -1810,7 +1810,7 @@ def setBilgeSwitchState():
     global bilgeSwitchState
 
     if debug is True:
-        logger.debug('Setting up RPi.GPIO pins')
+        logging.debug('Setting up RPi.GPIO pins')
 
     # from http://razzpisampler.oreilly.com/ch07.html
     RPi.GPIO.setmode(RPi.GPIO.BCM)
@@ -1823,14 +1823,14 @@ def setBilgeSwitchState():
         # BilgeSwitch is on ... Ops:
 
         message = 'Bilge Switch is ON !!!'
-        logger.info(message)
+        logging.info(message)
 
         bilgeSwitchState = True
 
     else:
 
         bilgeSwitchState = False
-        logger.info('Bilge Swich is off')
+        logging.info('Bilge Swich is off')
 
     return bilgeSwitchState
 
@@ -1877,11 +1877,11 @@ def sendHttpsLogging():
 
         r = requests.get(uri, params=payload, timeout=0.4, verify=False)
 
-        logger.info(r.url)
+        logging.info(r.url)
 
     except Exception, e:
 
-        logger.error('Could not send HTTPS logging: ' + str(e))
+        logging.error('Could not send HTTPS logging: ' + str(e))
 
 
 def dailyStatusOffSms(sms):
@@ -1891,7 +1891,7 @@ def dailyStatusOffSms(sms):
     # fish out the global
     global dailyStatus
 
-    logger.info('Disabling regluar status checks')
+    logging.info('Disabling regluar status checks')
 
     # disabled the Alarm by Nulling the values
     dailyStatus = ''
@@ -1909,7 +1909,7 @@ def sendDebugMessage():
     global sendStatus
 
     if debug is True:
-        logger.debug('Debug is true, sending debug status')
+        logging.debug('Debug is true, sending debug status')
         # pretend we have not sent a status
         # yes you might get a few ...
         sendStatus = True
@@ -1917,7 +1917,7 @@ def sendDebugMessage():
 
 def logUptime():
 
-    logger.info('Uptime: ' + str(uptimeSecs()) + ' secs')
+    logging.info('Uptime: ' + str(uptimeSecs()) + ' secs')
 
 
 def waitTillUptime(requiredUptime):
@@ -1942,10 +1942,10 @@ def waitTillUptime(requiredUptime):
         _uptime = uptimeSecs()
 
         if debug is True:
-            logger.debug('_uptime is: ' + str(_uptime)
+            logging.debug('_uptime is: ' + str(_uptime)
                          + ', we have looped: ' + str(_loop) + ' times')
 
-    logger.info('Uptime now: ' + str(_uptime) + ', uptime required: '
+    logging.info('Uptime now: ' + str(_uptime) + ', uptime required: '
                 + str(requiredUptime) + ', we looped: '
                 + str(_loop) + ' secs')
 
@@ -1971,36 +1971,36 @@ def giveGpsChance():
     if gpsp.getCurrentNoFixes() > 0:
 
         if debug is True:
-            logger.debug('Already have a GPS fix - nothing to do')
+            logging.debug('Already have a GPS fix - nothing to do')
 
         return
 
     # No GPS fix
 
-    logger.info('Going to loop 60 times to get an GPS fix')
+    logging.info('Going to loop 60 times to get an GPS fix')
 
     while gpsp.getCurrentNoFixes() < 1:
 
                 time.sleep(1)
                 if debug is True:
-                    logger.debug('No gps fixs!!! We have looped: '
+                    logging.debug('No gps fixs!!! We have looped: '
                                  + str(waitedForGpsFixIterations))
                 waitedForGpsFixIterations += 1
 
                 if waitedForGpsFixIterations == 60:
 
-                    logger.debug('Reach 60 tries, breaking')
+                    logging.debug('Reach 60 tries, breaking')
                     break
 
     if gpsp.getCurrentNoFixes > 1:
 
         # GPS Fix ...
-        logger.info('Got a GPS fix.  We looped: ' 
+        logging.info('Got a GPS fix.  We looped: ' 
                     + str(waitedForGpsFixIterations) + ' times, uptime now: '
                     + str(uptimeSecs()))
 
     else:
-        logger.error('No GPS FIX!!!,tried: '
+        logging.error('No GPS FIX!!!,tried: '
                      + str(waitedForGpsFixIterations) + ' times')
 
 
@@ -2018,27 +2018,27 @@ def setUpMopi():
     global mopi
 
     if debug is True:
-        logger.debug('About to initialise the mopi')
+        logging.debug('About to initialise the mopi')
 
     # create a mopi object to query
     try:
         mopi = mopiapi()
-        logger.info('mopi initialised')
+        logging.info('mopi initialised')
 
     except Exception, e:
-        logger.error('mopi not initialised: ' + str(e))
+        logging.error('mopi not initialised: ' + str(e))
         mopi = False
 
 
 def createLogging():
 
-    global logger
+    global logging
 
     # git it a go setting it up
     try:
         # create a Log hander
-        logger = logging.getLogger(__name__)
-        logger.setLevel(logging.DEBUG)
+        logging = logging.getLogger(__name__)
+        logging.setLevel(logging.DEBUG)
 
         # create a file handler
         handler = logging.handlers.RotatingFileHandler(logfile,
@@ -2053,8 +2053,8 @@ def createLogging():
         # add format to handlers
         handler.setFormatter(formatter)
 
-        # add the handlers to the logger
-        logger.addHandler(handler)
+        # add the handlers to the logging
+        logging.addHandler(handler)
 
     except Exception, e:
         print 'Logging problem' + str(e)
@@ -2068,11 +2068,11 @@ if __name__ == '__main__':
         exit("You need to have root privileges to run this script.\n"
              + "Please try again, this time using 'sudo'. Exiting.")
 
-    # setup logger
+    # setup logging
     createLogging()
 
     # log we have started
-    logger.info('Started ...')
+    logging.info('Started ...')
 
     # record the uptime
     logUptime()
@@ -2101,7 +2101,7 @@ if __name__ == '__main__':
     # check SMS, check the anchor watch and check the daily status
     if sm:
         if debug is True:
-            logger.debug('Going to try getting SMS messages getSms()')
+            logging.debug('Going to try getting SMS messages getSms()')
         getSms()
 
     # check and spin till we have been up 60 secs
@@ -2151,12 +2151,12 @@ if __name__ == '__main__':
 
     # we think we are done ..
     # stop the thread and wait for it to join
-    logger.info('Killing gps Thread...')
+    logging.info('Killing gps Thread...')
     gpsp.running = False
     gpsp.join()  # wait for the thread to finish what it's doing
 
     # log we are stopping ...
-    logger.info('Done. Exiting.')
+    logging.info('Done. Exiting.')
 
     exit(0)
 
