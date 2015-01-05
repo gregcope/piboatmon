@@ -1397,7 +1397,7 @@ def getStatusText():
         + gpsp.getCurrentAvgDataText()
 
     if bilgeSwitchState is False:
-        _prefix = 'OK\n'
+        _prefix = 'OK: '
 
     else:
         _prefix = 'BILGE'
@@ -1407,13 +1407,13 @@ def getStatusText():
     # overload or add to prefix if required
     if checkBattery() is not True:
 
-        if _prefix is 'OK\n':
+        if _prefix is 'OK: ':
             # overload OK prefix
             _prefix = 'BAT ALARM\n'
 
         else:
             # add BAT isseue
-            _prefix = _prefix + '& BAT ALARM\n'
+            _prefix = _prefix + '&BAT ALARM:'
 
     # got this far, should have a rich prefix
     return _prefix + _status
