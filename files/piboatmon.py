@@ -1275,8 +1275,8 @@ def setPowerOnDelay():
 
     mopi.setPowerOnDelay(wakeInNSecs)
 
-    logging.critical('Setting wake on delay to: ' + str(wakeInNSecs))
-
+    logging.info('Setting wake on delay to: ' + str(wakeInNSecs))
+    print 'Setting wake on delay to: ' + str(wakeInNSecs)
 
 def getInputmV():
 
@@ -1877,7 +1877,7 @@ def sendHttpsLogging():
 
         r = requests.get(uri, params=payload, timeout=0.4, verify=False)
 
-        logger.critical(r.url)
+        logger.info(r.url)
 
     except Exception, e:
 
@@ -2101,7 +2101,7 @@ if __name__ == '__main__':
     # check SMS, check the anchor watch and check the daily status
     if sm:
         if debug is True:
-            logging.debug('Going to try getting SMS messages getSms()')
+            logger.debug('Going to try getting SMS messages getSms()')
         getSms()
 
     # check and spin till we have been up 60 secs
@@ -2151,12 +2151,12 @@ if __name__ == '__main__':
 
     # we think we are done ..
     # stop the thread and wait for it to join
-    logging.info('Killing gps Thread...')
+    logger.info('Killing gps Thread...')
     gpsp.running = False
     gpsp.join()  # wait for the thread to finish what it's doing
 
     # log we are stopping ...
-    logging.info('Done. Exiting.')
+    logger.info('Done. Exiting.')
 
     exit(0)
 
