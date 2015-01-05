@@ -2151,12 +2151,12 @@ if __name__ == '__main__':
 
     # we think we are done ..
     # stop the thread and wait for it to join
-    logger.info('Killing gps Thread...')
+    logging.info('Killing gps Thread...')
     gpsp.running = False
     gpsp.join()  # wait for the thread to finish what it's doing
 
     # log we are stopping ...
-    logger.info('Done. Exiting.')
+    logging.info('Done. Exiting.')
 
     exit(0)
 
