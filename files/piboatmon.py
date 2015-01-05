@@ -1817,7 +1817,7 @@ def setBilgeSwitchState():
 
     _input18State = RPi.GPIO.input(18)
 
-    if _input18State is False:
+    if _input18State == 0:
 
         # BilgeSwitch is on ... Ops:
 
