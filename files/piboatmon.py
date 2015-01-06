@@ -2078,6 +2078,11 @@ if __name__ == '__main__':
     # so the GPS thread can be on its way :w
     setUpGammu()
 
+    # check and spin till we have been up 60 secs
+    # otherwise mopi will not shutdown
+    waitTillUptime(50)
+
+
     # get a Position fix - will need it either way
     setPosition()
 
@@ -2087,10 +2092,6 @@ if __name__ == '__main__':
         if debug is True:
             logging.debug('Going to try getting SMS messages getSms()')
         getSms()
-
-    # check and spin till we have been up 60 secs
-    # otherwise mopi will not shutdown
-    waitTillUptime(50)
 
     # for debug...
     sendDebugMessage()
