@@ -1683,6 +1683,7 @@ def checkDailyStatus():
     # we might set this if we run
     global lastDailyStatusCheck
     global sendStatus
+    global dailyStatusFired
 
     # check that have not sent a status message in timeframe
 
@@ -1737,7 +1738,7 @@ def checkDailyStatus():
     if _now > _nextAlarm:
 
         if debug is True:
-            logging.debug('alarm fired')
+            logging.debug('alarm fired, settting sendStatus and dailystatus to true')
 
         # alarm fired, so therefore send status
         sendStatus = True
@@ -1877,6 +1878,7 @@ def sendHttpsLogging():
                'presentLat': str(presentLat),
                'presentLon': str(presentLon),
                'movedDistanceM': str(movedDistanceM),
+               'dailyStatusFired': str(dailyStatusFired),
                'noSMSRecieved': str(noSMSRecieved)}
 
     httpsUriPath = '/mythweb/piboatmon/logging/imei/' + str(imei)
