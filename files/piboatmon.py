@@ -1784,7 +1784,7 @@ def sendAndLogStatus():
         if debug is True:
             logging.debug('About to call sendSMS as sendStatus is: '
                           + str(sendStatus))
-            _prefix = 'Debug status'
+            _prefix = 'Debug status '
 
         if regularStatus is True:
             _prefix = 'Regular status '
