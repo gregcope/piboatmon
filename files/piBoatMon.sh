@@ -8,9 +8,6 @@ defaultSleepSecs=3600
 /usr/bin/logger -t piBoatMon "Starting gpsDate in the background"
 /home/pi/piboatmon/files/gpsDate &
 
-# start off old skhooollllll
-/bin/sync; /bin/sync; /bin/sync
-
 # log the ntp status
 /usr/bin/logger -t piBoatMon ntpq status `/usr/bin/ntpq -p | grep NMEA`
 
@@ -26,14 +23,7 @@ defaultSleepSecs=3600
 /usr/bin/timeout $timeOutSecs /usr/bin/sudo /home/pi/piboatmon/files/piboatmon.py
 /usr/bin/logger -t piBoatMon "Finished /home/pi/piboatmon/files/piboatmon.py"
 
-/usr/bin/logger -t piBoatMon "Calling sync 3 times"
-# oldskhol...
-/bin/sync;/bin/sync;/bin/sync
-
 sleep 60
-
-# log the ntp status
-/usr/bin/logger -t piBoatMon ntpq status `/usr/bin/ntpq -p | grep NMEA`
 
 /usr/bin/logger -t piBoatMon "Going to sleep ... nite sync, mopciki -wsd 1"
 /bin/sync

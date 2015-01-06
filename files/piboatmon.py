@@ -247,8 +247,8 @@ class GpsPoller(threading.Thread):
                 if report['class'] == 'TPV':
 
                     # off we go
-                    if debug is True:
-                        logging.debug('GPS thread report is ' + str(report))
+                    #if debug is True:
+                    logging.info('GPS thread report is ' + str(report))
 
                     # if has the right things in the report
                     if (hasattr(report, 'speed')
