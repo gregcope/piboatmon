@@ -603,15 +603,16 @@ def setPosition():
                           + 'gpsp.getCurrentNoFixes() is: '
                           + str(gpsp.getCurrentNoFixes())
                           + ', we have looped: ' + str(_loop))
-            _loop += 1
+        _loop += 1
 
-            if _loop == NoGpsLoopsToTry:
-                logging.error('Not enough GPS fixes, tried: '
-                              + str(_loop) + ' times')
-                break
+        if _loop == NoGpsLoopsToTry:
+            logging.error('Not enough GPS fixes, tried: '
+                          + str(_loop) + ' times')
+            break
 
-            # fetch a fix, may / may not be good
-            presentLat, presentLon = gpsp.getCurretAvgLatLon()
+    # fetch a fix, may / may not be good
+    # We should have 10 or more
+    presentLat, presentLon = gpsp.getCurretAvgLatLon()
 
 
 def checkAnchorAlarm():
