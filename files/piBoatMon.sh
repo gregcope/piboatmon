@@ -5,8 +5,8 @@ timeOutSecs=90s
 defaultSleepSecs=3600
 
 # try and set the date from GPS to kickoff ntpd
-/usr/bin/logger -t piBoatMon "Starting gpsDate in the background"
-/home/pi/piboatmon/files/gpsDate &
+#/usr/bin/logger -t piBoatMon "Starting gpsDate in the background"
+#/home/pi/piboatmon/files/gpsDate &
 
 # log the ntp status
 /usr/bin/logger -t piBoatMon ntpq status `/usr/bin/ntpq -p | grep NMEA`
