@@ -1976,10 +1976,11 @@ def giveGpsChance():
 
     waitedForGpsFixIterations = 0
 
-    if gpsp.getCurrentNoFixes() > 0:
+    _fixes = gpsp.getCurrentNoFixes()
 
-        if debug is True:
-            logging.debug('Already have a GPS fix - nothing to do')
+    if _fixes > 0:
+
+        logging.info('Already have: ' + str(_fixes) + ' GPS fix(s) - nothing to do')
 
         return
 
