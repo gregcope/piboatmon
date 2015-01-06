@@ -57,7 +57,7 @@ movedDistanceM = 0
 ep = 0
 NoGpsLoopsToTry = 60
 dailyStatusFired = False
-noSMSRecieved = 0
+numSMSRecieved = 0
 
 # some object handles
 gpsd = None
@@ -789,7 +789,7 @@ def distance(lat1, lon1, lat2, lon2):
 def getSms():
 
     global sm
-    global noSMSRecieved
+    global numSMSRecieved
 
     sms = []
     _status = None
@@ -812,7 +812,7 @@ def getSms():
 
     logging.info(str(_remain) + ' SMS(s) to deal with')
 
-    noSMSRecieved = _remain
+    numSMSRecieved = _remain
 
     if _remain == 0:
         return
@@ -1879,7 +1879,7 @@ def sendHttpsLogging():
                'presentLon': str(presentLon),
                'movedDistanceM': str(movedDistanceM),
                'dailyStatusFired': str(dailyStatusFired),
-               'noSMSRecieved': str(noSMSRecieved)}
+               'numSMSRecieved': str(numSMSRecieved)}
 
     httpsUriPath = '/mythweb/piboatmon/logging/imei/' + str(imei)
 
