@@ -921,6 +921,7 @@ def processSMS(sms):
     # send a status txt
     if 'send status' in _lowertxt:
         # fire at least a statusTxt or dailyStatus to avoid 2 SMS
+        loging.info('send Status SMS recieved from: ' + str(sms[0]['Number']))
         sendStatusRequest = True
         sendStatus = True
         _understoodSms = True
