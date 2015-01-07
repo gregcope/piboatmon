@@ -1569,9 +1569,9 @@ def updatePhoneSms(sms):
 
         if oldphone != '':
             # sort a message to reply back letting original phone know of reset
-            reply = ': New phone being set: ' + str(phone) \
+            reply = ': phone being replaced with: ' + str(phone) \
                     + '.  To reset the phone back to this phone, ' \
-                    + ' reply to this SMS with:\n\nupdate phone ' \
+                    + ' reply to this SMS with:\n\nset phone ' \
                     + str(oldphone)
 
             # sent the reply SMS
@@ -1579,7 +1579,7 @@ def updatePhoneSms(sms):
 
         # reply to _newphone
         reply = 'New phone being set to: ' + str(phone)
-        sendSms(phone, reply)
+        sendSms(_newphone, reply)
 
     else:
         logging.error('Not a phone number we could parse in: '
