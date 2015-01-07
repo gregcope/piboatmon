@@ -58,6 +58,7 @@ ep = 0
 NoGpsLoopsToTry = 60
 dailyStatusFired = False
 numSMSRecieved = 0
+sendStatusRequest = False
 
 # some object handles
 gpsd = None
@@ -865,6 +866,7 @@ def processSMS(sms):
 
     # as we might set it grab it
     global sendStatus
+    global sendStatusRequest
 
     if 'set debug' in _lowertxt:
         debugSms(sms)
@@ -919,6 +921,7 @@ def processSMS(sms):
     # send a status txt
     if 'send status' in _lowertxt:
         # fire at least a statusTxt or dailyStatus to avoid 2 SMS
+        sendStatusRequest = True
         sendStatus = True
         _understoodSms = True
 
@@ -1799,6 +1802,9 @@ def sendAndLogStatus():
         if dailyStatusFired is True:
             _prefix = 'Daily status '
 
+        if sendStatusRequest is True:
+            _prefix = 'Status requested '
+
         # add the prefix
         message = _prefix + message
 
@@ -1879,6 +1885,7 @@ def sendHttpsLogging():
                'presentLon': str(presentLon),
                'movedDistanceM': str(movedDistanceM),
                'dailyStatusFired': str(dailyStatusFired),
+               'sendStatusRequest': str(sendStatusRequest),
                'numSMSRecieved': str(numSMSRecieved)}
 
     httpsUriPath = '/mythweb/piboatmon/logging/imei/' + str(imei)
