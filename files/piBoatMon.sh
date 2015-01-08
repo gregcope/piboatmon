@@ -10,6 +10,9 @@ logfile=/home/pi/piboatmon/files/piboatmon.log
 # need to remove the log file otherwise it gets recated each time!
 /bin/rm $logfile
 
+# try and set the date from GPS
+/usr/bin/sudo /home/pi/piboatmon/files/gpsDate &
+
 /usr/bin/logger -t piBoatMon "Setting the mopi power on timer to default of 3600 secs - piboatmon.py should overwrite it"
 /usr/bin/sudo /usr/sbin/mopicli -won $defaultSleepSecs &
 
