@@ -30,6 +30,8 @@ newlogfile=$logfile.$timestamp
 # delete the oldest logfiles
 /usr/bin/find /home/pi/piboatmon/files -name piboatmon.log*.tgz -mtime +10 -exec rm {} \;
 
+/bin/sync &
+
 sleep 60
 
 /bin/sync

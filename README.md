@@ -211,7 +211,8 @@ Do you have SMS credit?  Is the modem unlocked to your network, is it is working
 * **The SMS messages have the wrong time?** The timezone is based on UTC, but if this is not a timezone issue, it is likely that the unit is not getting a GPS fix in time as it depends on this to set the time, as the RPI has no RTC.  Try texting `setup` to the unit to get GPS feedback.
 * **What does BatX Missing mean?**  One of the batteries is either very dead, or disconnected.  If Bat2 then please replace the 9v reserve battery.
 * **What is the number on the end of the each SMS?**  Each SMS ends with a number which is the number of runs that the system has done.  Hopefully this will get quite big!
-
+* **Time is off by a few seconds** This does not do GPS leap second correction as this list needs updates.  However it does not need to be second perfect on timing.
+* **Sent some SMS instructions, No response** Some Mobile providers offer poor service, and these may not be getting though (aka Giffgaff).  Consider switching!!!  Try sending a message from another phone (e.g. ```set phone NewPhoneNum``` and it should reply to both phones (you will need to set it back with ```set phone OriginalPhone``` if you want your original.
 
 ## Referances / Notes
 
