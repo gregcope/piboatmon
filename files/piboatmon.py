@@ -49,6 +49,7 @@ bat1Mv = None
 bat2Mv = None
 presentLat = None
 presentLon = None
+presentFixes = None
 imei = None
 iteration = None
 LastRunTime = None
@@ -592,6 +593,7 @@ def setPosition():
     # should be called before checkAnchorAlarm
     global presentLat
     global presentLon
+    global presentFixes
 
     # get fix, wait for NoGpsLoopsToTry tries
     _loop = 0
@@ -614,7 +616,7 @@ def setPosition():
     # fetch a fix, may / may not be good
     # We should have 10 or more
     presentLat, presentLon = gpsp.getCurretAvgLatLon()
-
+    presentFixes = gpsp.getCurrentNoFixes()
 
 def checkAnchorAlarm():
 
@@ -1884,6 +1886,7 @@ def sendHttpsLogging():
                'waitedForGpsFixIterations': str(waitedForGpsFixIterations),
                'presentLat': str(presentLat),
                'presentLon': str(presentLon),
+               'presentFixes': str(presentFixes),
                'movedDistanceM': str(movedDistanceM),
                'dailyStatusFired': str(dailyStatusFired),
                'sendStatusRequest': str(sendStatusRequest),
