@@ -617,6 +617,8 @@ def setPosition():
     # We should have 10 or more
     presentLat, presentLon = gpsp.getCurretAvgLatLon()
     presentFixes = gpsp.getCurrentNoFixes()
+    logging.info('presentLat: ' + str(presentLat) + ', presentLon: '
+                 + str(presentLon) + ', presentFixes: ' + str(presentFixes))
 
 def checkAnchorAlarm():
 
