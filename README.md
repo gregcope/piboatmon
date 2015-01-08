@@ -228,3 +228,27 @@ PiMemspit
 gpu_mem_256=112
 in /boot/config.txt
 http://www.raspberrypi.org/forums/viewtopic.php?p=223549#p223549
+
+Modem Unlocking
+"""
+
+To get an IMEI unlock code;
+http://www.modemunlock.com/huawei.php
+
+Instructions on how to check;
+http://www.techmind.org/3Gmbb/index.html
+
+Thoughts on UK Mobile Providers
+"""
+
+GiffGaff
++ Easy Setup
+- Poor service (inbound SMS lost)
+
+O2
++ Easy setup
+- No simple PAYG SMS+Data product
+
+Three
++ Appears to work
+- Hard setup (lots of texts to deal with)

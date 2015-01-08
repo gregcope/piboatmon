@@ -12,6 +12,8 @@ defaultSleepSecs=3600
 
 # lame logrotate
 # takes each copy and copies it into a logfile called piboatmon.log.20150106
+# Copeied changed from here;
+# http://unserializableone.blogspot.co.uk/2010/07/simple-bash-script-to-do-log-rotation.html
 logfile=/home/pi/piboatmon/files/piboatmon.log
 timestamp=`/bin/date +%Y%m%d`
 newlogfile=$logfile.$timestamp
