@@ -3,6 +3,12 @@
 
 timeOutSecs=90s
 defaultSleepSecs=3600
+logfile=/home/pi/piboatmon/files/piboatmon.log
+
+
+# delete previous log file to stop it being added to
+# need to remove the log file otherwise it gets recated each time!
+/bin/rm $logfile
 
 /usr/bin/logger -t piBoatMon "Setting the mopi power on timer to default of 3600 secs - piboatmon.py should overwrite it"
 /usr/bin/sudo /usr/sbin/mopicli -won $defaultSleepSecs &
@@ -14,12 +20,9 @@ defaultSleepSecs=3600
 # takes each copy and copies it into a logfile called piboatmon.log.20150106
 # Copeied changed from here;
 # http://unserializableone.blogspot.co.uk/2010/07/simple-bash-script-to-do-log-rotation.html
-logfile=/home/pi/piboatmon/files/piboatmon.log
 timestamp=`/bin/date +%Y%m%d`
 newlogfile=$logfile.$timestamp
 /bin/cat $logfile >> $newlogfile
-# need to remove the log file otherwise it gets recated each time!
-/bin/rm $logfile
 
 # delete the oldest logfiles
 /usr/bin/find /home/pi/piboatmon/files -name piboatmon.log*.tgz -mtime +10 -exec rm {} \;
