@@ -752,7 +752,7 @@ def sendSms(_number, _txt):
         sm.SendSMS(message)
 
         # log and print what we sent
-        _message = 'Sending message: ' + _text + ', to: ' + _number
+        _message = 'Sending message: ' + _txt + ', to: ' + _number
         print _message
         logging.info(_message)
 
