@@ -750,7 +750,11 @@ def sendSms(_number, _txt):
             logging.debug('About to try sm.SendSMS(message)')
 
         sm.SendSMS(message)
-        logging.info('Message sent to: ' + str(_number))
+
+        # log and print what we sent
+        _message = 'Sending message: ' + _text + ', to: ' + _number)
+        print _message
+        logging.info(_message)
 
         # yay it worked!!!!
         return True
