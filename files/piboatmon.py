@@ -2073,6 +2073,8 @@ if __name__ == '__main__':
         logging.basicConfig(filename=logfile, level=logging.DEBUG,
                             format='%(asctime)s %(levelname)s'
                                    + ' %(funcName)s %(message)s')
+
+        logging.getLogger("requests").setLevel(logging.WARNING)
     except Exception, e:
         print 'Logging problem' + str(e)
         sys.exit(1)
@@ -2103,7 +2105,6 @@ if __name__ == '__main__':
     # check and spin till we have been up 60 secs
     # otherwise mopi will not shutdown
     waitTillUptime(55)
-
 
     # get a Position fix - will need it either way
     setPosition()
