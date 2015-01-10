@@ -94,7 +94,7 @@ Production Version
 
 The production system is different and based on
 
-* SIM800 or SIM900 or equiv Modem with a smaller, better antenna, as these are smaller, simpler (no usbswitch) and use less power
+* SIM800 or SIM900 or equiv Modem with a smaller, better antenna, as these are smaller, simpler (no usbswitch) and use less power.  I like the look of the [ADAfruit Fona](https://www.adafruit.com/product/1946) avalable from [protpic £33.56](http://proto-pic.co.uk/fona-mini-cellular-gsm-breakout-ufl-version/), or [Amazon £59 Ouch](http://www.amazon.co.uk/Adafruit-FONA-Cellular-Breakout-Version/dp/B00N2WCEN4), or [Ebay £42](http://www.ebay.co.uk/itm/FONA-Mini-Cellular-GSM-Breakout-uFL-Version/221636979636?_trksid=p2047675.c100011.m1850&_trkparms=aid%3D222007%26algo%3DSIC.MBE%26ao%3D1%26asc%3D20140107083358%26meid%3D4c7509b8cbb34228a38a1a1956066dfc%26pid%3D100011%26prg%3D20140107083358%26rk%3D2%26rkt%3D10%26sd%3D181502610127).  Although more expensive than a 2nd hand USB 3G one, should take less power, smaller, more reliable, and more features (in built HTTP posting)
 * Raspberry Pi A+, smaller, lower power
 * External GPS antenna so that we can get a better fix
 
