@@ -1815,7 +1815,7 @@ def sendAndLogStatus():
 
         # log it and send it...
 
-        logging.info(str(message))
+        logging.info('sms message to send: ' + str(message))
 
         if sendSms(phone, message):
             # went ok - clear any flags
