@@ -208,11 +208,11 @@ Do you have SMS credit?  Is the modem unlocked to your network, is it is working
 * **Not getting SMS messages, but had some before?** SMS Credit?  Battery power?  try sending `set debug on` or `set regular status on` to get SMS messages when ever it runs.  If you watch it run (ie you see the flashing LEDS), but no SMS, this is either an SMS/Modem fault or a code issue.
 * **GPS criteria?** We need a GPS with an RTC Battery to enable fast fixes, otherwise it take most GPS units over a minute to fix... which is too long, as the code is running 25 secs afterboot, and then the logic takes only a few seconds, most of which is waiting on the modem.
 * **GPS Accuracy?** Do you have an external SMA antenna fitted, does it have a good view of the sky?  Otherwise GPS accuracy is likely to be poor.
-* **The SMS messages have the wrong time?** The timezone is based on UTC, but if this is not a timezone issue, it is likely that the unit is not getting a GPS fix in time as it depends on this to set the time, as the RPI has no RTC.  Try texting `setup` to the unit to get GPS feedback.
+* **The SMS messages have the wrong time like 00:00:50?** The timezone is based on UTC, but if this is not a timezone issue, it is likely that the unit is not getting a GPS fix in time as it depends on this to set the time, as the RPI has no RTC.  Try texting `setup` to the unit to get GPS feedback.
 * **What does BatX Missing mean?**  One of the batteries is either very dead, or disconnected.  If Bat2 then please replace the 9v reserve battery.
 * **What is the number on the end of the each SMS?**  Each SMS ends with a number which is the number of runs that the system has done.  Hopefully this will get quite big!
 * **Time is off by a few seconds** This does not do GPS leap second correction as this list needs updates.  However it does not need to be second perfect on timing.
-* **Sent some SMS instructions, No response** Some Mobile providers offer poor service, and these may not be getting though (aka Giffgaff).  Consider switching!!!  Try sending a message from another phone (e.g. ```set phone NewPhoneNum``` and it should reply to both phones (you will need to set it back with ```set phone OriginalPhone``` if you want your original.
+* **Sent some SMS instructions, No response** Some Mobile providers offer poor service, and these may not be getting though (aka Giffgaff).  Consider switching!!!  Try sending a message from another phone (e.g. ```set phone NewPhoneNum``` and it should reply to both phones (you will need to set it back with ```set phone the_phone_num_you_used_before``` if you want your original.
 
 ## Referances / Notes
 

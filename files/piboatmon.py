@@ -1082,8 +1082,9 @@ def setupSms(sms):
     if gpsp.getCurrentNoFixes() > 1:
 
         # we got one fix... yay!
-        reply = 'Setup: GPS got: ' + str(gpsp.getCurrentNoFixes()) \
-                + ' fix(s)'
+        reply = 'Setup: GPS got a good number of fixes: ' + str(gpsp.getCurrentNoFixes()) \
+                + ', ' + gpsp.getCurrentAvgDataText()
+
         logging.info(reply)
 
     # we should have a reply eitherway ...
