@@ -1560,7 +1560,7 @@ def updatePhoneSms(sms):
 
     if _newPhoneRegEx is None:
 
-        reply = 'Could not parse: ' + str(str(sms[0]['Text']))
+        reply = 'Could not parse: ' + str(str(sms[0]['Text'])) + 'for new phone number'
         logging.info(reply)
         sendSms(number, reply)
         return
@@ -1592,7 +1592,7 @@ def updatePhoneSms(sms):
 
         # reply to _newphone
         reply = 'New phone being set to: ' + str(phone)
-        sendSms(_newphone, reply)
+        sendSms(_newPhone, reply)
 
     else:
         logging.error('Not a phone number we could parse in: '
