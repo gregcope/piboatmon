@@ -30,6 +30,13 @@ class piboatmon::readonlyboot {
     unless => '/bin/grep "#do_start$" /etc/init.d/checkroot.sh',
   }
 
+  exec { 'deletelogs':
+    logoutput => true,
+    cwd => '/var/log',
+    exec => '/usr/bin/find . -name \*log* -exec rm -fr {} \;',
+    onlyif => '/bin/ls *log*'
+  }
+
   exec { 'removedoStartCheckFsSh':
     logoutput => true,
     command => '/usr/bin/perl -p -i -e "s/do_start$/#do_start/" /etc/init.d/checkfs.sh',
