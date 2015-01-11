@@ -2099,9 +2099,6 @@ if __name__ == '__main__':
     # load config
     loadConfig()
 
-    # set iteration and LastRunTime
-    updateIterationAndLastRunTime()
-
     # create a gpsPollerthread and asks it to start
     gpsp = GpsPoller()
     gpsp.start()
@@ -2116,6 +2113,9 @@ if __name__ == '__main__':
     # check and spin till we have been up 60 secs
     # otherwise mopi will not shutdown
     waitTillUptime(114)
+
+    # set iteration and LastRunTime
+    updateIterationAndLastRunTime()
 
     # get a Position fix - will need it either way
     setPosition()
