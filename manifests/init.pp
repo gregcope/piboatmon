@@ -11,6 +11,7 @@ class piboatmon {
   include piboatmon::puppet
   include piboatmon::piboatmon
   include piboatmon::readonlyboot
+  include piboatmon::overclock
 }
 
 # to run but do nothing
