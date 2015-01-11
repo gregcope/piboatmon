@@ -33,8 +33,8 @@ class piboatmon::readonlyboot {
   exec { 'deletelogs':
     logoutput => true,
     cwd => '/var/log',
-    exec => '/usr/bin/find . -name \*log* -exec rm -fr {} \;',
-    onlyif => '/bin/ls *log*'
+    command => '/usr/bin/find . -name \*log* -exec rm -fr {} \;',
+    onlyif => '/bin/ls *log*',
   }
 
   exec { 'removedoStartCheckFsSh':
