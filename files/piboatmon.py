@@ -2109,7 +2109,7 @@ if __name__ == '__main__':
 
     # check and spin till we have been up 60 secs
     # otherwise mopi will not shutdown
-    waitTillUptime(55)
+    waitTillUptime(114)
 
     # get a Position fix - will need it either way
     setPosition()
@@ -2160,7 +2160,7 @@ if __name__ == '__main__':
     sendHttpsLogging()
 
     # Wait till we get to 60 secs uptime
-    waitTillUptime(60)
+    #waitTillUptime(60)
 
     # we think we are done ..
     # stop the thread and wait for it to join

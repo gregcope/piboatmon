@@ -1,7 +1,7 @@
 #!/bin/sh
 
 
-timeOutSecs=90s
+timeOutSecs=180s
 defaultSleepSecs=3600
 logfile=/home/pi/piboatmon/files/piboatmon.log
 
