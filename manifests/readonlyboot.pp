@@ -52,8 +52,8 @@ class piboatmon::readonlyboot {
 #http://thebeezspeaks.blogspot.co.uk/2013/10/hardening-your-raspberry-pi.html
   exec { 'makeTmpTmpfs':
     logoutput => true,
-    command => '/usr/bin/perl -p -i -e "s/^.*RAMTMP=no$/RAMTMP=no/" /etc/default/tmpfs',
-    unless => '/bin/grep "^RAMTMP=no" /etc/default/tmpfs',
+    command => '/usr/bin/perl -p -i -e "s/^.*RAMTMP=.*$/RAMTMP=yes/" /etc/default/tmpfs',
+    unless => '/bin/grep "^RAMTMP=yes" /etc/default/tmpfs',
   }
 
   exec { 'removeCleanCheckRootBootCleanSh':
