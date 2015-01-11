@@ -851,10 +851,7 @@ def getSms():
 
         # delete the SMS
         for x in range(len(cursms)):
-            logging.info('Deleting SMS no: ' + str(x))
-            if debug is True:
-                logging.debug('About to delete SMS in location: '
-                              + str(cursms[x]['Location']))
+            logging.info('Deleting SMS in location: ' + str(cursms[x]['Location']))
             sm.DeleteSMS(cursms[x]['Folder'], cursms[x]['Location'])
 
         _remain = _remain - len(cursms)
