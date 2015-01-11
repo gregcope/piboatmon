@@ -60,6 +60,7 @@ NoGpsLoopsToTry = 60
 dailyStatusFired = False
 numSMSRecieved = 0
 sendStatusRequest = False
+uptimeAtStart = 0
 
 # some object handles
 gpsd = None
@@ -1897,6 +1898,7 @@ def sendHttpsLogging():
                'movedDistanceM': str(movedDistanceM),
                'dailyStatusFired': str(dailyStatusFired),
                'sendStatusRequest': str(sendStatusRequest),
+               'uptimeAtStart': str(uptimeAtStart),
                'numSMSRecieved': str(numSMSRecieved)}
 
     httpsUriPath = '/mythweb/piboatmon/logging/imei/' + str(imei)
@@ -1952,7 +1954,11 @@ def sendDebugMessage():
 
 def logUptime():
 
-    logging.info('Uptime: ' + str(uptimeSecs()) + ' secs')
+    global uptimeAtStart
+
+    _uptime = uptimeSecs()
+    uptimeAtStart = _uptime
+    logging.info('Uptime: ' + str(_uptime) + ' secs')
 
 
 def waitTillUptime(requiredUptime):
