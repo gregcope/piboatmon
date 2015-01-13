@@ -4,7 +4,7 @@
 timeOutSecs=180s
 defaultSleepSecs=3600
 logfile=/home/pi/piboatmon/files/piboatmon.log
-
+shutdownDelay=30
 
 # delete previous log file to stop it being added to
 # need to remove the log file otherwise it gets recated each time!
@@ -32,7 +32,7 @@ newlogfile=$logfile.$timestamp
 
 /bin/sync &
 
-sleep 30
+sleep $shutdownDelay
 
 /bin/sync
 
