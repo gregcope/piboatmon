@@ -649,8 +649,8 @@ def checkAnchorAlarm():
             if presentLat is 0 or presentLon is 0:
 
                 # got an empty fix
-                _txt = 'No present position fix to compare to anchor alarm' \
-                       + 'alarm - alarm range is: ' + str(alarmRange) \
+                _txt = 'No GPS fix to compare to set anchor alarm' \
+                       + ' - alarm range is: ' + str(alarmRange) \
                        + ' alarm Lat: ' + str(alarmLat) \
                        + ' alarm Lon: ' + str(alarmLon)
 
