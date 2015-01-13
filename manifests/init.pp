@@ -2,7 +2,7 @@ class piboatmon {
 
   include piboatmon::python
   include piboatmon::gps
-  include piboatmon::ntp
+#  include piboatmon::ntp
   include piboatmon::3g
   include piboatmon::mopi
   include piboatmon::fasterboot

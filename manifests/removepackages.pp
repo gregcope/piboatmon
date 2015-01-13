@@ -63,4 +63,5 @@ class piboatmon::removepackages {
   package { 'minecraft-pi': ensure => 'purged' }
   package { 'python-minecraftpi': ensure => 'purged' }
   package { 'raspi-config': ensure => 'purged' }
+  package { 'ntp': ensure => 'purged' }
 }
