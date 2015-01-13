@@ -1583,7 +1583,7 @@ def updatePhoneSms(sms):
             reply = ': phone being replaced with: ' + str(phone) \
                     + '.  To reset the phone back to this phone, ' \
                     + ' reply to this SMS with:\n\nset phone ' \
-                    + str(oldphone)
+                    + str(oldphone) + '\n\n'
 
             # sent the reply SMS
             sendSms(oldphone, reply)
@@ -1811,7 +1811,7 @@ def sendAndLogStatus():
             _prefix = 'Daily status '
 
         if sendStatusRequest is True:
-            _prefix = 'Status requested '
+            _prefix = 'Status requested & ' + _prefix
 
         # add the prefix
         message = _prefix + message
