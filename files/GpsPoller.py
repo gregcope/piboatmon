@@ -90,6 +90,7 @@ class gpspoller(threading.Thread):
 
                         # we got a good fix
                         self.numFixes += 1
+                        _loop +=1
 
                         # add each to summary
                         # and update rolling average
