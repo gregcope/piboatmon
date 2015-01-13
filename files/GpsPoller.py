@@ -12,7 +12,7 @@ import time
 import threading
 import logging
 
-class GpsPoller(threading.Thread):
+class gpspoller(threading.Thread):
 
     # class variables
     avLat = 0
@@ -30,7 +30,7 @@ class GpsPoller(threading.Thread):
         threading.Thread.__init__(self)
 
         if debug is True:
-            logging.debug('Setting up GpsPoller __init__ class')
+            logging.debug('Setting up gpspoller __init__ class')
 
         # fire up the gpsd conncection
         try:
