@@ -33,7 +33,6 @@ class gpspoller(threading.Thread):
 
         while self.running:
 
-            sleep (1)
             print 'Foo'
             #try:
             #    self.gpsd.next() #this will continue to loop and grab EACH set of gpsd info to clear the buffer
