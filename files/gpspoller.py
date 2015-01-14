@@ -21,6 +21,7 @@ class gpspoller(threading.Thread):
             self.gpsd = gps(mode=WATCH_ENABLE) #starting the stream of info
 
         except:
+
             logging.error('GPS thread Ops... gpsd not running right?'
                           + 'Hint: sudo /etc/init.d/gpsd start')
 
@@ -29,7 +30,7 @@ class gpspoller(threading.Thread):
  
     def run(self):
 
-        while gpsp.running:
+        while self.gpsp.running:
 
             try:
                 self.gpsd.next() #this will continue to loop and grab EACH set of gpsd info to clear the buffer
