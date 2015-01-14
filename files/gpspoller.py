@@ -37,7 +37,7 @@ class gpspoller(threading.Thread):
             try:
                 self.gpsd.next() #this will continue to loop and grab EACH set of gpsd info to clear the buffer
 
-                print str(self.gpsd)
+                print str(self.gpsd.fix.time)
             except StopIteration:
                 self.gpsd = None
                 logging.error('GPS thread GPSD has terminated')
