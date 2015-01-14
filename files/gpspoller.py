@@ -6,10 +6,6 @@ import logging
 
 class gpspoller(threading.Thread):
 
-    # class variables
-    gpsd = None
-    gpsp
-
     def __init__(self):
 
         self.gpsd = None
@@ -33,7 +29,7 @@ class gpspoller(threading.Thread):
  
     def run(self):
 
-        while self.gpsp.running:
+        while self.running:
 
             try:
                 self.gpsd.next() #this will continue to loop and grab EACH set of gpsd info to clear the buffer
