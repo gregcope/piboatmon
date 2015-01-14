@@ -55,7 +55,11 @@ class gpspoller(threading.Thread):
         _fixesAtStart = self.num3DFixes
 
         while self.num3DFixes < _fixesAtStart + 3:
-            print "While..."
+            if self.num3DFixes == 1:
+                time.sleep(1)
+                print 'Skipping - no fix'
+                next
+
             print _fixesAtStart
             print self.num3DFixes
             time.sleep(1)
