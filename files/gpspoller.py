@@ -1,6 +1,7 @@
-import gps
+from gps import *
 import threading
 import logging
+import time
 
 # http://www.danmandle.com/blog/getting-gpsd-to-work-with-python/
 
@@ -18,7 +19,7 @@ class gpspoller(threading.Thread):
 
 #        try:
 
-        self.gpsd = gps.gps(mode=WATCH_ENABLE) #starting the stream of info
+        self.gpsd = gps(mode=WATCH_ENABLE) #starting the stream of info
 
 #        except:
 
@@ -31,11 +32,13 @@ class gpspoller(threading.Thread):
 
         while self.running:
 
-            try:
-                self.gpsd.next() #this will continue to loop and grab EACH set of gpsd info to clear the buffer
-            except StopIteration:
-                self.gpsd = None
-                logging.error('GPS thread GPSD has terminated')
+            sleep (1)
+            print 'Foo'
+            #try:
+            #    self.gpsd.next() #this will continue to loop and grab EACH set of gpsd info to clear the buffer
+            #except StopIteration:
+            #    self.gpsd = None
+            #    logging.error('GPS thread GPSD has terminated')
 
     def getCurrentAvgData(self):
 
