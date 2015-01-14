@@ -8,8 +8,12 @@ class gpspoller(threading.Thread):
 
     # class variables
     gpsd = None
+    gpsp
 
     def __init__(self):
+
+        self.gpsd = None
+        self.foo = None
 
         # we are going to be a thread
         threading.Thread.__init__(self)
@@ -25,7 +29,6 @@ class gpspoller(threading.Thread):
             logging.error('GPS thread Ops... gpsd not running right?'
                           + 'Hint: sudo /etc/init.d/gpsd start')
 
-        self.current_value = None
         self.running = True #setting the thread running to true
  
     def run(self):
