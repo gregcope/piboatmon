@@ -31,6 +31,8 @@ class gpspoller(threading.Thread):
  
     def run(self):
 
+        print 'self.running: ' + str(self.running) 
+
         while self.running:
 
             print 'Foo'
