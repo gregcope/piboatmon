@@ -26,7 +26,7 @@ class gpspoller(threading.Thread):
             logging.error('GPS thread Ops... gpsd not running right?'
                           + 'Hint: sudo /etc/init.d/gpsd start')
 
-        #self.running = True #setting the thread running to true
+        self.running = False 
         print 'started'
  
     def run(self):
@@ -37,9 +37,14 @@ class gpspoller(threading.Thread):
 
             try:
                 self.gpsd.next() #this will continue to loop and grab EACH set of gpsd info to clear the buffer
+                print self.gpsd.fix
             except StopIteration:
                 self.gpsd = None
                 logging.error('GPS thread GPSD has terminated')
+
+    def stop(self):
+
+        self.running = False
 
     def getCurrentAvgData(self):
 
