@@ -27,6 +27,7 @@ class gpspoller(threading.Thread):
 #                          + 'Hint: sudo /etc/init.d/gpsd start')
 
         self.running = True #setting the thread running to true
+        print 'started'
  
     def run(self):
 
