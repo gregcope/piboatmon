@@ -55,5 +55,4 @@ class gpspoller(threading.Thread):
         print self.gpsd.fix.longitude
         print self.gpsd.fix.epy
         print self.gpsd.fix.epx
-        print self.gpsd.satellites
         print self.gpsd.satellites_used
