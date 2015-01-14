@@ -19,7 +19,7 @@ class gpspoller(threading.Thread):
 
         try:
 
-        self.gpsd = gps(mode=WATCH_ENABLE) #starting the stream of info
+            self.gpsd = gps(mode=WATCH_ENABLE) #starting the stream of info
 
         except:
 
