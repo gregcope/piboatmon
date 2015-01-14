@@ -50,8 +50,8 @@ class gpspoller(threading.Thread):
 
     def getCurrentAvgData(self):
 
-        print self.gpsd.fix
         print self.gpsd.fix.mode
         print self.gpsd.fix.latitude
         print self.gpsd.fix.longitude
         print self.gpsd.satellites
+        print self.gpsd.satellites_used
