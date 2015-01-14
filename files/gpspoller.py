@@ -32,14 +32,11 @@ class gpspoller(threading.Thread):
     def run(self):
 
         self.running = True
-        print 'self.running: ' + str(self.running) 
 
         while self.running:
 
-            print 'Foo'
             try:
                 self.gpsd.next() #this will continue to loop and grab EACH set of gpsd info to clear the buffer
-                print 
             except StopIteration:
                 self.gpsd = None
                 logging.error('GPS thread GPSD has terminated')
