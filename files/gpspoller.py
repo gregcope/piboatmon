@@ -4,6 +4,7 @@ import logging
 import time
 
 # http://www.danmandle.com/blog/getting-gpsd-to-work-with-python/
+# http://www.stuffaboutcode.com/2013/09/raspberry-pi-gps-setup-and-python.html
 
 class gpspoller(threading.Thread):
 
