@@ -37,6 +37,8 @@ class gpspoller(threading.Thread):
             try:
                 self.gpsd.next() #this will continue to loop and grab EACH set of gpsd info to clear the buffer
                 print 'Got a next'
+                if self.gpsd['class'] == ' TPV':
+                    print "got a TPV"
             except StopIteration:
                 self.gpsd = None
                 logging.error('GPS thread GPSD has terminated')
