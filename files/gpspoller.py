@@ -10,6 +10,7 @@ class gpspoller(threading.Thread):
     def __init__(self):
 
         self.gpsd = None
+        self.num3DFixes = 0
 
         # we are going to be a thread
         threading.Thread.__init__(self)
@@ -37,10 +38,8 @@ class gpspoller(threading.Thread):
             try:
                 self.gpsd.next() #this will continue to loop and grab EACH set of gpsd info to clear the buffer
 
-                print self.gpsd.fix.mode
-
                 if str(self.gpsd.fix.mode) == '3':
-                    print "got a 3"
+                    self.num3DFixes += 1
                 
             except StopIteration:
                 self.gpsd = None
@@ -52,6 +51,18 @@ class gpspoller(threading.Thread):
 
     def getCurrentAvgData(self):
 
+        print self.num3DFixes
+        _fixesAtStart = self.num3DFixes
+
+        while self.num3DFixes < _fixesAtStart + 3:
+            print "While..."
+            print _fixesAtStart
+            print self.num3DFixes
+            time.sleep(1)
+
+    def getFix(self):
+
+        print self.num3DFixes
         print self.gpsd.fix.mode
         print self.gpsd.fix.latitude
         print self.gpsd.fix.longitude
