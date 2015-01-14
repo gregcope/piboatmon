@@ -39,7 +39,7 @@ class gpspoller(threading.Thread):
 
                 print self.gpsd.fix.mode
 
-                if self.gpsd.fix.mode == '3':
+                if str(self.gpsd.fix.mode) == '3':
                     print "got a 3"
                 
             except StopIteration:
