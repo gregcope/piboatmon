@@ -16,14 +16,14 @@ class gpspoller(threading.Thread):
 
         logging.debug('Setting up gpspoller __init__ class')
 
-        try:
+#        try:
 
-            self.gpsd = gps(mode=WATCH_ENABLE) #starting the stream of info
+        self.gpsd = gps(mode=WATCH_ENABLE) #starting the stream of info
 
-        except:
+#        except:
 
-            logging.error('GPS thread Ops... gpsd not running right?'
-                          + 'Hint: sudo /etc/init.d/gpsd start')
+#            logging.error('GPS thread Ops... gpsd not running right?'
+#                          + 'Hint: sudo /etc/init.d/gpsd start')
 
         self.running = True #setting the thread running to true
  
