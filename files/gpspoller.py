@@ -26,11 +26,12 @@ class gpspoller(threading.Thread):
             logging.error('GPS thread Ops... gpsd not running right?'
                           + 'Hint: sudo /etc/init.d/gpsd start')
 
-        self.running = True #setting the thread running to true
+        #self.running = True #setting the thread running to true
         print 'started'
  
     def run(self):
 
+        self.running = True
         print 'self.running: ' + str(self.running) 
 
         while self.running:
