@@ -736,7 +736,7 @@ def sendSms(_number, _txt):
     # Prefix with boatname and time
     # and add iteration to the end
     _txt = datetime.datetime.now().strftime("%a %X") + ' ' + boatname \
-        + ': ' + _txt + ',' + str(iteration)
+        + ': ' + _txt + '\n' + str(iteration)
 
     if debug is True:
         logging.debug('Trying to send SMS message: ' + str(_txt)
