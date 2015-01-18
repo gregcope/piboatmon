@@ -107,19 +107,19 @@ class gpspoller(threading.Thread):
         if self.num3DFixes < 3:
             return 1000
 
-        print self.num3DFixes
-        print self.gpsd.status
+        print 'num3DFixes: ' + str(self.num3DFixes)
+        print 'status: ' + str(self.gpsd.status)
         # 1 = NO_FIX, 2 = FIX, 3 = DGPS_FIX
-        print self.gpsd.fix.mode
+        print 'Mode: ' + str(self.gpsd.fix.mode)
         # 0 = ZERO, 1 = NO_FIX, 2 = 2D, 3 = 3D
-        print self.gpsd.fix.latitude
-        print self.gpsd.fix.longitude
-        print self.rollingLat
-        print self.rollingLon
-        print self.gpsd.fix.epy
-        print self.gpsd.fix.epx
-        print self.gpsd.satellites_used
-        print self.gpsd.pdop 
+        print 'lat ', self.gpsd.fix.latitude
+        print 'lon ', self.gpsd.fix.longitude
+        print 'rollingLat ', self.rollingLat
+        print 'rollingLon ', self.rollingLon
+        print 'epy: ', self.gpsd.fix.epy
+        print 'epx: ', self.gpsd.fix.epx
+        print 'sat used: ', self.gpsd.satellites_used
+        print 'pdop: ', self.gpsd.pdop 
 
 #print gps.misc.EarthDistance((51,0),(51.00008945,0)) 
 # http://fossies.org/dox/gpsd-3.11/gps_8py_source.html
