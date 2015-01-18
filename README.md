@@ -57,6 +57,11 @@ How it works
 * Uses GPIO pin 18 connected to a [bilge switch](http://www.ebay.co.uk/sch/i.html?_odkw=bilge+switch+seaflo&_from=R40%7CR40%7CR40&_osacat=0&_from=R40&_trksid=p2045573.m570.l1313.TR0.TRC0.H0.Xbilge+switch+seaflo+float&_nkw=bilge+switch+seaflo+float&_sacat=0) and can alarm on that
 * Uses Puppet to configure the host, install all the needed packages and configure the services
 
+GPS Battery Backup
+------------------
+
+The Adafruit Ultimate GPS has a CR1220 coin cell holder that will power Real Time Clock (RTC) which should last around 1 year.  See more details from Adafruit [here](https://learn.adafruit.com/adafruit-ultimate-gps?view=all#battery-backup)
+
 Bill Of Mattieals
 -----------------
 
