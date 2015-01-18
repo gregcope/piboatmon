@@ -28,6 +28,8 @@ class gpspoller(threading.Thread):
         logging.debug('Setting up gpspoller __init__ class with rolling Average window of: '
                       + str(self.rollingWindow))
 
+        print 'Window is: ' + str(self.rollingWindow)
+
         try:
 
             self.gpsd = gps(mode=WATCH_ENABLE) #starting the stream of info
