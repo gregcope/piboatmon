@@ -11,18 +11,22 @@ import time
 
 class gpspoller(threading.Thread):
 
-    def __init__(self):
+    def __init__(self, window):
 
         self.gpsd = None
         self.num3DFixes = 0
         self.rollingLat = 0
         self.rollingLon = 0
-        self.rollingWindow = 3
+        self.rollingWindow = window
+
+        if self.rollingWindow < 3 or > 10:
+            logging.error('Rolling average window needs to be between 3 or 10')
 
         # we are going to be a thread
         threading.Thread.__init__(self)
 
-        logging.debug('Setting up gpspoller __init__ class')
+        logging.debug('Setting up gpspoller __init__ class with rolling Average window of: '
+                      + str(self.rollingWindow))
 
         try:
 
@@ -85,7 +89,7 @@ class gpspoller(threading.Thread):
         self.running = False
 
 
-    def movingAverage(data):
+    def movingAverage(self, data):
 
         total = 0
 
