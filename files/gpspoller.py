@@ -17,6 +17,12 @@ class gpspoller(threading.Thread):
         self.num3DFixes = 0
         self.rollingLat = 0
         self.rollingLon = 0
+        self.rollingTrack = 0
+        self.rollingSpeed = 0
+        self.rollingEpx = 0
+        self.rollingEpy = 0
+        self.rollingSatsUsed = 0
+        self.rollingHdop = 0
         self.rollingWindow = window
 
         if self.rollingWindow < 3 or self.rollingWindow > 10:
@@ -52,6 +58,12 @@ class gpspoller(threading.Thread):
         # until we have the right number of results
         self.dLat = deque([0, 0, 0], self.rollingWindow)
         self.dLon = deque([0, 0, 0], self.rollingWindow)
+        self.dTrack = deque([0, 0, 0], self.rollingWindow)
+        self.dSpeed = deque([0, 0, 0], self.rollingWindow)
+        self.dEpx = deque([0, 0, 0], self.rollingWindow)
+        self.dEpy = deque([0, 0, 0], self.rollingWindow)
+        self.dSatsUsed = deque([0, 0, 0], self.rollingWindow)
+        self.dHdop = deque([0, 0, 0], self.rollingWindow)
 
         while self.running:
 
@@ -72,6 +84,12 @@ class gpspoller(threading.Thread):
                     # add good fix info to the fix disque
                     self.dLat.append(self.gpsd.fix.latitude)
                     self.dLon.append(self.gpsd.fix.longitude)
+                    self.dTrack.append(self.gpsd.fix.track)
+                    self.dSpeed.append(self.gpsd.fix.speed)
+                    self.dEpx.append(self.gpsd.fix.self.gpsd.fix.epx)
+                    self.dEpy.append(self.gpsd.fix.self.gpsd.fix.epy)
+                    self.dSatsUsed.append(self.gpsd.fix.self.gpsd.satellites_used)
+                    self.dHdop.append(self.gpsd.hdop)
 
                 if self.num3DFixes >= self.rollingWindow:
 
@@ -81,6 +99,12 @@ class gpspoller(threading.Thread):
                     print 'Num 3D fixes' + str(self.num3DFixes) + ', greater than rolling window; ' + str(self.rollingWindow)
                     self.rollingLat = self.movingAverage(self.dLat)
                     self.rollingLon = self.movingAverage(self.dLon)
+                    self.rollingTrack = self.movingAverage(self.dTrack)
+                    self.rollingSpeed = self.movingAverage(self.dSpeed)
+                    self.rollingEpx = self.movingAverage(self.dEpx)
+                    self.rollingEpy = self.movingAverage(self.dEpy)
+                    self.rollingSatsUsed = self.movingAverage(self.dSatsUsed)
+                    self.rollingHdop = self.movingAverage(self.dHdop)
  
             except StopIteration:
                 self.gpsd = None
