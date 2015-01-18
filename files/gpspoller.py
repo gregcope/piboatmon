@@ -6,7 +6,6 @@ import threading
 import logging
 import time
 
-# http://sentdex.com/sentiment-analysisbig-data-and-python-tutorials-algorithmic-trading/how-to-chart-stocks-and-forex-doing-your-own-financial-charting/calculate-simple-moving-average-sma-python/
 # http://www.danmandle.com/blog/getting-gpsd-to-work-with-python/
 # http://www.stuffaboutcode.com/2013/09/raspberry-pi-gps-setup-and-python.html
 
@@ -52,12 +51,17 @@ class gpspoller(threading.Thread):
 
             try:
 
-                #this will continue to loop and grab EACH set of gpsd info to clear the buffer
+                # this will continue to loop 
+                # and grab EACH set of gpsd info 
+                # to clear the buffer
                 self.gpsd.next()
 
+                # check if we have a good fix
                 if str(self.gpsd.fix.mode) == '3':
+
                     self.num3DFixes += 1
 
+                    # add good fix info to the fix disque
                     self.dLat.append(self.gpsd.fix.latitude)
                     self.dLon.append(self.gpsd.fix.lontitude)
 

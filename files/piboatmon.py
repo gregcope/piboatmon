@@ -2109,7 +2109,7 @@ if __name__ == '__main__':
 
     # check and spin till we have been up 60 secs
     # otherwise mopi will not shutdown
-    waitTillUptime(114)
+    waitTillUptime(174)
 
     # set iteration and LastRunTime
     updateIterationAndLastRunTime()
