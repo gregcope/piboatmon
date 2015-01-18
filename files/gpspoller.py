@@ -19,7 +19,7 @@ class gpspoller(threading.Thread):
         self.rollingLon = 0
         self.rollingWindow = window
 
-        if self.rollingWindow < 3 or > 10:
+        if self.rollingWindow < 3 or self.rollingWindow > 10:
             logging.error('Rolling average window needs to be between 3 or 10')
 
         # we are going to be a thread
