@@ -79,8 +79,8 @@ class gpspoller(threading.Thread):
                     # so we can average and populate the rolling lat/lon
 
                     print 'Num 3D fixes' + str(self.num3DFixes) + ', greater than rolling window; ' + str(self.rollingWindow)
-                    self.rollingLat = movingAverage(self.dLat)
-                    self.rollingLon = movingAverage(self.dLon)
+                    self.rollingLat = self.movingAverage(self.dLat)
+                    self.rollingLon = self.movingAverage(self.dLon)
  
             except StopIteration:
                 self.gpsd = None
