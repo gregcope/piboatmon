@@ -60,7 +60,7 @@ class gpspoller(threading.Thread):
                 if str(self.gpsd.fix.mode) == '3':
 
                     print '3D fix, adding to dLat' + str(self.gpsd.fix.latitude)
-                    print '3D fix, adding to dLon' + str(self.gpsd.fix.lontitude)
+                    print '3D fix, adding to dLon' + str(self.gpsd.fix.longitude)
                     self.num3DFixes += 1
 
                     # add good fix info to the fix disque
