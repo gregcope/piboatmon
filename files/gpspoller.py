@@ -120,6 +120,7 @@ class gpspoller(threading.Thread):
         print 'epx: ', self.gpsd.fix.epx
         print 'sat used: ', self.gpsd.satellites_used
         print 'pdop: ', self.gpsd.pdop 
+        print 'hdop: ', self.gpsd.hdop
 
 #print gps.misc.EarthDistance((51,0),(51.00008945,0)) 
 # http://fossies.org/dox/gpsd-3.11/gps_8py_source.html
