@@ -65,7 +65,7 @@ class gpspoller(threading.Thread):
 
                     # add good fix info to the fix disque
                     self.dLat.append(self.gpsd.fix.latitude)
-                    self.dLon.append(self.gpsd.fix.lontitude)
+                    self.dLon.append(self.gpsd.fix.longitude)
 
                 if self.num3DFixes >= self.rollingWindow:
 
