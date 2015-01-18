@@ -59,6 +59,8 @@ class gpspoller(threading.Thread):
                 # check if we have a good fix
                 if str(self.gpsd.fix.mode) == '3':
 
+                    print '3D fix, adding to dLat' + str(self.gpsd.fix.latitude)
+                    print '3D fix, adding to dLon' + str(self.gpsd.fix.lonitude)
                     self.num3DFixes += 1
 
                     # add good fix info to the fix disque
@@ -70,6 +72,7 @@ class gpspoller(threading.Thread):
                     # should have enough good Lat/Lons,
                     # so we can average and populate the rolling lat/lon
 
+                    print 'Num 3D fixes' + str(self.num3DFixes) + ', greater than rolling window; ' + str(self.rollingWindow)
                     self.rollingLat = movingAverage(self.dLat)
                     self.rollingLon = movingAverage(self.dLon)
  
@@ -87,6 +90,7 @@ class gpspoller(threading.Thread):
         total = 0
 
         for n in range(len(data)):
+            print 'Averaging: ' + str(data[n])
             total += data[n]
 
         return total / len(data)
@@ -95,26 +99,7 @@ class gpspoller(threading.Thread):
     def getCurrentRollingAvData(self):
 
         if self.num3DFixes < 3:
-            return -1
-
-        # should be good ... to start the rolling average
-        rollingAverage(self.dLat)
-        
-
-        print self.num3DFixes
-        _fixesAtStart = self.num3DFixes
-
-        while self.num3DFixes < _fixesAtStart + 3:
-            if self.num3DFixes == 1:
-                time.sleep(1)
-                print 'Skipping - no fix'
-                next
-
-            print _fixesAtStart
-            print self.num3DFixes
-            time.sleep(1)
-
-    def getFix(self):
+            return 1000
 
         print self.num3DFixes
         print self.gpsd.status
@@ -123,6 +108,8 @@ class gpspoller(threading.Thread):
         # 0 = ZERO, 1 = NO_FIX, 2 = 2D, 3 = 3D
         print self.gpsd.fix.latitude
         print self.gpsd.fix.longitude
+        print self.rollingLat
+        print self.rollingLon
         print self.gpsd.fix.epy
         print self.gpsd.fix.epx
         print self.gpsd.satellites_used
