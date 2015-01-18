@@ -44,8 +44,8 @@ class gpspoller(threading.Thread):
         # but make them zero
         # we do not populat the rolling average
         # until we have the right number of results
-        self._dLat = deque([0, 0, 0], self.rollingWindow)
-        self._dLon = deque([0, 0, 0], self.rollingWindow)
+        self.dLat = deque([0, 0, 0], self.rollingWindow)
+        self.dLon = deque([0, 0, 0], self.rollingWindow)
 
         while self.running:
 
@@ -59,8 +59,8 @@ class gpspoller(threading.Thread):
                 # check if we have a good fix
                 if str(self.gpsd.fix.mode) == '3':
 
-                    print '3D fix, adding to dLat' + str(self.gpsd.fix.latitude)
-                    print '3D fix, adding to dLon' + str(self.gpsd.fix.longitude)
+                    print '3D fix, adding to dLat: ' + str(self.gpsd.fix.latitude)
+                    print '3D fix, adding to dLon: ' + str(self.gpsd.fix.longitude)
                     self.num3DFixes += 1
 
                     # add good fix info to the fix disque
