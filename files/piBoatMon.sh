@@ -11,7 +11,8 @@ shutdownDelay=30
 /bin/rm $logfile
 
 # try and set the date from GPS
-/usr/bin/sudo /home/pi/piboatmon/files/gpsDate &
+/usr/bin/sudo /home/pi/piboatmon/files/gpsDateTPV &
+/usr/bin/sudo /home/pi/piboatmon/files/gpsDateRMC &
 
 /usr/bin/logger -t piBoatMon "Setting the mopi power on timer to default of 3600 secs - piboatmon.py should overwrite it"
 /usr/bin/sudo /usr/sbin/mopicli -won $defaultSleepSecs &
