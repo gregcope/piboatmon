@@ -1,30 +1,30 @@
 #!/bin/sh
 
 #
-# Script to set the date on the GPS TPV data
-# until NTP can get more accurate
-#
+# Script to set the date on the GPS RMC data
+# Does not need a fix
+# as GPS unit will output Data without one
 # Polls the GPS for 10 lines
 # and checks the extracted GPSDATE looks like;
-# DDDD-DD-DDTDD:DD:DD
+# $GPRMC,200737.000,V,,,,,0.64,5.31,190115,,,N*44 
+# turns it into;
 # 2014-12-13T15:13:22.000Z
-#
-# Otherwise the TPV data can have the following if there is no fix
-# {"class":"TPV","tag":"GGA","device":"/dev/ttyAMA0","mode":3,"lat":51.013665000,"lon":-0.449583333,"alt":13.900}#015
-#
-# then just calls the date command and logs
 
+# /usr/bin/gpspipe -R | /usr/bin/head -10 | /bin/grep GPRMC | /usr/bin/awk -F"," '{print $2,$10}' | /bin/sed -r 's/([0-9]{2})([0-9]{2})([0-9]{2}).*([0-9]{2})([0-9]{2})([0-9]{2})$/20\6-\5-\4T\1:\2:\3.000Z/' | /usr/bin/tail -1
+# 222038.000 190115
+# 222039.000 190115
+#
 # start with something that will not match
 GPSDATE=0
 
-/usr/bin/logger -t gpsDate "Polling GPS for TPV time sentence ..."
+/usr/bin/logger -t gpsDate "Polling GPS for GPRMC time sentence ..."
 
 # go for the loop
 until [ `echo $GPSDATE | /bin/grep  -P "^(19|20)\d{2}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}"` ]
 do
-    GPSDATE=`/usr/bin/gpspipe -w | /usr/bin/head -10 | /bin/grep TPV | /bin/sed -r 's/.*"time":"([^"]*)".*/\1/' | /usr/bin/head -1`
+    GPSDATE=`/usr/bin/gpspipe -R | /usr/bin/head -10 | /bin/grep GPRMC | /usr/bin/awk -F"," '{print $2,$10}' | /bin/sed -r 's/([0-9]{2})([0-9]{2})([0-9]{2}).*([0-9]{2})([0-9]{2})([0-9]{2})$/20\6-\5-\4T\1:\2:\3.000Z/' | /usr/bin/tail -1`
 done
 
 # got this far, should have a GPS Date that looks good ...
-/bin/date -s "$GPSDATE" && /usr/bin/logger -t gpsDate "Setting date to: $GPSDATE, exiting"
+/bin/date -s "$GPSDATE" && /usr/bin/logger -t gpsDate "Setting date from GPTRMC to: $GPSDATE, exiting"
 
