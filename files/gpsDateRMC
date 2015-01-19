@@ -10,7 +10,8 @@
 # turns it into;
 # 2014-12-13T15:13:22.000Z
 
-# /usr/bin/gpspipe -R | /usr/bin/head -10 | /bin/grep GPRMC | /usr/bin/awk -F"," '{print $2,$10}' | /bin/sed -r 's/([0-9]{2})([0-9]{2})([0-9]{2}).*([0-9]{2})([0-9]{2})([0-9]{2})$/20\6-\5-\4T\1:\2:\3.000Z/' | /usr/bin/tail -1
+# /usr/bin/gpspipe -R | /usr/bin/head -10 | /bin/grep GPRMC | /usr/bin/awk -F"," '{print $2,$10}' | /bin/sed -r 's/([0-9]{2})([0-9]{2})([0-9]{2}).*([0-9]{2})([0-9]{2})([0-9]{2})$/20\6-\5-\4T\1:\2:\3.000Z/' | /usr/bi
+n/tail -1
 # 222038.000 190115
 # 222039.000 190115
 #
