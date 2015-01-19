@@ -8,7 +8,7 @@ shutdownDelay=30
 
 # delete previous log file to stop it being added to
 # need to remove the log file otherwise it gets recated each time!
-/bin/rm $logfile
+/bin/rm -f $logfile
 
 # try and set the date from GPS
 /usr/bin/sudo /home/pi/piboatmon/files/gpsDateTPV &
