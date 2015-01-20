@@ -125,7 +125,6 @@ class gpspoller(threading.Thread):
         total = 0
 
         for n in range(len(data)):
-            print 'Averaging: ' + str(data[n])
             total += data[n]
 
         return total / len(data)
@@ -149,5 +148,5 @@ class gpspoller(threading.Thread):
                 self.rollingSatsUsed,
                 self.rollingHdop)
                 
-#print gps.misc.EarthDistance((51,0),(51.00008945,0)) 
+# print gps.misc.EarthDistance((51,0),(51.00008945,0)) 
 # http://fossies.org/dox/gpsd-3.11/gps_8py_source.html
