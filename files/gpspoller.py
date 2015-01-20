@@ -34,8 +34,6 @@ class gpspoller(threading.Thread):
         logging.debug('Setting up gpspoller __init__ class with rolling Average window of: '
                       + str(self.rollingWindow))
 
-        print 'Window is: ' + str(self.rollingWindow)
-
         try:
 
             self.gpsd = gps(mode=WATCH_ENABLE) #starting the stream of info
@@ -45,12 +43,13 @@ class gpspoller(threading.Thread):
             logging.error('GPS thread Ops... gpsd not running right?'
                           + 'Hint: sudo /etc/init.d/gpsd start')
 
-        self.running = False 
-        print 'started'
+        self.running = False
+        logging.debug('gpspoller __init__ finished')
  
     def run(self):
 
         self.running = True
+        logging.info('gpspoller Running')
 
         # create the deques of the right length
         # but make them zero
@@ -77,8 +76,12 @@ class gpspoller(threading.Thread):
                 # check if we have a good fix
                 if str(self.gpsd.fix.mode) == '3':
 
-                    print '3D fix, adding to dLat: ' + str(self.gpsd.fix.latitude)
-                    print '3D fix, adding to dLon: ' + str(self.gpsd.fix.longitude)
+                    logging.info('GPS 3D fix! lat: '
+                                 + str(self.gpsd.fix.latitude) + ', lon: '
+                                 + str(self.gpsd.fix.longitude) + ', stats: '
+                                 + str(self.gpsd.satellites_used) + ', hdop: '
+                                 + str(self.gpsd.hdop) )
+
                     self.num3DFixes += 1
 
                     # add good fix info to the fix disque
@@ -96,7 +99,8 @@ class gpspoller(threading.Thread):
                     # should have enough good Lat/Lons,
                     # so we can average and populate the rolling lat/lon
 
-                    print 'Num 3D fixes' + str(self.num3DFixes) + ', greater than rolling window; ' + str(self.rollingWindow)
+                    logging.info('Updating rolling average')
+
                     self.rollingLat = self.movingAverage(self.dLat)
                     self.rollingLon = self.movingAverage(self.dLon)
                     self.rollingTrack = self.movingAverage(self.dTrack)
@@ -113,6 +117,7 @@ class gpspoller(threading.Thread):
     def stop(self):
 
         self.running = False
+        logging.info('Stopping gps thread')
 
 
     def movingAverage(self, data):
@@ -128,23 +133,21 @@ class gpspoller(threading.Thread):
 
     def getCurrentRollingAvData(self):
 
-        if self.num3DFixes < 3:
+        if self.num3DFixes < self.rollingWindow:
+            logging.warn('Calling rolling average with no enough 3D fixes - num3DFixes: '
+                         + str(self.num3DFixes) + ', rollingWindow: ' 
+                         + str(self.rollingWindow) )
             return 1000
 
-        print 'num3DFixes: ' + str(self.num3DFixes)
-        print 'status: ' + str(self.gpsd.status)
-        # 1 = NO_FIX, 2 = FIX, 3 = DGPS_FIX
-        print 'Mode: ' + str(self.gpsd.fix.mode)
-        # 0 = ZERO, 1 = NO_FIX, 2 = 2D, 3 = 3D
-        print 'lat ', self.gpsd.fix.latitude
-        print 'lon ', self.gpsd.fix.longitude
-        print 'rollingLat ', self.rollingLat
-        print 'rollingLon ', self.rollingLon
-        print 'epy: ', self.gpsd.fix.epy
-        print 'epx: ', self.gpsd.fix.epx
-        print 'sat used: ', self.gpsd.satellites_used
-        print 'pdop: ', self.gpsd.pdop 
-        print 'hdop: ', self.gpsd.hdop
-
+        return (self.num3DFixes,
+                self.rollingLat,
+                self.rollingLon,
+                self.rollingTrack,
+                self.rollingSpeed,
+                self.rollingEpx,
+                self.rollingEpy,
+                self.rollingSatsUsed,
+                self.rollingHdop)
+                
 #print gps.misc.EarthDistance((51,0),(51.00008945,0)) 
 # http://fossies.org/dox/gpsd-3.11/gps_8py_source.html
