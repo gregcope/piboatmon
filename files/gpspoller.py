@@ -86,9 +86,9 @@ class gpspoller(threading.Thread):
                     self.dLon.append(self.gpsd.fix.longitude)
                     self.dTrack.append(self.gpsd.fix.track)
                     self.dSpeed.append(self.gpsd.fix.speed)
-                    self.dEpx.append(self.gpsd.fix.self.gpsd.fix.epx)
-                    self.dEpy.append(self.gpsd.fix.self.gpsd.fix.epy)
-                    self.dSatsUsed.append(self.gpsd.fix.self.gpsd.satellites_used)
+                    self.dEpx.append(self.gpsd.fix.epx)
+                    self.dEpy.append(self.gpsd.fix.epy)
+                    self.dSatsUsed.append(self.gpsd.satellites_used)
                     self.dHdop.append(self.gpsd.hdop)
 
                 if self.num3DFixes >= self.rollingWindow:
