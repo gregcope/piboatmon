@@ -476,7 +476,7 @@ def loadConfig():
     try:
         lastDailyStatusCheck = configP.get('main', 'lastDailyStatusCheck')
     except:
-        lastDailyStatusCheck = ''
+        lastDailyStatusCheck = '1970-01-01 00:00:00.000000'
 
     try:
         batteryOkMVolts = configP.get('main', 'batteryOkVolts')
@@ -2031,7 +2031,7 @@ def giveGpsChance():
                     logging.debug('Reach 60 tries, breaking')
                     break
 
-    if gpsp.getCurrentNoFixes > 1:
+    if gpsp.getCurrentNoFixes() > 0:
 
         # GPS Fix ...
         logging.info('Got a GPS fix.  We looped: '
@@ -2039,7 +2039,7 @@ def giveGpsChance():
                      + str(uptimeSecs()))
 
     else:
-        logging.error('No GPS FIX!!!,tried: '
+        logging.error('No GPS FIX!!! tried: '
                       + str(waitedForGpsFixIterations) + ' times')
 
 
