@@ -1748,6 +1748,8 @@ def checkDailyStatus():
 
     if _now > _nextAlarm:
 
+        logging.info('Daily status fired - due after: ' + str(_nextAlarm))
+
         if debug is True:
             logging.debug('alarm fired, settting sendStatus and dailystatus to true')
 
