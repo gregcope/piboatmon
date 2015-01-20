@@ -17,7 +17,7 @@
 # start with something that will not match
 GPSDATE=0
 
-/usr/bin/logger -t gpsDate "Polling GPS for TPV time sentence ..."
+/usr/bin/logger -t gpsDateTPV "Polling GPS for TPV time sentence ..."
 
 # go for the loop
 until [ `echo $GPSDATE | /bin/grep  -P "^(19|20)\d{2}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}"` ]
@@ -26,5 +26,5 @@ do
 done
 
 # got this far, should have a GPS Date that looks good ...
-/bin/date -s "$GPSDATE" && /usr/bin/logger -t gpsDate "Setting date to: $GPSDATE, exiting"
+/bin/date -s "$GPSDATE" && /usr/bin/logger -t gpsDateTPV "Setting date to: $GPSDATE, exiting"
 
