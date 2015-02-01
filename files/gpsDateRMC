@@ -4,13 +4,13 @@
 # Script to set the date on the GPS RMC data
 # Does not need a fix
 # as GPS unit will output Data without one
-# Polls the GPS for 10 lines
+# Polls the GPS for 5 lines
 # and checks the extracted GPSDATE looks like;
 # $GPRMC,200737.000,V,,,,,0.64,5.31,190115,,,N*44 
 # turns it into;
 # 2014-12-13T15:13:22.000Z
 
-# /usr/bin/gpspipe -R | /usr/bin/head -10 | /bin/grep GPRMC | /usr/bin/awk -F"," '{print $2,$10}' | /bin/sed -r 's/([0-9]{2})([0-9]{2})([0-9]{2}).*([0-9]{2})([0-9]{2})([0-9]{2})$/20\6-\5-\4T\1:\2:\3.000Z/' | /usr/bin/tail -1
+# /usr/bin/gpspipe -R | /usr/bin/head -5 | /bin/grep GPRMC | /usr/bin/awk -F"," '{print $2,$10}' | /bin/sed -r 's/([0-9]{2})([0-9]{2})([0-9]{2}).*([0-9]{2})([0-9]{2})([0-9]{2})$/20\6-\5-\4T\1:\2:\3.000Z/' | /usr/bin/tail -1
 # 222038.000 190115
 # 222039.000 190115
 #
@@ -22,7 +22,7 @@ GPSDATE=0
 # go for the loop
 until [ `echo $GPSDATE | /bin/grep  -P "^(19|20)\d{2}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}"` ]
 do
-    GPSDATE=`/usr/bin/gpspipe -R | /usr/bin/head -10 | /bin/grep GPRMC | /usr/bin/awk -F"," '{print $2,$10}' | /bin/sed -r 's/([0-9]{2})([0-9]{2})([0-9]{2}).*([0-9]{2})([0-9]{2})([0-9]{2})$/20\6-\5-\4T\1:\2:\3.000Z/' | /usr/bin/tail -1`
+    GPSDATE=`/usr/bin/gpspipe -R | /usr/bin/head -5 | /bin/grep GPRMC | /usr/bin/awk -F"," '{print $2,$10}' | /bin/sed -r 's/([0-9]{2})([0-9]{2})([0-9]{2}).*([0-9]{2})([0-9]{2})([0-9]{2})$/20\6-\5-\4T\1:\2:\3.000Z/' | /usr/bin/tail -1`
 done
 
 # got this far, should have a GPS Date that looks good ...

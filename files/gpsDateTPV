@@ -4,7 +4,7 @@
 # Script to set the date on the GPS TPV data
 # until NTP can get more accurate
 #
-# Polls the GPS for 10 lines
+# Polls the GPS for 5 lines
 # and checks the extracted GPSDATE looks like;
 # DDDD-DD-DDTDD:DD:DD
 # 2014-12-13T15:13:22.000Z
@@ -22,7 +22,7 @@ GPSDATE=0
 # go for the loop
 until [ `echo $GPSDATE | /bin/grep  -P "^(19|20)\d{2}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}"` ]
 do
-    GPSDATE=`/usr/bin/gpspipe -w | /usr/bin/head -10 | /bin/grep TPV | /bin/sed -r 's/.*"time":"([^"]*)".*/\1/' | /usr/bin/head -1`
+    GPSDATE=`/usr/bin/gpspipe -w | /usr/bin/head -5 | /bin/grep TPV | /bin/sed -r 's/.*"time":"([^"]*)".*/\1/' | /usr/bin/head -1`
 done
 
 # got this far, should have a GPS Date that looks good ...
