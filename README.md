@@ -21,7 +21,7 @@ It's design requirements are;
 * Low power (20ma idle)
 * Anchor / Mooring Alarm
 * Battery monitoring (volts)
-* Bilge switch monitoring
+* Bilge monitoring
 * Not designed to be on all the time (due to power)
 * Use SMS as the lower common demoninator of communication
 * Daily status messages SMS messages
@@ -31,19 +31,22 @@ Logic summary
 
 Basically it works thus;
 
-0. Runs logrotate, gpsDate
-1. Reads config
-2. Starts a GPS thread logging GPS positions
-3. Wait till uptime is 55 secs as mopi will not shutdown
-4. Checks for inbound SMS messages from a 3G USB modem
-5. Checks the anchor Alarm
-6. Checks battery state
-7. Checks a bilge switch
-8. Checks to see if it needs to send a status SMS
-9. Logs present status and pings and https server the same info
-10. Checks for a GPS fix, and stays awake for upto another 60 secs to get one
-11. Waits till uptime is 60 secs (otherwise mopi will not shutdown)
-12. Goes to sleep for a configurable time (rinse/repeate)
+0. Runs gpsDate to get time from GPS RTC (no need for GPS fix)
+1. Removes old log
+2. Starts the pythong program by reading config
+3. Starts a GPS thread logging GPS positions
+4. Wait till uptime is 55 secs as mopi will not shutdown
+5. Checks for inbound SMS messages from a 3G USB modem
+6. Checks the anchor Alarm
+7. Checks battery state
+8. Checks a bilge switch
+9. Checks to see if it needs to send a status SMS
+10. Logs present status and pings and https server the same info
+11. Checks for a GPS fix, and stays awake for upto another 60 secs to get one
+12. Waits till uptime is 60 secs (otherwise mopi will not shutdown)
+13. Adds logs to daily log
+14. Removes logs older than X
+15. Goes to sleep for a configurable time (rinse/repeate)
 
 How it works
 ------------
@@ -260,3 +263,16 @@ O2
 Three
 + Appears to work
 - Hard setup (lots of texts to deal with)
+- Long time to get SMS messages when first booted
+
+Ardino / low power regulators;
+http://www.homautomation.org/2014/04/03/best-ways-to-power-a-arduino-according-to-your-need/
+
+DIY, with code examples
+https://github.com/petervojtek/diy/wiki/Arduino-with-Very-Low-Power-Consumption
+
+DIY with jeelib code examples
+http://www.openhomeautomation.net/arduino-battery/
+
+Hardcore DIY with code examples;
+http://gammon.com.au/power
